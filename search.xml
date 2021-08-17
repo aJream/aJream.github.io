@@ -4561,4 +4561,769 @@
         <tag>javaSE</tag>
       </tags>
   </entry>
+  <entry>
+    <title>3-maven+IDEA创建webapp</title>
+    <url>/2021/05/06/Maven/3-maven+IDEA%E5%88%9B%E5%BB%BAwebapp/</url>
+    <content><![CDATA[<ol>
+<li><p>创建project</p>
+<p>![image-20210502143531044](<a href="https://gitee.com/ajream/images/raw/master/img/2021-05-02">https://gitee.com/ajream/images/raw/master/img/2021-05-02</a> 14-35-33_image-20210502143531044.png)</p>
+<p>![image-20210502143822062](<a href="https://gitee.com/aJream/images/raw/master/img/2021-05-02">https://gitee.com/aJream/images/raw/master/img/2021-05-02</a> 14-38-23_image-20210502143822062.png)</p>
+<p>![image-20210502144127624](<a href="https://gitee.com/aJream/images/raw/master/img/2021-05-02">https://gitee.com/aJream/images/raw/master/img/2021-05-02</a> 14-41-29_image-20210502144127624.png)</p>
+<p>接着等待下载一些文件</p>
+</li>
+<li><p>进入工程下文件 <code>pom.xml</code>，做以下配置：</p>
+<ol>
+<li><p>修改Java编译器版本为<code>1.8</code>（根据自己情况）</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">project.build.sourceEncoding</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">project.build.sourceEncoding</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">maven.compiler.source</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">maven.compiler.source</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">maven.compiler.target</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">maven.compiler.target</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>删除下面两个标签及标签中的内容</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">pluginManagement</span>&gt;</span></span><br><span class="line">    ...</span><br><span class="line"><span class="tag">&lt;/<span class="name">pluginManagement</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>如果使用tomcat服务器，在刚才删除的地方添加下面内容</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.tomcat.maven<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>tomcat7-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span>  <span class="comment">&lt;!--tomcat版本--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">port</span>&gt;</span>8088<span class="tag">&lt;/<span class="name">port</span>&gt;</span> <span class="comment">&lt;!--端口--&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">path</span>&gt;</span>/test<span class="tag">&lt;/<span class="name">path</span>&gt;</span> <span class="comment">&lt;!--项目站点名--&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">uriEncoding</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">uriEncoding</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">server</span>&gt;</span>tomcat7<span class="tag">&lt;/<span class="name">server</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后：</p>
+<p>![image-20210502145452277](<a href="https://gitee.com/aJream/images/raw/master/img/2021-05-02">https://gitee.com/aJream/images/raw/master/img/2021-05-02</a> 14-54-53_image-20210502145452277.png)</p>
+</li>
+<li><p>等待下载完成后</p>
+<p>![image-20210502145735190](<a href="https://gitee.com/aJream/images/raw/master/img/2021-05-02">https://gitee.com/aJream/images/raw/master/img/2021-05-02</a> 14-57-36_image-20210502145735190.png)</p>
+<p>![image-20210502145859423](<a href="https://gitee.com/ajream/images/raw/master/img/2021-05-02">https://gitee.com/ajream/images/raw/master/img/2021-05-02</a> 14-59-00_image-20210502145859423.png)</p>
+<p>![image-20210502150218246](<a href="https://gitee.com/ajream/images/raw/master/img/2021-05-02">https://gitee.com/ajream/images/raw/master/img/2021-05-02</a> 15-02-19_image-20210502150218246.png)</p>
+</li>
+<li><p>配置完成，点击运行</p>
+<p>![image-20210502150451149](<a href="https://gitee.com/ajream/images/raw/master/img/2021-05-02">https://gitee.com/ajream/images/raw/master/img/2021-05-02</a> 15-04-52_image-20210502150451149.png)</p>
+<p>![image-20210502150620073](<a href="https://gitee.com/ajream/images/raw/master/img/2021-05-02">https://gitee.com/ajream/images/raw/master/img/2021-05-02</a> 15-06-21_image-20210502150620073.png)</p>
+<p>浏览器访问结果：</p>
+<p>![image-20210502150700084](<a href="https://gitee.com/ajream/images/raw/master/img/2021-05-02">https://gitee.com/ajream/images/raw/master/img/2021-05-02</a> 15-07-01_image-20210502150700084.png)</p>
+</li>
+</ol>
+</li>
+</ol>
+<blockquote>
+<p>下载的插件在repository的org目录下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">D:\maven\apache-maven-3.8.1\repository\org\apache\tomcat</span><br></pre></td></tr></table></figure></blockquote>
+]]></content>
+      <categories>
+        <category>java</category>
+      </categories>
+      <tags>
+        <tag>Maven</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>java垃圾回收算法</title>
+    <url>/2021/05/16/Java%E5%BA%95%E5%B1%82%E7%90%86%E8%A7%A3/Java%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95/</url>
+    <content><![CDATA[<h1 id="Java垃圾回收算法"><a href="#Java垃圾回收算法" class="headerlink" title="Java垃圾回收算法"></a>Java垃圾回收算法</h1><p><a href="https://zhuanlan.zhihu.com/p/73628158">咱们从头到尾说一次 Java 垃圾回收 - 知乎 (zhihu.com)</a></p>
+<h2 id="1、什么是垃圾（定义）"><a href="#1、什么是垃圾（定义）" class="headerlink" title="1、什么是垃圾（定义）"></a>1、什么是垃圾（定义）</h2><p>有两种算法来定义</p>
+<h3 id="引用计数算法"><a href="#引用计数算法" class="headerlink" title="引用计数算法"></a>引用计数算法</h3><p>引用计数算法是通过在对象头中分配一个空间来存储该对象被引用的次数，如果该对象被其他对象引用，则它的引用计数+1，删除一个该对象的引用，则其引用计数-1，当其引用计数为0时，该对象就是垃圾，会被回收。</p>
+<blockquote>
+<p><strong>缺点：</strong>循环引用（其计数永远不会为0）</p>
+</blockquote>
+<h3 id="可达性分析算法"><a href="#可达性分析算法" class="headerlink" title="可达性分析算法"></a>可达性分析算法</h3><p>可达性分析算法（Reachability Analysis）：基本思路是，通过一些被称为引用链（GC Roots）的对象作为起点，从这些节点开始向下搜索，搜索走过的路径被称为（Reference Chain)，当一个对象到 GC Roots 没有任何引用链相连时（即从 GC Roots 节点到该节点不可达），则证明该对象是不可用的。</p>
+<img src="https://gitee.com/ajream/images/raw/master/img/2021-04-23 19-06-16_image-20210423190611076.png" alt="image-20210423190611076" style="zoom:50%;" />
+
+
+
+<blockquote>
+<p>可达性算法，解决了引用计数所无法解决的问题-“循环依赖”</p>
+</blockquote>
+<h2 id="2、怎么回收（算法）"><a href="#2、怎么回收（算法）" class="headerlink" title="2、怎么回收（算法）"></a>2、怎么回收（算法）</h2><h3 id="标记-清除算法"><a href="#标记-清除算法" class="headerlink" title="标记-清除算法"></a>标记-清除算法</h3><p>![image-20210424225646255](<a href="https://gitee.com/ajream/images/raw/master/img/2021-04-24">https://gitee.com/ajream/images/raw/master/img/2021-04-24</a> 22-56-51_image-20210424225646255.png)</p>
+<p>标记清除算法原理就是，把要回收的内存进行标记，再清除掉这些内存中的无用数据；</p>
+<p>缺点：会导致大量碎片化的内存出现，但开辟内存时需要的是整块内存</p>
+<h3 id="复制算法"><a href="#复制算法" class="headerlink" title="复制算法"></a>复制算法</h3><p><strong>回收前：</strong></p>
+<p>![image-20210424231518421](<a href="https://gitee.com/ajream/images/raw/master/img/2021-04-24">https://gitee.com/ajream/images/raw/master/img/2021-04-24</a> 23-15-19_image-20210424231518421.png)</p>
+<p><strong>回收后：</strong></p>
+<p>![image-20210424231836708](<a href="https://gitee.com/ajream/images/raw/master/img/2021-04-24">https://gitee.com/ajream/images/raw/master/img/2021-04-24</a> 23-18-37_image-20210424231836708.png)</p>
+<p>原理：把整块内存平均分为两部分，分配内存时，只使用其中一部分。而这一部分内存满即将满时，jvm进行垃圾回收：</p>
+<ol>
+<li>首先把存活的对象都复制到另一块空内存上</li>
+<li>再把剩下的可回收的内存一次性进行垃圾回收，得到一块（占总的1/2）内存区域。</li>
+</ol>
+<p>优点：解决了标记-清除算法的问题</p>
+<p>缺点：同一时间只能使用其中一半的内存</p>
+<h3 id="标记-整理算法"><a href="#标记-整理算法" class="headerlink" title="标记-整理算法"></a>标记-整理算法</h3><p>![img](<a href="https://gitee.com/ajream/images/raw/master/img/2021-04-24">https://gitee.com/ajream/images/raw/master/img/2021-04-24</a> 23-19-46_v2-49f3e16de8d552ef585862062abe3f18_720w.jpg)</p>
+<p>标记整理算法（Mark-Compact）标记过程仍然与标记-清除算法一样，但后续步骤不是直接对可回收对象进行清理，而是让所有存活的对象都向一端移动，再清理掉端边界以外的内存区域。</p>
+<p>优点：标记整理算法一方面在标记-清除算法上做了升级，解决了内存碎片的问题，也规避了复制算法只能利用一半内存区域的弊端。</p>
+<p>缺点：标记-整理算法对内存变动频繁，需要整理所有存活对象的引用地址，在效率上比复制算法要差很多。</p>
+<h3 id="分代收集算法"><a href="#分代收集算法" class="headerlink" title="分代收集算法"></a>分代收集算法</h3><p>分代收集算法融合了上述3种基础的算法思想，而产生的针对不同情况所采用不同算法的一套组合拳。</p>
+<p>对象存活周期的不同将内存划分为几块。一般是把 Java 堆分为新生代和老年代，这样就可以根据各个年代的特点采用最适当的收集算法。</p>
+<ol>
+<li>在新生代中，每次垃圾收集时都发现有大批对象死去，只有少量存活，那就选用<u>复制算法</u>，只需要付出少量存活对象的复制成本就可以完成收集。</li>
+<li>老年代中因为对象存活率高、没有额外空间对它进行分配担保，就必须使用<u>标记-清理</u>或者<u>标记-整理算法</u>来进行回收。</li>
+</ol>
+<h2 id="3、内存模型与回收策略"><a href="#3、内存模型与回收策略" class="headerlink" title="3、内存模型与回收策略"></a>3、内存模型与回收策略</h2><p>内存模型:</p>
+<p>![img](<a href="https://gitee.com/ajream/images/raw/master/img/2021-04-24">https://gitee.com/ajream/images/raw/master/img/2021-04-24</a> 23-25-51_v2-2dcba4d81807c67df8309aa181bb00c3_720w.jpg)</p>
+<p>可以看到，内存模型分为 :</p>
+<ul>
+<li><p>Eden</p>
+</li>
+<li><p>Survior</p>
+</li>
+<li><p>Old</p>
+<p>这3个区，而Survior又分为 From、to两个区</p>
+</li>
+</ul>
+<h3 id="Eden区"><a href="#Eden区" class="headerlink" title="Eden区"></a>Eden区</h3><p>IBM 公司的专业研究表明，有将近98%的对象是朝生夕死，所以针对这一现状，大多数情况下，对象会在新生代 Eden 区中进行分配，当 Eden 区没有足够空间进行分配时，虚拟机会发起一次 Minor GC，Minor GC 相比 Major GC <strong>更频繁，回收速度也更快</strong>。</p>
+<blockquote>
+<p>通过 Minor GC 之后，Eden 会被清空，Eden 区中绝大部分对象会被回收，而那些无需回收的存活对象，将会进到 Survivor 的 From 区（若 From 区不够，则直接进入 Old 区）。</p>
+</blockquote>
+<h3 id="Survivor区"><a href="#Survivor区" class="headerlink" title="Survivor区"></a>Survivor区</h3><p>Survivor 区相当于是 Eden 区和 Old 区的一个缓冲，类似于我们交通灯中的黄灯。Survivor 又分为2个区，一个是 From 区，一个是 To 区。每次执行 Minor GC，会将 Eden 区和 From 存活的对象放到 Survivor 的 To 区（如果 To 区不够，则直接进入 Old 区）。</p>
+<p>1、为啥需要Survivor区？</p>
+<p>不就是新生代到老年代么，直接 Eden 到 Old 不好了吗，为啥要这么复杂。想想如果没有 Survivor 区，Eden 区每进行一次 Minor GC，存活的对象就会被送到老年代，老年代很快就会被填满。而有很多对象虽然一次 Minor GC 没有消灭，但其实也并不会蹦跶多久，或许第二次，第三次就需要被清除。这时候移入老年区，很明显不是一个明智的决定。</p>
+<blockquote>
+<p>所以，Survivor 的存在意义就是减少被送到老年代的对象，进而减少 Major GC 的发生。Survivor 的预筛选保证，只有经历16次 Minor GC 还能在新生代中存活的对象，才会被送到老年代。</p>
+</blockquote>
+<p>2、为啥需要俩？</p>
+<p>设置两个 Survivor 区最大的好处就是解决内存碎片化。</p>
+<p>我们先假设一下，Survivor 如果只有一个区域会怎样。Minor GC 执行后，Eden 区被清空了，存活的对象放到了 Survivor 区，而之前 Survivor 区中的对象，可能也有一些是需要被清除的。问题来了，这时候我们怎么清除它们？在这种场景下，我们<strong>只能标记清除</strong>，而我们知道标记清除最大的问题就是内存碎片，在新生代这种经常会消亡的区域，采用标记清除必然会让内存产生严重的碎片化。因为 Survivor 有2个区域，所以每次 Minor GC，会将之前 Eden 区和 From 区中的存活对象复制到 To 区域。第二次 Minor GC 时，From 与 To 职责兑换，这时候会将 Eden 区和 To 区中的存活对象再复制到 From 区域，以此反复。</p>
+<p>这种机制最大的好处就是，整个过程中，永远有一个 Survivor space 是空的，另一个非空的 Survivor space 是无碎片的。那么，Survivor 为什么不分更多块呢？比方说分成三个、四个、五个?显然，如果 Survivor 区再细分下去，每一块的空间就会比较小，容易导致 Survivor 区满，两块 Survivor 区可能是经过权衡之后的最佳方案。</p>
+<h3 id="Old-区"><a href="#Old-区" class="headerlink" title="Old 区"></a>Old 区</h3><p>老年代占据着2/3的堆内存空间，只有在 Major GC 的时候才会进行清理，每次 GC 都会触发“Stop-The-World”。内存越大，STW 的时间也越长，所以内存也不仅仅是越大就越好。由于复制算法在对象存活率较高的老年代会进行很多次的复制操作，效率很低，所以老年代这里采用的是标记 — 整理算法。</p>
+<p>除了上述所说，在内存担保机制下，无法安置的对象会直接进到老年代，以下几种情况也会进入老年代。</p>
+<p>1、大对象</p>
+<p>大对象指需要大量连续内存空间的对象，这部分对象不管是不是“朝生夕死”，都会直接进到老年代。这样做主要是为了避免在 Eden 区及2个 Survivor 区之间发生大量的内存复制。当你的系统有非常多“朝生夕死”的大对象时，得注意了。</p>
+<p>2、长期存活对象</p>
+<p>虚拟机给每个对象定义了一个对象年龄（Age）计数器。正常情况下对象会不断的在 Survivor 的 From 区与 To 区之间移动，对象在 Survivor 区中没经历一次 Minor GC，年龄就增加1岁。当年龄增加到15岁时，这时候就会被转移到老年代。当然，这里的15，JVM 也支持进行特殊设置。</p>
+<p>3、动态对象年龄</p>
+<p>虚拟机并不重视要求对象年龄必须到15岁，才会放入老年区，如果 Survivor 空间中相同年龄所有对象大小的综合大于 Survivor 空间的一般，年龄大于等于该年龄的对象就可以直接进去老年区，无需等你“成年”。</p>
+<p>这其实有点类似于负载均衡，轮询是负载均衡的一种，保证每台机器都分得同样的请求。看似很均衡，但每台机的硬件不通，健康状况不同，我们还可以基于每台机接受的请求数，或每台机的响应时间等，来调整我们的负载均衡算法。</p>
+]]></content>
+      <categories>
+        <category>java</category>
+      </categories>
+      <tags>
+        <tag>Java垃圾回收</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>1-maven基本概念</title>
+    <url>/2021/05/05/Maven/1-maven%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/</url>
+    <content><![CDATA[<h1 id="Maven基本概念"><a href="#Maven基本概念" class="headerlink" title="Maven基本概念"></a>Maven基本概念</h1><h2 id="Maven学习内容"><a href="#Maven学习内容" class="headerlink" title="Maven学习内容"></a>Maven学习内容</h2><img src="https://gitee.com/aJream/images/raw/master/img/2021-05-02 10-08-42_Maven.svg" alt="Maven" style="zoom:100%;" />
+
+
+
+<h2 id="Maven简介"><a href="#Maven简介" class="headerlink" title="Maven简介"></a>Maven简介</h2><p>Maven主要用于项目构建、依赖管理、项目信息管理</p>
+<ol>
+<li>小型项目</li>
+<li>大型企业项目</li>
+<li>传统瀑布式开发</li>
+<li>流行的敏捷开发</li>
+</ol>
+<h2 id="项目构建"><a href="#项目构建" class="headerlink" title="项目构建"></a>项目构建</h2><p>​        总结一下， 我们会发现， 除了编写源代码， 我们每天有相当一部分时间花在了编</p>
+<p>译，运行单元测试， 生成文档， 打包和部署等繁琐且不起眼的工作上， 这就是构建。</p>
+<h2 id="项目构建工具"><a href="#项目构建工具" class="headerlink" title="项目构建工具"></a>项目构建工具</h2><h3 id="Ant"><a href="#Ant" class="headerlink" title="Ant"></a>Ant</h3><p>最早的构建工具， 基于 IDE, 大概是 2000 年有的， 当时是最流行 java 构建工具，不过它的 XML 脚本编写格式让 XML 文件特别大。 对工程构建过程中的过程控制特别好。</p>
+<h3 id="Maven"><a href="#Maven" class="headerlink" title="Maven"></a>Maven</h3><ul>
+<li>项目对象模型， 通过其描述信息来管理项目的构建， 报告和文档的软件项目管理工具。 </li>
+<li>填补了 Ant 缺点， Maven 第一次支持了从网络上下载的功能， 仍然采用 xml 作为配置文件格式。</li>
+<li> Maven 专注的是依赖管理， 使用 Java 编写。</li>
+</ul>
+<h3 id="Gradle"><a href="#Gradle" class="headerlink" title="Gradle"></a>Gradle</h3><ul>
+<li>结合以上两个的优点， 它继承了 Ant 的灵活和 Maven 的生命周期管理， 它最后被 google 作为了 Android 御用管理工具。</li>
+<li> 它最大的区别是不用 XML 作为配置文件格式， 采用了 DSL 格式， 使得脚本更加简洁。</li>
+</ul>
+<h2 id="Maven四大特性"><a href="#Maven四大特性" class="headerlink" title="Maven四大特性"></a>Maven四大特性</h2><h3 id="依赖管理系统（jar项目的多模块）"><a href="#依赖管理系统（jar项目的多模块）" class="headerlink" title="依赖管理系统（jar项目的多模块）"></a>依赖管理系统（jar项目的多模块）</h3><ul>
+<li>Maven 为 Java 世界引入了一个新的依赖管理系统 jar 包管理 ，jar 升级时修改配置文件即可。 </li>
+<li>在 Java 世界中， 可以用 <u>groupId</u>、 <u>artifactId</u>、 <u>version</u> 组成的Coordination（ 坐标）唯一标识一个依赖。 </li>
+<li>任何基于 Maven 构建的项目自身也必须定义这三项属性， 生成的包可以是 Jar 包， 也可以是 war 包或者 jar 包。</li>
+</ul>
+<p>一个典型的依赖引用如下所示：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>javax.servlet<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span> //包名/项目名</span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>javax.servlet-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span> //某一模块名</span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>3.1.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span>	//所需要jar的版本</span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="多模块构建"><a href="#多模块构建" class="headerlink" title="多模块构建"></a>多模块构建</h3><p> 项目复查时 dao service controller 层分离将一个项目分解为多个模块已经是很通用的一种方式。在 Maven 中需要定义一个 parent POM 作为一组 module 的聚合 POM。在该 POM 中可以使用 标签来定义一组子模块。 parent POM 不会有什么实际构建产出。 而 parent POM 中的 build 配置以及依赖配置都会自动继承给子 module。</p>
+<h3 id="一致的项目结构（不同的IDE项目结构是一致）"><a href="#一致的项目结构（不同的IDE项目结构是一致）" class="headerlink" title="一致的项目结构（不同的IDE项目结构是一致）"></a>一致的项目结构（不同的IDE项目结构是一致）</h3><p> Ant 时代大家创建 Java 项目目录时比较随意， 然后通过 Ant 配置指定哪些属于source，那些属于 testSource 等。而 Maven 在设计之初的理念就是 Conversion overconfiguration（ 约定大于配置）。 其制定了一套项目目录结构作为标准的 Java 项目结构,解决不同 ide 带来的文件目录不一致问题。</p>
+<h3 id="一致的构建模型和插件机制"><a href="#一致的构建模型和插件机制" class="headerlink" title="一致的构建模型和插件机制"></a>一致的构建模型和插件机制</h3><p>通过 pom 配置 tomcat、 jetty 插件:</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">	<span class="comment">&lt;!--这里是所有添加插件配置的地方--&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mortbay.jetty<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-jetty-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>6.1.25<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">scanIntervalSeconds</span>&gt;</span>10<span class="tag">&lt;/<span class="name">scanIntervalSeconds</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">contextPath</span>&gt;</span>/test<span class="tag">&lt;/<span class="name">contextPath</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+]]></content>
+      <categories>
+        <category>java</category>
+      </categories>
+      <tags>
+        <tag>Maven</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>1-Servlet</title>
+    <url>/2021/05/05/javaEE/1-Servlet/</url>
+    <content><![CDATA[<h1 id="Servlet"><a href="#Servlet" class="headerlink" title="Servlet"></a>Servlet</h1><h2 id="servlet技术"><a href="#servlet技术" class="headerlink" title="servlet技术"></a>servlet技术</h2><ol>
+<li>Servlet是Java EE规范之一，规范即接口</li>
+<li>是JavaWeb三大组件之一，其他2个是：Filter过滤器、Listener监听器</li>
+<li>是运行在服务器上一个Java小程序，可以接收客户端发来的请求，并相应给客户端</li>
+<li>Servlet没有 <code>main()</code>方法，由系统自动调用</li>
+</ol>
+<h2 id="IDEA创建servlet"><a href="#IDEA创建servlet" class="headerlink" title="IDEA创建servlet"></a>IDEA创建servlet</h2><img src="https://img-blog.csdnimg.cn/20210502184910567.png" alt="在这里插入图片描述" style="zoom:43%;" />
+
+
+
+<img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 16-37-34_image-20210502163733514.png" alt="image-20210502163733514" style="zoom: 67%;" />
+
+
+
+<img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 16-38-39_image-20210502163838549.png" alt="image-20210502163838549" style="zoom:67%;" />
+
+
+
+
+
+<h2 id="手动实现Servlet程序"><a href="#手动实现Servlet程序" class="headerlink" title="手动实现Servlet程序"></a>手动实现Servlet程序</h2><ol>
+<li><p>编写类实现Servlet规范，有3种方式：</p>
+<ol>
+<li><p>继承 <code>HttpServlet</code>类</p>
+ <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloServlet</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>实现 <code>Servlet</code>接口</p>
+ <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.servlet01;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.servlet.*;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Servlet01</span> <span class="keyword">implements</span> <span class="title">Servlet</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(ServletConfig servletConfig)</span> <span class="keyword">throws</span> ServletException </span>&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ServletConfig <span class="title">getServletConfig</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(ServletRequest servletRequest, ServletResponse servletResponse)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;实现Servlet接口&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getServletInfo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destroy</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+</li>
+<li><p>实现 <code>service()</code>方法，处理请求，响应数据</p>
+<p>【快捷键 <kbd>ctrl + o</kbd> 可以重写方法或实现接口】</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloServlet</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(HttpServletRequest req, HttpServletResponse resp)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">        <span class="comment">//控制台打印</span></span><br><span class="line">        System.out.println(<span class="string">&quot;Hello Servlet&quot;</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//通过流输出数据到浏览器</span></span><br><span class="line">        resp.getWriter().write(<span class="string">&quot;hello servlet!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>设置注解<code>@WebServlet</code>，指定访问路径</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@WebServlet(name=&quot;helloServlet&quot;, value = &quot;/ser01&quot;)</span> <span class="comment">//name可以不设置</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<blockquote>
+<p>在第二步中，也可以不重写 <code>Service()</code>方法，而是更具体些，重写 <code>doGet()</code>、<code>doPost</code>方法；</p>
+<p>根据浏览器请求方式来进行不同处理</p>
+<p>但实际我们不知道浏览器以何种方式请求，故两个方法都需要去写，因此这种方式用的较少</p>
+</blockquote>
+<h2 id="Servlet工作流程"><a href="#Servlet工作流程" class="headerlink" title="Servlet工作流程"></a>Servlet工作流程</h2><p>url<code>http://localhost:8083/servlet01/ser01</code>含义：</p>
+<blockquote>
+<ul>
+<li>服务器：<code>http://localhost:8083</code></li>
+<li>项目：<code>/servlet01</code></li>
+<li>资源：<code>/ser01</code></li>
+</ul>
+</blockquote>
+]]></content>
+      <categories>
+        <category>java</category>
+      </categories>
+      <tags>
+        <tag>javaEE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>2-Servlet生命周期</title>
+    <url>/2021/05/06/javaEE/2-Servlet%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</url>
+    <content><![CDATA[<h1 id="Servlet生命周期"><a href="#Servlet生命周期" class="headerlink" title="Servlet生命周期"></a>Servlet生命周期</h1><ol>
+<li>通过调用 <code>init()</code>方法创建、初始化服务（系统自动调用，只执行一次）</li>
+<li>调用 <code>Service()</code> 方法执行服务</li>
+<li>调用 <code>destroy()</code>销毁服务（关闭服务器时系统自动调用，只执行一次）</li>
+</ol>
+<h4 id="Servlet工作流程"><a href="#Servlet工作流程" class="headerlink" title="Servlet工作流程"></a>Servlet工作流程</h4><p>![image-20210502165959933](<a href="https://gitee.com/ajream/images/raw/master/img/2021-05-02">https://gitee.com/ajream/images/raw/master/img/2021-05-02</a> 17-00-01_image-20210502165959933.png)</p>
+]]></content>
+      <categories>
+        <category>java</category>
+      </categories>
+      <tags>
+        <tag>javaEE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>3-ServletRequest对象</title>
+    <url>/2021/05/07/javaEE/3-ServletRequest%E5%AF%B9%E8%B1%A1/</url>
+    <content><![CDATA[<h1 id="HttpServletRequest对象"><a href="#HttpServletRequest对象" class="headerlink" title="HttpServletRequest对象"></a>HttpServletRequest对象</h1><p>该对象主要用于接收客户端发送过来的信息，如请求参数、请求头等</p>
+<p>HttpServletRequest是ServletRequest的唯一的子<strong>接口</strong></p>
+<h2 id="接收请求"><a href="#接收请求" class="headerlink" title="接收请求"></a>接收请求</h2><h3 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//完整url路径</span></span><br><span class="line">String url = req.getRequestURL().toString();</span><br><span class="line"></span><br><span class="line"><span class="comment">//部分路径</span></span><br><span class="line">String uri = req.getRequestURI();</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取请求的参数（如果有的话,即路径中`?`后面的字符串）</span></span><br><span class="line">String query = req.getQueryString();</span><br><span class="line"></span><br><span class="line"><span class="comment">//请求方式get、post</span></span><br><span class="line">String method = req.getMethod();</span><br><span class="line"></span><br><span class="line"><span class="comment">//请求协议(http/1/1)</span></span><br><span class="line">String protocol = req.getProtocol();</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取项目站点名</span></span><br><span class="line">String webapp = req.getContextPath();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>请求为【<code>localhost:8083/sr02/servlet02</code>】时输出：</p>
+<p>![image-20210502192535571](<a href="https://gitee.com/ajream/images/raw/master/img/2021-05-02">https://gitee.com/ajream/images/raw/master/img/2021-05-02</a> 19-25-40_image-20210502192535571.png)</p>
+<p>请求为【<code>localhost:8083/sr02/servlet02?name=xiaod&amp;passwd=123456</code>】时：</p>
+<p>![image-20210502192917681](<a href="https://gitee.com/ajream/images/raw/master/img/2021-05-02">https://gitee.com/ajream/images/raw/master/img/2021-05-02</a> 19-29-20_image-20210502192917681.png)</p>
+<p><strong>详细参数获取（重点）</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//获取指定参数，返回字符串</span></span><br><span class="line">String name = req.getParameter(<span class="string">&quot;name&quot;</span>);  <span class="comment">//用户名</span></span><br><span class="line">String passwd = req.getParameter(<span class="string">&quot;passwd&quot;</span>);  <span class="comment">//密码</span></span><br></pre></td></tr></table></figure>
+
+<p>![image-20210502193840780](<a href="https://gitee.com/ajream/images/raw/master/img/2021-05-02">https://gitee.com/ajream/images/raw/master/img/2021-05-02</a> 19-38-47_image-20210502193840780.png)</p>
+<p>获取多个同名参数（适用于复选框）</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//多个参数名称相同，用数组收集</span></span><br><span class="line"><span class="comment">//如：参数为 name=xiaod&amp;passwd=123456&amp;hobby=sing&amp;hobby=dance</span></span><br><span class="line">String[] hobbies = req.getParameterValues(<span class="string">&quot;hobby&quot;</span>); </span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="中文乱码问题"><a href="#中文乱码问题" class="headerlink" title="中文乱码问题"></a>中文乱码问题</h2><p>tomcat8以上版本只有get请求会乱码，使用字符串乱码处理方式来解决</p>
+<p>使用<strong>post请求</strong>提交表单时，若含有中文，获取到的是乱码</p>
+<p><strong>验证步骤</strong></p>
+<ol>
+<li><p>在webapp下创建login.jsp文件</p>
+<img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 20-18-02_image-20210502201756825.png" alt="image-20210502201756825" style="zoom:50%;" /></li>
+<li><p>在login.jsp下粘贴以下代码</p>
+<figure class="highlight jsp"><table><tr><td class="code"><pre><span class="line">&lt;%@ page contentType=<span class="string">&quot;text/html;charset=UTF-8&quot;</span> language=<span class="string">&quot;java&quot;</span> %&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt;登录&lt;/title&gt;</span><br><span class="line">    &lt;form method=<span class="string">&quot;post&quot;</span> action=<span class="string">&quot;servlet02&quot;</span>&gt;</span><br><span class="line">        账户名：&lt;input type=<span class="string">&quot;text&quot;</span> name=<span class="string">&quot;name&quot;</span>&gt; &lt;br&gt;</span><br><span class="line">        密码：&lt;input type=<span class="string">&quot;password&quot;</span> name=<span class="string">&quot;passwd&quot;</span>&gt; &lt;br&gt;</span><br><span class="line">        &lt;button&gt;登录&lt;/button&gt;   &lt;!--button默认为提交按钮--&gt;</span><br><span class="line">    &lt;/form&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line"></span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>需要注意，form标签的属性 <code>action</code>为**注解@WebServlet(“/servlet02”)**中的 <code>servlet02</code>（不要有斜线），这样就与这个处理类关联起来了</p>
+</blockquote>
+</li>
+<li><p>运行启动</p>
+</li>
+<li><p>浏览器访问</p>
+<p>![image-20210502202959582](<a href="https://gitee.com/ajream/images/raw/master/img/2021-05-02">https://gitee.com/ajream/images/raw/master/img/2021-05-02</a> 20-30-03_image-20210502202959582.png)</p>
+</li>
+<li><p>点击登录提交给 <code>Servlet01</code>类（含有注解 <code>@WebServlet(&quot;/servlet02&quot;)</code> ）处理</p>
+<p>查看获取到的数据：</p>
+<p>![image-20210502203233059](<a href="https://gitee.com/ajream/images/raw/master/img/2021-05-02">https://gitee.com/ajream/images/raw/master/img/2021-05-02</a> 20-32-36_image-20210502203233059.png)</p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>java</category>
+      </categories>
+      <tags>
+        <tag>javaEE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>4-请求转发</title>
+    <url>/2021/05/08/javaEE/4-%E8%AF%B7%E6%B1%82%E8%BD%AC%E5%8F%91/</url>
+    <content><![CDATA[<h1 id="请求转发"><a href="#请求转发" class="headerlink" title="请求转发"></a>请求转发</h1><ol>
+<li>可以让请求从服务端跳转到另一页面（或者跳转到另一个Servlet类处理）</li>
+<li>是服务端行为</li>
+<li>特点：<ol>
+<li>浏览器地址栏不发生改变</li>
+<li>实现不同的Servlet数据贡献</li>
+</ol>
+</li>
+</ol>
+<p>步骤：</p>
+<ol>
+<li><p>分别创建类：Servlet02和Servlet03</p>
+<p>填入以下内容：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//类Servlet02</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.xxxx.servlet02;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.servlet.ServletException;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.annotation.WebServlet;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServlet;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletRequest;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletResponse;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="meta">@WebServlet(&quot;/ser02&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Servlet02</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(HttpServletRequest req, HttpServletResponse resp)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">        String name = req.getParameter(<span class="string">&quot;name&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;ser02获取到用户名：&quot;</span> + name);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//跳转到servlet03</span></span><br><span class="line">        req.getRequestDispatcher(<span class="string">&quot;ser03&quot;</span>).forward(req, resp);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//类Servlet03</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.xxxx.servlet02;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.servlet.ServletException;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.annotation.WebServlet;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServlet;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletRequest;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletResponse;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="meta">@WebServlet(&quot;/ser03&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">servlet03</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(HttpServletRequest req, HttpServletResponse resp)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">        String name = req.getParameter(<span class="string">&quot;name&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;ser03获取到用户名：&quot;</span> + name);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在类Servlet02中，跳转语句为：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">req.getRequestDispatcher(<span class="string">&quot;ser03&quot;</span>).forward(req, resp);</span><br></pre></td></tr></table></figure>
+
+<p><code>ser03</code>(没有斜线“/”)表示servlet03的注解 “**@WebServlet(“/ser03”)**”</p>
+<blockquote>
+<p>也可以跳转到 login.jsp页面</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//跳转到login.jsp</span></span><br><span class="line">req.getRequestDispatcher(<span class="string">&quot;login.jsp&quot;</span>).forward(req, resp);</span><br></pre></td></tr></table></figure></blockquote>
+</li>
+<li><p>启动服务，浏览器访问servlet02，然后自动会访问servlet03，但地址栏没变</p>
+<p>![image-20210502211542653](<a href="https://gitee.com/aJream/images/raw/master/img/2021-05-02">https://gitee.com/aJream/images/raw/master/img/2021-05-02</a> 21-15-48_image-20210502211542653.png)</p>
+<p>![image-20210502211627393](<a href="https://gitee.com/ajream/images/raw/master/img/2021-05-02">https://gitee.com/ajream/images/raw/master/img/2021-05-02</a> 21-16-32_image-20210502211627393.png)</p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>java</category>
+      </categories>
+      <tags>
+        <tag>javaEE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>http</title>
+    <url>/2021/05/09/javaEE/http/</url>
+    <content><![CDATA[<p>![image-20210428211605440](<a href="https://gitee.com/Dream-and-dreaming/images/raw/master/img/2021-04-28">https://gitee.com/Dream-and-dreaming/images/raw/master/img/2021-04-28</a> 21-16-07_image-20210428211605440.png)</p>
+]]></content>
+      <categories>
+        <category>java</category>
+      </categories>
+      <tags>
+        <tag>javaEE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Tomcat基础</title>
+    <url>/2021/05/11/javaEE/Tomcat%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<h1 id="Tomcat基础"><a href="#Tomcat基础" class="headerlink" title="Tomcat基础"></a>Tomcat基础</h1><h2 id="web概念"><a href="#web概念" class="headerlink" title="web概念"></a>web概念</h2><ol>
+<li>软件架构<ul>
+<li>C/S：客户端/服务器端（QQ、360。。。）</li>
+<li>B/S：浏览器/服务器端（京东、淘宝、网易。。。）</li>
+</ul>
+</li>
+<li>资源分类<ul>
+<li>静态资源（所有用户访问得到的结果一样）</li>
+<li>动态资源（不同用户访问的结果不同）</li>
+</ul>
+</li>
+<li>网络通信三要素<ul>
+<li>协议<ul>
+<li>tcp：安全协议、三次握手、速度较慢</li>
+<li>udp：不安全、速度快</li>
+</ul>
+</li>
+<li>ip：电子设备在网络中唯一标识</li>
+<li>端口号</li>
+</ul>
+</li>
+</ol>
+<h2 id="常见web服务器软件"><a href="#常见web服务器软件" class="headerlink" title="常见web服务器软件"></a>常见web服务器软件</h2><ol>
+<li>webLogic：大型JavaEE服务器，属于Oracle公司，收费</li>
+<li>webSphere：IBM公司</li>
+<li>JBOSS：JBOSS公司</li>
+<li>Tomcat：Apache组织</li>
+</ol>
+<h2 id="Tomcat安装与启动"><a href="#Tomcat安装与启动" class="headerlink" title="Tomcat安装与启动"></a>Tomcat安装与启动</h2><p>下载地址：<a href="https://tomcat.apache.org/download-80.cgi">Apache Downloads</a></p>
+<h3 id="启动tomcat"><a href="#启动tomcat" class="headerlink" title="启动tomcat"></a>启动tomcat</h3><p>运行bin目录下的批处理文件 <code>startup.bat</code>（确认当前是jdk1.8或以上，用<code>java -version</code>查看）</p>
+<h3 id="部署网页"><a href="#部署网页" class="headerlink" title="部署网页"></a>部署网页</h3><p>例如部署一个test.html文件</p>
+<ol>
+<li>把test.html文件复制到<strong>D:\tomcat\webapps\ROOT</strong> 目录下</li>
+<li>启动tomcat</li>
+<li>访问 <a href="http://127.0.0.1:8080/test.html">http://127.0.0.1:8080/test.html</a></li>
+</ol>
+<h3 id="改端口号"><a href="#改端口号" class="headerlink" title="改端口号"></a>改端口号</h3><p>8080是tomcat默认端口号，而平时上网默认使用80端口</p>
+<p>tomcat的端口配置相关信息在 server.xml中，server.xml 记录了非常多的tomcat配置信息，其中就包括端口。</p>
+<p>修改端口号步骤：</p>
+<ol>
+<li>打开server.xml文件</li>
+<li><code>ctrl+f</code>查询8080，将下面这句代码的<code>8080</code>修改为其他端口号，如80，8081，8082</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Connector</span> <span class="attr">port</span>=<span class="string">&quot;8080&quot;</span> <span class="attr">protocol</span>=<span class="string">&quot;HTTP/1.1&quot;</span> <span class="attr">connectionTimeout</span>=<span class="string">&quot;20000&quot;</span> <span class="attr">redirectPort</span>=<span class="string">&quot;8543&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>接着就可以直接通过 <a href="http://127.0.0.1/test.html%E8%AE%BF%E9%97%AE%E7%BD%91%E9%A1%B5%E4%BA%86%E3%80%82">http://127.0.0.1/test.html访问网页了。</a></p>
+<p>80端口就是web服务默认的端口号，所以就不需要显式写这个端口号了。</p>
+<h3 id="端口被占用"><a href="#端口被占用" class="headerlink" title="端口被占用"></a>端口被占用</h3><p>端口被占用就无法启动tomcat</p>
+<p>所以要找到端口被占用的程序是哪一个</p>
+<p>然后再关闭对应的程序即可</p>
+<ul>
+<li><p>查看80端口被哪些程序占用</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">netstat -ano|findstr &quot;80&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ajream/images/raw/master/img/image-20210408072223224.png" alt="image-20210408072223224"></p>
+<p>第一行就是占用端口“80”的进程（其他只是含有80这个字符串而已），最后一列对应的进程的pid</p>
+</li>
+<li><p>根据pid查询对应应用程序</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">tasklist|findstr <span class="string">&quot;4&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gitee.com/ajream/images/raw/master/img/image-20210408072728546.png" alt="image-20210408072728546"></p>
+<p>第一个system就是占用的程序</p>
+</li>
+<li><p>根据名称结束该进程</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">taskkill /f /t /im java.exe</span><br></pre></td></tr></table></figure>
+
+<p>结束java.exe</p>
+<p>结束成功会提示：<br>成功： 已终止 。。。</p>
+<p>或者通过pid终止：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">taskkill /f /pid 1828</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://stepimagewm.how2j.cn/1565.png" alt="根据名称 结束该程序"></p>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>java</category>
+      </categories>
+      <tags>
+        <tag>javaEE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>IDEA配置Tomcat</title>
+    <url>/2021/05/10/javaEE/IDEA%E9%85%8D%E7%BD%AETomcat/</url>
+    <content><![CDATA[<p>三个步骤</p>
+<ol>
+<li></li>
+</ol>
+<p>![image-20210502152308870](<a href="https://gitee.com/ajream/images/raw/master/img/2021-05-02">https://gitee.com/ajream/images/raw/master/img/2021-05-02</a> 15-23-11_image-20210502152308870.png)</p>
+<ol start="2">
+<li></li>
+</ol>
+<p>![image-20210502152803463](<a href="https://gitee.com/ajream/images/raw/master/img/2021-05-02">https://gitee.com/ajream/images/raw/master/img/2021-05-02</a> 15-28-04_image-20210502152803463.png)</p>
+<ol start="3">
+<li></li>
+</ol>
+<p>![image-20210502152955436](<a href="https://gitee.com/ajream/images/raw/master/img/2021-05-02">https://gitee.com/ajream/images/raw/master/img/2021-05-02</a> 15-29-56_image-20210502152955436.png)</p>
+]]></content>
+      <categories>
+        <category>java</category>
+      </categories>
+      <tags>
+        <tag>javaEE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>java面试基础</title>
+    <url>/2021/05/21/Java%E5%BA%95%E5%B1%82%E7%90%86%E8%A7%A3/java%E9%9D%A2%E8%AF%95%E9%A2%98/</url>
+    <content><![CDATA[<h1 id="Java面试基础"><a href="#Java面试基础" class="headerlink" title="Java面试基础"></a>Java面试基础</h1><h2 id="面向对象和面向过程的区别"><a href="#面向对象和面向过程的区别" class="headerlink" title="面向对象和面向过程的区别"></a>面向对象和面向过程的区别</h2><ul>
+<li><strong>面向过程</strong> ：<strong>面向过程性能比面向对象高。</strong> 因为类调用时需要实例化，开销比较大，比较消耗资源，所以当性能是最重要的考量因素的时候，比如单片机、嵌入式开发、Linux/Unix 等一般采用面向过程开发。<strong>但是</strong>面向过程没有面向对象易维护、易复用、易扩展。</li>
+<li><strong>面向对象</strong> ：<strong>面向对象易维护、易复用、易扩展。</strong> 因为面向对象有封装、继承、多态性的特性，所以可以设计出低耦合的系统，使系统更加灵活、更加易于维护。但是，<strong>面向对象性能比面向过程低</strong>。</li>
+</ul>
+<h2 id="Java语言有哪些特点"><a href="#Java语言有哪些特点" class="headerlink" title="Java语言有哪些特点"></a>Java语言有哪些特点</h2><ol>
+<li>面向对象（封装，继承，多态）；</li>
+<li>跨平台性（ Java 虚拟机实现平台无关性）；</li>
+<li>可靠性；</li>
+<li>安全性；</li>
+<li>支持多线程（ C++ 语言没有内置的多线程机制，因此必须调用操作系统的多线程功能来进行多线程程序设计，而 Java 语言却提供了多线程支持）</li>
+<li>支持网络编程并且很方便（ Java 语言诞生本身就是为简化网络编程设计的，因此 Java 语言不仅支持网络编程而且很方便）；</li>
+<li>编译与解释并存</li>
+</ol>
+<h2 id="jvm、jdk、jre"><a href="#jvm、jdk、jre" class="headerlink" title="jvm、jdk、jre"></a>jvm、jdk、jre</h2><ul>
+<li><p>JVM是运行 Java 字节码的虚拟机。JVM 有针对不同系统的特定实现（Windows，Linux，macOS），目的是使用相同的字节码，它们都会给出相同的结果。</p>
+</li>
+<li><p>JDK 是 Java Development Kit，它是功能齐全的 Java SDK。它拥有 JRE 所拥有的一切，还有编译器（javac）和工具（如 javadoc 和 jdb）。它能够创建和编译程序。</p>
+</li>
+<li><p>JRE 是 Java 运行时环境。它是运行已编译 Java 程序所需的所有内容的集合，包括 Java 虚拟机（JVM），Java 类库，java 命令和其他的一些基础构件。但是，它不能用于创建新程序。</p>
+</li>
+</ul>
+<h2 id="Java和C-对比"><a href="#Java和C-对比" class="headerlink" title="Java和C++对比"></a>Java和C++对比</h2><ul>
+<li>都是面向对象的语言，都支持封装、继承和多态</li>
+<li>Java 不提供指针来直接访问内存，程序内存更加安全</li>
+<li>Java 有自动内存管理机制，不需要程序员手动释放无用内存</li>
+<li>Java 的类是单继承的，C++ 支持多重继承；虽然 Java 的类不可以多继承，但是接口可以多继承。</li>
+</ul>
+<h2 id="字符型常量和字符串常量的区别"><a href="#字符型常量和字符串常量的区别" class="headerlink" title="字符型常量和字符串常量的区别"></a>字符型常量和字符串常量的区别</h2><ol>
+<li>形式上：字符常量是<strong>单引号</strong>引起的一个字符; 字符串常量是<strong>双引号</strong>引起的若干个字符</li>
+<li>含义上：字符常量相当于一个整型值( ASCII 值),可以参加表达式运算; 字符串常量代表一个地址值(该字符串在内存中存放位置)</li>
+<li>占内存大小 字符常量只占 2 个字节; 字符串常量占若干个字节 (<strong>注意： char 在 Java 中占两个字节</strong>)</li>
+</ol>
+<h2 id="构造器Constructor是否可被override"><a href="#构造器Constructor是否可被override" class="headerlink" title="构造器Constructor是否可被override"></a>构造器Constructor是否可被override</h2><p>Constructor 不能被 override（重写）,但是可以 overload（重载）,所以你可以看到一个类中有多个构造函数的情况。</p>
+<h2 id="重载和重写的区别"><a href="#重载和重写的区别" class="headerlink" title="重载和重写的区别"></a>重载和重写的区别</h2><p>重载：同样的一个方法能够根据输入数据的不同，做出不同的处理</p>
+<p>重写：当子类继承自父类的相同方法，输入数据一样，但要做出有别于父类的响应时，你就要覆盖父类方法</p>
+<h2 id="Java-面向对象编程三大特性：封装-继承-多态"><a href="#Java-面向对象编程三大特性：封装-继承-多态" class="headerlink" title="Java 面向对象编程三大特性：封装 继承 多态"></a>Java 面向对象编程三大特性：封装 继承 多态</h2><h3 id="封装"><a href="#封装" class="headerlink" title="封装"></a>封装</h3><blockquote>
+<ol>
+<li>属性私有化</li>
+<li>提供方法来访问私有属性</li>
+</ol>
+</blockquote>
+<p>封装把一个对象的属性私有化，同时提供一些可以被外界访问的属性的方法，如果属性不想被外界访问，我们大可不必提供方法给外界访问。但是如果一个类没有提供给外界访问的方法，那么这个类也没有什么意义了。</p>
+<h3 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h3><p>继承是使用已存在的类的定义作为基础建立新类的技术，新类的定义可以增加新的数据或新的功能，也可以用父类的功能，但不能选择性地继承父类。通过使用继承我们能够非常方便地复用以前的代码。</p>
+<p><strong>关于继承如下 3 点请记住：</strong></p>
+<ol>
+<li>子类拥有父类对象所有的属性和方法（包括私有属性和私有方法），但是父类中的私有属性和方法子类是无法访问，<strong>只是拥有</strong>。</li>
+<li>子类可以拥有自己属性和方法，即子类可以对父类进行扩展。</li>
+<li>子类可以用自己的方式实现父类的方法。</li>
+</ol>
+<h3 id="多态"><a href="#多态" class="headerlink" title="多态"></a>多态</h3><p>所谓多态就是指程序中定义的引用变量所指向的具体类型和通过该引用变量发出的方法调用在编程时并不确定，而是在程序运行期间才确定，即一个引用变量到底会指向哪个类的实例对象，该引用变量发出的方法调用到底是哪个类中实现的方法，必须在由程序运行期间才能决定。</p>
+<p>在 Java 中有两种形式可以实现多态：继承（多个子类对同一方法的重写）和接口（实现接口并覆盖接口中同一方法）。</p>
+<h2 id="StringBuffer和StringBuilder"><a href="#StringBuffer和StringBuilder" class="headerlink" title="StringBuffer和StringBuilder"></a>StringBuffer和StringBuilder</h2><p>两者的区别是什么? String 为什么是不可变的?</p>
+<h3 id="可变性"><a href="#可变性" class="headerlink" title="可变性"></a>可变性</h3><p>简单的来说：<code>String</code> 类中使用 <code>final</code> 关键字修饰字符数组来保存字符串，<code>private final char value[]</code>，所以 String 对象是不可变的。</p>
+<p>而 <code>StringBuilder</code> 与 <code>StringBuffer</code> 都继承自 <code>AbstractStringBuilder</code> 类，在 <code>AbstractStringBuilder</code> 中也是使用字符数组保存字符串<code>char[]value</code> 但是没有用 <code>final</code> 关键字修饰，所以这两种对象都是可变的。</p>
+<p><code>StringBuilder</code> 与 <code>StringBuffer</code> 的构造方法都是调用父类构造方法也就是 <code>AbstractStringBuilder</code> 实现的，大家可以自行查阅源码。</p>
+<h3 id="线程安全性"><a href="#线程安全性" class="headerlink" title="线程安全性"></a>线程安全性</h3><ul>
+<li><p><code>String</code> 中的对象是不可变的，也就可以理解为常量，线程安全。</p>
+</li>
+<li><p><code>AbstractStringBuilder</code> 是 <code>StringBuilder</code> 与 <code>StringBuffer</code> 的公共父类，定义了一些字符串的基本操作，如 <code>expandCapacity</code>、<code>append</code>、<code>insert</code>、<code>indexOf</code> 等公共方法。</p>
+</li>
+<li><p><code>StringBuffer</code> 对方法加了同步锁或者对调用的方法加了同步锁，所以是线程安全的。</p>
+</li>
+<li><p><code>StringBuilder</code> 并没有对方法进行加同步锁，所以是<strong>非</strong>线程安全的。</p>
+</li>
+</ul>
+<h3 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h3><ul>
+<li><p>每次对 <code>String</code> 类型进行改变的时候，都会生成一个新的 <code>String</code> 对象，然后将指针指向新的 <code>String</code> 对象。</p>
+</li>
+<li><p>而<code>StringBuffer</code> 每次都会对 <code>StringBuffer</code> 对象本身进行操作，而不是生成新的对象并改变对象引用。</p>
+</li>
+<li><p>相同情况下使用 <code>StringBuilder</code> 相比使用 <code>StringBuffer</code> 仅能获得 10%~15% 左右的性能提升，但却要冒多线程不安全的风险。</p>
+</li>
+</ul>
+<blockquote>
+<p>对于三者使用的总结：</p>
+<ol>
+<li>操作少量的数据: 适用 <code>String</code></li>
+<li>单线程操作字符串缓冲区下操作大量数据: 适用 <code>StringBuilder</code></li>
+<li>多线程操作字符串缓冲区下操作大量数据: 适用 <code>StringBuffer</code></li>
+</ol>
+</blockquote>
+<h2 id="自动装箱与拆箱"><a href="#自动装箱与拆箱" class="headerlink" title="自动装箱与拆箱"></a>自动装箱与拆箱</h2><ul>
+<li>装箱：将基本类型用它们对应的引用类型包装起来；</li>
+<li>拆箱：将包装类型转换为基本数据类型；</li>
+</ul>
+<h2 id="在一个静态方法内调用一个非静态成员为什么是非法的"><a href="#在一个静态方法内调用一个非静态成员为什么是非法的" class="headerlink" title="在一个静态方法内调用一个非静态成员为什么是非法的"></a>在一个静态方法内调用一个非静态成员为什么是非法的</h2><p>由于静态方法可以不通过对象进行调用，因此在静态方法里：</p>
+<ul>
+<li>不能调用其他非静态变量</li>
+<li>不可以访问非静态变量成员</li>
+</ul>
+<h2 id="在Java中定义一个不做事且没有参数的构造方法的作用"><a href="#在Java中定义一个不做事且没有参数的构造方法的作用" class="headerlink" title="在Java中定义一个不做事且没有参数的构造方法的作用"></a>在Java中定义一个不做事且没有参数的构造方法的作用</h2><p>Java 程序在实例化子类之前（即执行<strong>子类的构造方法</strong>之前），如果没有用 <code>super()</code>来调用父类特定的构造方法，则会<u>默认调用</u>父类中“没有参数的构造方法”。</p>
+<p>若父类中只定义了有参数的构造方法，而在子类的构造方法中又没有用 <code>super()</code>来调用父类中特定的构造方法，则编译时将发生错误，因为 Java 程序在父类中找不到没有参数的构造方法可供执行。</p>
+<p>解决办法：在父类里加上一个不做事且没有参数的构造方法。</p>
+<p>详细见：<a href="D:\Users\74452\Desktop\JavaLearning\javaSE\14-接口与继承.md">super关键字</a></p>
+<h2 id="接口和抽象类的区别"><a href="#接口和抽象类的区别" class="headerlink" title="接口和抽象类的区别"></a>接口和抽象类的区别</h2><ol>
+<li>接口的方法默认是 <code>public</code>，所有方法在接口中不能有实现(Java 8开始接口方法可以有<strong>默认实现</strong>），而抽象类可以有非抽象的方法。</li>
+<li>接口中除了 <code>static</code>、<code>final</code> 变量，不能有其他变量，而抽象类中则不一定。</li>
+<li>一个类可以实现多个接口，但只能实现一个抽象类。<u>接口自己本身</u>可以通过 <u><code>extends</code></u> 关键字扩展多个接口。</li>
+<li>接口方法默认修饰符是 <code>public</code>，抽象方法可以有 <code>public</code>、<code>protected</code> 和 <code>default</code> 这些修饰符（抽象方法就是为了被重写所以不能使用 <code>private</code> 关键字修饰！）。</li>
+<li>从设计层面来说，抽象是对类的抽象，是一种模板设计，而接口是对行为的抽象，是一种行为的规范。</li>
+</ol>
+<blockquote>
+<p>备注：</p>
+<ol>
+<li>在 JDK8 中，接口也可以定义静态方法，可以直接用<u>接口名</u>调用。实现类和实现是不可以调用的。如果同时实现两个接口，接口中定义了一样的默认方法，则必须重写，不然会报错。</li>
+<li>jdk9 的接口被允许定义私有方法 。</li>
+</ol>
+</blockquote>
+<h2 id="对象实体与对象引用"><a href="#对象实体与对象引用" class="headerlink" title="对象实体与对象引用"></a>对象实体与对象引用</h2><ul>
+<li><p>用new 运算符创建对象实例（对象实例在堆内存中）</p>
+</li>
+<li><p>对象引用指向对象实例（对象引用存放在栈内存中）</p>
+</li>
+</ul>
+<p>一个对象引用可以指向 0 个或 1 个对象（一根绳子可以不系气球，也可以系一个气球）;</p>
+<p>一个对象可以有 n 个引用指向它（可以用 n 条绳子系住一个气球）。</p>
+<h2 id="类的构造方法"><a href="#类的构造方法" class="headerlink" title="类的构造方法"></a>类的构造方法</h2><p>类的构造方法主要作用是完成对类对象的初始化工作。</p>
+<p>一个类没有声明构造方法也可以执行，因为一个类即使没有声明构造方法也会有默认的不带参数的构造方法。</p>
+<h2 id="静态方法与实例方法区别"><a href="#静态方法与实例方法区别" class="headerlink" title="静态方法与实例方法区别"></a>静态方法与实例方法区别</h2><ol>
+<li>在外部调用静态方法时，可以使用”<code>类名.方法名</code>“的方式，也可以使用”<code>对象名.方法名</code>“的方式。而实例方法只有后面这种方式。也就是说，调用静态方法可以无需创建对象。</li>
+<li>静态方法在访问本类的成员时，只允许访问静态成员（即静态成员变量和静态方法），而不允许访问实例成员变量和实例方法；实例方法则无此限制。</li>
+</ol>
+<h2 id="对象相等vs引用相等"><a href="#对象相等vs引用相等" class="headerlink" title="对象相等vs引用相等"></a>对象相等vs引用相等</h2><p>对象的相等，指的是内存中存放的内容是否相等。</p>
+<p>而引用相等，指的是他们指向的内存地址是否相等。</p>
+<h2 id="号与equals方法"><a href="#号与equals方法" class="headerlink" title="==号与equals方法"></a>==号与equals方法</h2><p>基本数据类型<code>==</code>比较的是值，而引用数据类型<code>==</code>比较的是内存地址</p>
+<p>注意：</p>
+<ol>
+<li><p>类没有覆盖 equals() 方法时， equals() 比较的是两个对象的内存地址，相当于用 <code>==</code>号</p>
+</li>
+<li><p>String 中的 equals 方法是被重写过的，因此String 的 equals 方法比较的是对象的值</p>
+</li>
+<li><p>当创建 String 类型的对象时，虚拟机会在常量池中查找有没有已经存在的值和要创建的值相同的对象，如果有就把它赋给当前引用。如果没有就在常量池中重新创建一个 String 对象。</p>
+</li>
+</ol>
+<h2 id="hashCode-与-equals"><a href="#hashCode-与-equals" class="headerlink" title="hashCode 与 equals"></a>hashCode 与 equals</h2><p>为什么重写 <code>equals</code> 时必须重写 <code>hashCode</code> 方法：</p>
+<ol>
+<li><p>hashcode用来记录对象存放的地址（理解可能不到位），如果两个对象相等，则 hashcode 一定也是相同的。</p>
+</li>
+<li><p>两个对象相等，对两个对象分别调用 equals 方法都返回 true。</p>
+</li>
+<li><p>但是，两个对象有相同的 hashcode 值，它们也不一定是相等的 。</p>
+</li>
+<li><p>因此，equals 方法被覆盖过，则 <code>hashCode</code> 方法也必须被覆盖</p>
+</li>
+</ol>
+<h2 id="Java值传递"><a href="#Java值传递" class="headerlink" title="Java值传递"></a>Java值传递</h2><p>Java 程序设计语言<u>总是采用按值调用</u>。也就是说，方法得到的是所有参数值的一个<strong>拷贝</strong>，即方法不能修改传递给它的任何参数变量的内容。</p>
+<blockquote>
+<p>与c/c++不同，c/c++提供了值传递和引用传递</p>
+</blockquote>
+<h2 id="线程、进程"><a href="#线程、进程" class="headerlink" title="线程、进程"></a>线程、进程</h2><h3 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h3><p><strong>线程（thread）</strong> 是操作系统能够进行运算调度的最小单位</p>
+<p>同类的多个线程共享同一块内存空间和一组系统资源，所以系统在产生一个线程，或是在各个线程之间作切换工作时，负担要比进程小得多，也正因为如此，线程也被称为轻量级进程。</p>
+<hr>
+<p><strong>进程</strong>是系统进行资源（ CPU 时间，内存空间，文件，输入输出设备的使用权等等）分配和调度的基本单位</p>
+<h3 id="线程生命周期的几种基本状态"><a href="#线程生命周期的几种基本状态" class="headerlink" title="线程生命周期的几种基本状态"></a>线程生命周期的几种基本状态</h3><ol>
+<li><p>线程创建之后它将处于 <strong>NEW（新建）</strong> 状态</p>
+</li>
+<li><p>调用 <code>start()</code> 方法后线程这时候处于 <strong>READY（就绪）</strong> 状态。</p>
+</li>
+<li><p>可运行状态的线程获得了 cpu 时间片（timeslice）后就处于 <strong>RUNNING（运行）</strong> 状态。</p>
+</li>
+<li><p>线程执行 <code>wait()</code>方法之后，线程进入 <strong>WAITING（等待）</strong>状态</p>
+</li>
+<li><p>当线程调用同步方法时，在没有获取到锁的情况下，线程将会进入到 <strong>BLOCKED（阻塞）</strong> 状态。</p>
+</li>
+<li><p>线程在执行 Runnable 的<code>run()</code>方法之后将会进入到 <strong>TERMINATED（终止）</strong> 状态。</p>
+</li>
+</ol>
+<p><img src="https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/19-1-29/Java%20%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81%E5%8F%98%E8%BF%81.png" alt="Java线程状态变迁"></p>
+<h2 id="final关键字"><a href="#final关键字" class="headerlink" title="final关键字"></a>final关键字</h2><p>final 关键字主要用在三个地方：变量、方法、类。</p>
+<ol>
+<li>对于一个 final 变量，如果是基本数据类型的变量，则其数值一旦在初始化之后便不能更改；如果是引用类型的变量，则在对其初始化之后便不能再让其指向另一个对象。</li>
+<li>当用 final 修饰一个类时，表明这个类不能被继承。final 类中的所有成员方法都会被隐式地指定为 final 方法。</li>
+<li>使用 final 方法的原因有两个。第一个原因是把方法锁定，以防任何继承类修改它的含义；第二个原因是效率。在早期的 Java 实现版本中，会将 final 方法转为内嵌调用。但是如果方法过于庞大，可能看不到内嵌调用带来的任何性能提升（现在的 Java 版本已经不需要使用 final 方法进行这些优化了）。类中所有的 private 方法都隐式地指定为 final。</li>
+</ol>
+<h2 id="Java异常处理"><a href="#Java异常处理" class="headerlink" title="Java异常处理"></a>Java异常处理</h2><p>结构图：</p>
+<img src="https://guide-blog-images.oss-cn-shenzhen.aliyuncs.com/2020-12/Java%E5%BC%82%E5%B8%B8%E7%B1%BB%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84%E5%9B%BE.png" alt="img" style="zoom:50%;" />
+
+
+
+<img src="https://guide-blog-images.oss-cn-shenzhen.aliyuncs.com/2020-12/Java%E5%BC%82%E5%B8%B8%E7%B1%BB%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84%E5%9B%BE2.png" alt="img" style="zoom: 33%;" />
+
+
+
+
+
+<p><code>Exception</code> 和 <code>Error</code> 二者都是 Java 异常处理的重要子类，各自都包含大量子类。</p>
+<ul>
+<li><code>Exception</code>：程序本身可以处理的异常，可以通过 <code>catch</code> 来进行捕获。<code>Exception</code> 又可以分为检查异常(必须处理) <code>Check Exception</code> 和 不检查异常(可以不处理) <code>Uncheck Exception</code>。</li>
+<li><code>Error</code> ：<code>Error</code> 属于程序无法处理的错误 ，我们没办法通过 <code>catch</code> 来进行捕获 。例如，Java 虚拟机运行错误（<code>Virtual MachineError</code>）、虚拟机内存不够错误(<code>OutOfMemoryError</code>)、类定义错误（<code>NoClassDefFoundError</code>）等 。这些异常发生时，Java 虚拟机（JVM）一般会选择线程终止。</li>
+</ul>
+<ol>
+<li><p>检查异常</p>
+<p>除了``RuntimeException<code>及其子类以外，其他的</code>Exception`类及其子类都属于检查异常。常见的受检查异常有：</p>
+<ul>
+<li>IO 相关的异常</li>
+<li><code>ClassNotFoundException</code> </li>
+<li><code>SQLException</code>……</li>
+</ul>
+</li>
+<li><p>不检查异常</p>
+<p><code>RuntimeException</code> 及其子类都统称为非受检查异常，例如：</p>
+<ul>
+<li><code>NullPointerException</code></li>
+<li><code>NumberFormatException</code>（字符串转换为数字）</li>
+<li><code>ArrayIndexOutOfBoundsException</code>（数组越界）</li>
+<li><code>ClassCastException</code>（类型转换错误）</li>
+<li><code>ArithmeticException</code>（算术错误）等</li>
+</ul>
+</li>
+</ol>
+<p><strong>在以下 3 种特殊情况下，<code>finally</code> 块不会被执行：</strong></p>
+<ol>
+<li>在 try 或 finally 块中用了 <code>System.exit(int)</code>退出程序。但是，如果 <code>System.exit(int)</code> 在异常语句之后，<code>finally</code> 还是会被执行</li>
+<li>程序所在的线程死亡。</li>
+<li>关闭 CPU。</li>
+</ol>
+<blockquote>
+<p><strong>注意：</strong> 当 try 语句和 finally 语句中都有 return 语句时，在方法返回之前，finally 语句的内容将被执行，并且 finally 语句的返回值将会覆盖try语句的返回值。</p>
+</blockquote>
+<h2 id="获取用键盘输入常用的两种方法"><a href="#获取用键盘输入常用的两种方法" class="headerlink" title="获取用键盘输入常用的两种方法"></a>获取用键盘输入常用的两种方法</h2><ol>
+<li>通过 Scanner</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Scanner input = <span class="keyword">new</span> Scanner(System.in);</span><br><span class="line">String s  = input.nextLine();</span><br><span class="line">input.close();Copy to clipboardErrorCopied</span><br></pre></td></tr></table></figure>
+
+
+
+<ol start="2">
+<li>通过 BufferedReader</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">BufferedReader input = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(System.in));</span><br><span class="line">String s = input.readLine();</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Java-中-IO-流分类"><a href="#Java-中-IO-流分类" class="headerlink" title="Java 中 IO 流分类"></a>Java 中 IO 流分类</h2><ul>
+<li>按照流的流向分，可以分为输入流和输出流；</li>
+<li>按照操作单元划分，可以划分为字节流和字符流；</li>
+<li>按照流的角色划分为节点流和处理流</li>
+</ul>
+<blockquote>
+<p> Java I0 流的 40 多个类都是从如下 4 个抽象类基类中派生出来：</p>
+<ul>
+<li>InputStream/Reader: 所有的输入流的基类，前者是字节输入流，后者是字符输入流。</li>
+<li>OutputStream/Writer: 所有输出流的基类，前者是字节输出流，后者是字符输出流。</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>为什么要有字符流？</p>
+<p>字符流是由 Java 虚拟机将字节转换得到的，问题就出在这个过程还算是非常耗时，并且，如果我们不知道编码类型就很容易出现乱码问题。所以， I/O 流就干脆提供了一个直接操作字符的接口，方便我们平时对字符进行流操作。</p>
+<ul>
+<li><p>音频文件、图片等二进制文件用字节流比较好，</p>
+</li>
+<li><p>涉及到字符文本文件使用字符流比较好</p>
+</li>
+</ul>
+</blockquote>
+]]></content>
+      <categories>
+        <category>java</category>
+      </categories>
+      <tags>
+        <tag>Maven</tag>
+      </tags>
+  </entry>
 </search>
