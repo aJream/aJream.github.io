@@ -592,45 +592,6 @@
       </tags>
   </entry>
   <entry>
-    <title>4-MySQL事务</title>
-    <url>/2021/05/08/MySQL_JDBC/4-MySQL%E4%BA%8B%E5%8A%A1/</url>
-    <content><![CDATA[<h1 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h1><h2 id="什么是事务"><a href="#什么是事务" class="headerlink" title="什么是事务"></a>什么是事务</h2><p>什么是事务：要么都成功，要么都失败</p>
-<blockquote>
-<p>比如：</p>
-<p>a 转账给 b  100元</p>
-<p>b 收到 a 的钱 100元</p>
-<p>这两者应该：要么都成功，要么都失败</p>
-</blockquote>
-<p>事务原则：ACID原则-&gt;【原子性、一致性、隔离性、持久性】</p>
-<ul>
-<li>原子性：要么都成功，要么都失败</li>
-<li>一致性：事务前后（时间上）数据完整性一致</li>
-<li>持久性：事务一旦提交则不可逆</li>
-<li>隔离性：多个用户操作一个数据库，数据库为每一个用户开启的事务，应该相互隔离，相互之间不能干扰</li>
-</ul>
-<blockquote>
-<p>隔离导致的一些问题：</p>
-<ul>
-<li>脏读：一个事务读取另一个事务未提交的数据</li>
-<li>不可重复读：在一个事务内读取表中某一数据，多次读取结果不同</li>
-<li>虚读（幻读）：在一个事务内读取到其他事务插入的数据，导致前后读取不一致</li>
-</ul>
-</blockquote>
-<h2 id="事务执行"><a href="#事务执行" class="headerlink" title="事务执行"></a>事务执行</h2><p>MySQL默认开启事务自动提交</p>
-<p>手动处理事务：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">set autocommit = 0 -- 关闭事务自动提交</span><br><span class="line">start transaction -- 标记一个事务开始，从这句话后的sql都在一个事务内</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 数据操作</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">-- 提交：持久化（成功）</span><br><span class="line">commit</span><br><span class="line"></span><br><span class="line">-- 回滚：回到原来样子（事务失败）</span><br><span class="line">rollback</span><br><span class="line"></span><br><span class="line">-- 事务结束</span><br><span class="line">set autocommit = 1 -- 恢复自动提交</span><br><span class="line"></span><br><span class="line">savepoint 保存点名 ; -- 设置事务保存点</span><br><span class="line">rollback to savepoint 保存点名 ; -- 回到事务保存点</span><br><span class="line">release savepoint 保存点名; -- 撤销保存点</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-]]></content>
-      <categories>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>MySQL_JDBC</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>5-索引</title>
     <url>/2021/05/09/MySQL_JDBC/5-%E7%B4%A2%E5%BC%95/</url>
     <content><![CDATA[<h1 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h1><p><strong>索引是</strong>帮助MySQL高效获取数据的<strong>数据结构</strong></p>
@@ -673,6 +634,45 @@
 <li>hash类型</li>
 <li>B-tree类型（innoDB默认索引类型）</li>
 </ul>
+]]></content>
+      <categories>
+        <category>java</category>
+      </categories>
+      <tags>
+        <tag>MySQL_JDBC</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>4-MySQL事务</title>
+    <url>/2021/05/08/MySQL_JDBC/4-MySQL%E4%BA%8B%E5%8A%A1/</url>
+    <content><![CDATA[<h1 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h1><h2 id="什么是事务"><a href="#什么是事务" class="headerlink" title="什么是事务"></a>什么是事务</h2><p>什么是事务：要么都成功，要么都失败</p>
+<blockquote>
+<p>比如：</p>
+<p>a 转账给 b  100元</p>
+<p>b 收到 a 的钱 100元</p>
+<p>这两者应该：要么都成功，要么都失败</p>
+</blockquote>
+<p>事务原则：ACID原则-&gt;【原子性、一致性、隔离性、持久性】</p>
+<ul>
+<li>原子性：要么都成功，要么都失败</li>
+<li>一致性：事务前后（时间上）数据完整性一致</li>
+<li>持久性：事务一旦提交则不可逆</li>
+<li>隔离性：多个用户操作一个数据库，数据库为每一个用户开启的事务，应该相互隔离，相互之间不能干扰</li>
+</ul>
+<blockquote>
+<p>隔离导致的一些问题：</p>
+<ul>
+<li>脏读：一个事务读取另一个事务未提交的数据</li>
+<li>不可重复读：在一个事务内读取表中某一数据，多次读取结果不同</li>
+<li>虚读（幻读）：在一个事务内读取到其他事务插入的数据，导致前后读取不一致</li>
+</ul>
+</blockquote>
+<h2 id="事务执行"><a href="#事务执行" class="headerlink" title="事务执行"></a>事务执行</h2><p>MySQL默认开启事务自动提交</p>
+<p>手动处理事务：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">set autocommit = 0 -- 关闭事务自动提交</span><br><span class="line">start transaction -- 标记一个事务开始，从这句话后的sql都在一个事务内</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 数据操作</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">-- 提交：持久化（成功）</span><br><span class="line">commit</span><br><span class="line"></span><br><span class="line">-- 回滚：回到原来样子（事务失败）</span><br><span class="line">rollback</span><br><span class="line"></span><br><span class="line">-- 事务结束</span><br><span class="line">set autocommit = 1 -- 恢复自动提交</span><br><span class="line"></span><br><span class="line">savepoint 保存点名 ; -- 设置事务保存点</span><br><span class="line">rollback to savepoint 保存点名 ; -- 回到事务保存点</span><br><span class="line">release savepoint 保存点名; -- 撤销保存点</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
 ]]></content>
       <categories>
         <category>java</category>
@@ -977,64 +977,6 @@
       </tags>
   </entry>
   <entry>
-    <title>4-NodeMCU作为客户端使用</title>
-    <url>/2021/08/14/esp8266/4-NodeMCU%E4%BD%9C%E4%B8%BA%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8/</url>
-    <content><![CDATA[<!--toc-->
-
-<p>ESP8266-Arduino库中有两个库用于控制ESP8266与网络服务器进行通讯。他们是<code>WiFiClient</code>库和<code>ESP8266HTTPClient</code>库。</p>
-<p>【注意】</p>
-<ul>
-<li><p><code>WiFiClient</code> 被声明在 <code>&lt;ESP8266WiFi.h&gt;</code> 中（这种方式实现Client更复杂，但灵活）</p>
-</li>
-<li><p>而<code>ESP8266HTTPClient</code>被单独声明在 <code>&lt;ESP8266HTTPClient.h&gt;</code>（这种方式实现Client更简单，但很多功能不能根据自己意愿来定制实现）</p>
-</li>
-</ul>
-<h2 id="1、ESP8266HTTPClient-实现"><a href="#1、ESP8266HTTPClient-实现" class="headerlink" title="1、ESP8266HTTPClient 实现"></a>1、ESP8266HTTPClient 实现</h2><ol>
-<li><p>连接WiFi，具体实现看第一篇文章</p>
-</li>
-<li><p>连接WiFi后，写一个函数来访问服务器</p>
-</li>
-<li><p>函数设计，五个步骤：</p>
-<ul>
-<li>创建客户端对象</li>
-<li>配置访问地址url</li>
-<li>发送get（post）请求<ul>
-<li>请求成功：处理返回信息</li>
-<li>请求失败：（任意）</li>
-</ul>
-</li>
-<li>结束请求</li>
-</ul>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 发送HTTP请求并且将服务器响应通过串口输出</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">httpClientRequest</span><span class="params">()</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">  <span class="comment">//1 创建 HTTPClient 对象</span></span><br><span class="line">  HTTPClient httpClient;</span><br><span class="line"> </span><br><span class="line">  <span class="comment">//2 通过begin函数配置请求地址</span></span><br><span class="line">  httpClient.begin(URL); </span><br><span class="line"> </span><br><span class="line">  <span class="comment">//3 通过GET函数启动连接并发送HTTP请求</span></span><br><span class="line">  <span class="keyword">int</span> httpCode = httpClient.GET();</span><br><span class="line">  </span><br><span class="line">  <span class="comment">//4 处理服务器返回信息</span></span><br><span class="line">  <span class="keyword">if</span> (httpCode == HTTP_CODE_OK) &#123;</span><br><span class="line">    <span class="comment">// 使用getString函数获取服务器响应体内容</span></span><br><span class="line">    String responsePayload = httpClient.getString();</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">//...</span></span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">  <span class="comment">//5 关闭ESP8266与服务器连接</span></span><br><span class="line">  httpClient.end();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ol>
-<p>完整code：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ESP8266WiFi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ESP8266HTTPClient.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  String url = <span class="string">&quot;http://www.example.com&quot;</span>;</span><br><span class="line">  </span><br><span class="line">  Serial.begin(<span class="number">115200</span>);</span><br><span class="line">  </span><br><span class="line">  WiFi.mode(WIFI_STA);</span><br><span class="line">  WiFi.begin(<span class="string">&quot;RBook&quot;</span>, <span class="string">&quot;17191719&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; WiFi.status() != WL_CONNECTED; i++)&#123;</span><br><span class="line">    delay(<span class="number">1000</span>);</span><br><span class="line">    Serial.<span class="built_in">printf</span>(<span class="string">&quot;%d &quot;</span>, i);</span><br><span class="line">  &#125;</span><br><span class="line">  Serial.print(<span class="string">&quot;\r\nwifi is connected\r\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">  getResponse(url);</span><br><span class="line">  </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// put your main code here, to run repeatedly:</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//五个步骤进行发送请求并获取数据</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">getResponse</span><span class="params">(String url)</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">  HTTPClient httpClient;  <span class="comment">// 1</span></span><br><span class="line"></span><br><span class="line">  httpClient.begin(url);  <span class="comment">// 2</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">int</span> httpCode = httpClient.GET(); <span class="comment">// 3</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 4</span></span><br><span class="line">  <span class="keyword">if</span>(httpCode == HTTP_CODE_OK)&#123;</span><br><span class="line">    Serial.<span class="built_in">printf</span>(<span class="string">&quot;httpCode: %d  Success......\n&quot;</span>, httpCode);</span><br><span class="line">    String res = httpClient.getString();</span><br><span class="line">    Serial.println(<span class="string">&quot;======================&quot;</span>);</span><br><span class="line">    Serial.println(res);</span><br><span class="line">    Serial.println(<span class="string">&quot;======================&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    Serial.<span class="built_in">printf</span>(<span class="string">&quot;httpCode: %d  Failed......\n&quot;</span>, httpCode);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 5</span></span><br><span class="line">  httpClient.end();</span><br><span class="line">  </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h5 id="【注意】"><a href="#【注意】" class="headerlink" title="【注意】"></a>【注意】</h5><blockquote>
-<p>转义字符 <code>\r</code> 表示将光标移动到本行开头（继续输出会覆盖本行内容）</p>
-<p><code>\r\n</code> 表示将光标移到开头再换行（不会覆盖本行内容），一般与 <code>\n</code> 效果相同</p>
-</blockquote>
-<h2 id="2、WiFiClient-实现"><a href="#2、WiFiClient-实现" class="headerlink" title="2、WiFiClient 实现"></a>2、WiFiClient 实现</h2><ol>
-<li>创建对象</li>
-<li>连接服务器<ul>
-<li>连接成功：（1）发送请求（2）获取并处理服务器响应的数据（3）断开与服务器的连接</li>
-<li>连接失败：断开连接</li>
-</ul>
-</li>
-</ol>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">wifiClientRequest</span><span class="params">(String url)</span></span>&#123;</span><br><span class="line">    <span class="comment">// 建立WiFi客户端对象</span></span><br><span class="line">    WiFiClient client;    </span><br><span class="line"></span><br><span class="line">    <span class="comment">// 建立字符串，用于HTTP请求</span></span><br><span class="line">    String httpRequest =  String(<span class="string">&quot;GET /&quot;</span>) + <span class="string">&quot; HTTP/1.1\r\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;url: &quot;</span> + url + <span class="string">&quot;\r\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;Connection: close\r\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;\r\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 连接网络服务器</span></span><br><span class="line">    <span class="keyword">if</span> (client.connect(url, httpPort))&#123; 	<span class="comment">//连接成功connect会返回true</span></span><br><span class="line">        </span><br><span class="line">        client.print(httpRequest);          <span class="comment">// 向服务器发送HTTP请求</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 通过串口输出网络服务器响应信息    </span></span><br><span class="line">        <span class="keyword">while</span> (client.connected() || client.available())&#123; </span><br><span class="line">            <span class="keyword">if</span> (client.available())&#123;</span><br><span class="line">                String line = client.readStringUntil(<span class="string">&#x27;\n&#x27;</span>);  <span class="comment">//一行一行读取</span></span><br><span class="line">                Serial.println(line);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        client.stop();		<span class="comment">// 断开与服务器的连接</span></span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span>&#123;    </span><br><span class="line">        client.stop();		<span class="comment">// 如果连接不成功则断开连接</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id=""><a href="#" class="headerlink" title=""></a></h2>]]></content>
-      <categories>
-        <category>硬件学习</category>
-      </categories>
-      <tags>
-        <tag>esp8266</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>3-闪存文件系统</title>
     <url>/2021/08/14/esp8266/3-%E9%97%AA%E5%AD%98%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/</url>
     <content><![CDATA[<!-- toc -->
@@ -1092,6 +1034,64 @@
 </ol>
 <h2 id="3、使用闪存系统配置功能更丰富的网络服务器"><a href="#3、使用闪存系统配置功能更丰富的网络服务器" class="headerlink" title="3、使用闪存系统配置功能更丰富的网络服务器"></a>3、使用闪存系统配置功能更丰富的网络服务器</h2><p><a href="http://www.taichi-maker.com/homepage/esp8266-nodemcu-iot/iot-c/spiffs/spiffs-web-server/">太极创客文章</a></p>
 ]]></content>
+      <categories>
+        <category>硬件学习</category>
+      </categories>
+      <tags>
+        <tag>esp8266</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>4-NodeMCU作为客户端使用</title>
+    <url>/2021/08/14/esp8266/4-NodeMCU%E4%BD%9C%E4%B8%BA%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<!--toc-->
+
+<p>ESP8266-Arduino库中有两个库用于控制ESP8266与网络服务器进行通讯。他们是<code>WiFiClient</code>库和<code>ESP8266HTTPClient</code>库。</p>
+<p>【注意】</p>
+<ul>
+<li><p><code>WiFiClient</code> 被声明在 <code>&lt;ESP8266WiFi.h&gt;</code> 中（这种方式实现Client更复杂，但灵活）</p>
+</li>
+<li><p>而<code>ESP8266HTTPClient</code>被单独声明在 <code>&lt;ESP8266HTTPClient.h&gt;</code>（这种方式实现Client更简单，但很多功能不能根据自己意愿来定制实现）</p>
+</li>
+</ul>
+<h2 id="1、ESP8266HTTPClient-实现"><a href="#1、ESP8266HTTPClient-实现" class="headerlink" title="1、ESP8266HTTPClient 实现"></a>1、ESP8266HTTPClient 实现</h2><ol>
+<li><p>连接WiFi，具体实现看第一篇文章</p>
+</li>
+<li><p>连接WiFi后，写一个函数来访问服务器</p>
+</li>
+<li><p>函数设计，五个步骤：</p>
+<ul>
+<li>创建客户端对象</li>
+<li>配置访问地址url</li>
+<li>发送get（post）请求<ul>
+<li>请求成功：处理返回信息</li>
+<li>请求失败：（任意）</li>
+</ul>
+</li>
+<li>结束请求</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 发送HTTP请求并且将服务器响应通过串口输出</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">httpClientRequest</span><span class="params">()</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">  <span class="comment">//1 创建 HTTPClient 对象</span></span><br><span class="line">  HTTPClient httpClient;</span><br><span class="line"> </span><br><span class="line">  <span class="comment">//2 通过begin函数配置请求地址</span></span><br><span class="line">  httpClient.begin(URL); </span><br><span class="line"> </span><br><span class="line">  <span class="comment">//3 通过GET函数启动连接并发送HTTP请求</span></span><br><span class="line">  <span class="keyword">int</span> httpCode = httpClient.GET();</span><br><span class="line">  </span><br><span class="line">  <span class="comment">//4 处理服务器返回信息</span></span><br><span class="line">  <span class="keyword">if</span> (httpCode == HTTP_CODE_OK) &#123;</span><br><span class="line">    <span class="comment">// 使用getString函数获取服务器响应体内容</span></span><br><span class="line">    String responsePayload = httpClient.getString();</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">//...</span></span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">  <span class="comment">//5 关闭ESP8266与服务器连接</span></span><br><span class="line">  httpClient.end();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>完整code：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ESP8266WiFi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ESP8266HTTPClient.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  String url = <span class="string">&quot;http://www.example.com&quot;</span>;</span><br><span class="line">  </span><br><span class="line">  Serial.begin(<span class="number">115200</span>);</span><br><span class="line">  </span><br><span class="line">  WiFi.mode(WIFI_STA);</span><br><span class="line">  WiFi.begin(<span class="string">&quot;RBook&quot;</span>, <span class="string">&quot;17191719&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; WiFi.status() != WL_CONNECTED; i++)&#123;</span><br><span class="line">    delay(<span class="number">1000</span>);</span><br><span class="line">    Serial.<span class="built_in">printf</span>(<span class="string">&quot;%d &quot;</span>, i);</span><br><span class="line">  &#125;</span><br><span class="line">  Serial.print(<span class="string">&quot;\r\nwifi is connected\r\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">  getResponse(url);</span><br><span class="line">  </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// put your main code here, to run repeatedly:</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//五个步骤进行发送请求并获取数据</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">getResponse</span><span class="params">(String url)</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">  HTTPClient httpClient;  <span class="comment">// 1</span></span><br><span class="line"></span><br><span class="line">  httpClient.begin(url);  <span class="comment">// 2</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">int</span> httpCode = httpClient.GET(); <span class="comment">// 3</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 4</span></span><br><span class="line">  <span class="keyword">if</span>(httpCode == HTTP_CODE_OK)&#123;</span><br><span class="line">    Serial.<span class="built_in">printf</span>(<span class="string">&quot;httpCode: %d  Success......\n&quot;</span>, httpCode);</span><br><span class="line">    String res = httpClient.getString();</span><br><span class="line">    Serial.println(<span class="string">&quot;======================&quot;</span>);</span><br><span class="line">    Serial.println(res);</span><br><span class="line">    Serial.println(<span class="string">&quot;======================&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    Serial.<span class="built_in">printf</span>(<span class="string">&quot;httpCode: %d  Failed......\n&quot;</span>, httpCode);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 5</span></span><br><span class="line">  httpClient.end();</span><br><span class="line">  </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="【注意】"><a href="#【注意】" class="headerlink" title="【注意】"></a>【注意】</h5><blockquote>
+<p>转义字符 <code>\r</code> 表示将光标移动到本行开头（继续输出会覆盖本行内容）</p>
+<p><code>\r\n</code> 表示将光标移到开头再换行（不会覆盖本行内容），一般与 <code>\n</code> 效果相同</p>
+</blockquote>
+<h2 id="2、WiFiClient-实现"><a href="#2、WiFiClient-实现" class="headerlink" title="2、WiFiClient 实现"></a>2、WiFiClient 实现</h2><ol>
+<li>创建对象</li>
+<li>连接服务器<ul>
+<li>连接成功：（1）发送请求（2）获取并处理服务器响应的数据（3）断开与服务器的连接</li>
+<li>连接失败：断开连接</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">wifiClientRequest</span><span class="params">(String url)</span></span>&#123;</span><br><span class="line">    <span class="comment">// 建立WiFi客户端对象</span></span><br><span class="line">    WiFiClient client;    </span><br><span class="line"></span><br><span class="line">    <span class="comment">// 建立字符串，用于HTTP请求</span></span><br><span class="line">    String httpRequest =  String(<span class="string">&quot;GET /&quot;</span>) + <span class="string">&quot; HTTP/1.1\r\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;url: &quot;</span> + url + <span class="string">&quot;\r\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;Connection: close\r\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;\r\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 连接网络服务器</span></span><br><span class="line">    <span class="keyword">if</span> (client.connect(url, httpPort))&#123; 	<span class="comment">//连接成功connect会返回true</span></span><br><span class="line">        </span><br><span class="line">        client.print(httpRequest);          <span class="comment">// 向服务器发送HTTP请求</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 通过串口输出网络服务器响应信息    </span></span><br><span class="line">        <span class="keyword">while</span> (client.connected() || client.available())&#123; </span><br><span class="line">            <span class="keyword">if</span> (client.available())&#123;</span><br><span class="line">                String line = client.readStringUntil(<span class="string">&#x27;\n&#x27;</span>);  <span class="comment">//一行一行读取</span></span><br><span class="line">                Serial.println(line);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        client.stop();		<span class="comment">// 断开与服务器的连接</span></span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span>&#123;    </span><br><span class="line">        client.stop();		<span class="comment">// 如果连接不成功则断开连接</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id=""><a href="#" class="headerlink" title=""></a></h2>]]></content>
       <categories>
         <category>硬件学习</category>
       </categories>
@@ -1418,32 +1418,6 @@
       </tags>
   </entry>
   <entry>
-    <title>11-数字与字符串相互转换</title>
-    <url>/2021/05/07/javaSE/11-%E6%95%B0%E5%AD%97%E4%B8%8E%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9B%B8%E4%BA%92%E8%BD%AC%E6%8D%A2/</url>
-    <content><![CDATA[<h1 id="11-数字⇿字符串"><a href="#11-数字⇿字符串" class="headerlink" title="11 数字⇿字符串"></a>11 数字⇿字符串</h1><h2 id="11-1-数字转字符串（2种方法）"><a href="#11-1-数字转字符串（2种方法）" class="headerlink" title="11.1 数字转字符串（2种方法）"></a>11.1 数字转字符串（2种方法）</h2><ul>
-<li>使用String类的静态方法<code>valueOf</code></li>
-<li>先把基本类型装箱为对象，然后调用对象的<code>toString</code></li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line">         </span><br><span class="line"><span class="comment">//方法1</span></span><br><span class="line">String str = String.valueOf(i);</span><br><span class="line">         </span><br><span class="line"><span class="comment">//方法2</span></span><br><span class="line">Integer it = i;</span><br><span class="line">String str2 = it.toString();</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="11-2-字符串转数字"><a href="#11-2-字符串转数字" class="headerlink" title="11.2 字符串转数字"></a>11.2 字符串转数字</h2><ul>
-<li>调用Integer的静态方法<code>parseInt</code></li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String str = <span class="string">&quot;999&quot;</span>;</span><br><span class="line">         </span><br><span class="line"><span class="keyword">int</span> i= Integer.parseInt(str);</span><br></pre></td></tr></table></figure>
-
-
-
-]]></content>
-      <categories>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>javaSE</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>12-字符串操作</title>
     <url>/2021/05/08/javaSE/12-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%93%8D%E4%BD%9C/</url>
     <content><![CDATA[<h1 id="12-java字符串"><a href="#12-java字符串" class="headerlink" title="12 java字符串"></a>12 java字符串</h1><p>Java用<code>String</code> 和 <code>StringBuffer</code>类来处理字符串，在Java中，每个字符串都是一个对象。</p>
@@ -1498,6 +1472,32 @@
 
 <p>  为<strong>提高效率</strong>被编译成下列<strong>等价</strong>代码：</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">StringBuffer s = <span class="keyword">new</span> StringBuffer(); </span><br><span class="line">s.append(<span class="string">&quot;a&quot;</span>).append(<span class="number">4</span>).append(<span class="string">&quot;b123&quot;</span>).append(<span class="keyword">false</span>).toString();</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>java</category>
+      </categories>
+      <tags>
+        <tag>javaSE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>11-数字与字符串相互转换</title>
+    <url>/2021/05/07/javaSE/11-%E6%95%B0%E5%AD%97%E4%B8%8E%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9B%B8%E4%BA%92%E8%BD%AC%E6%8D%A2/</url>
+    <content><![CDATA[<h1 id="11-数字⇿字符串"><a href="#11-数字⇿字符串" class="headerlink" title="11 数字⇿字符串"></a>11 数字⇿字符串</h1><h2 id="11-1-数字转字符串（2种方法）"><a href="#11-1-数字转字符串（2种方法）" class="headerlink" title="11.1 数字转字符串（2种方法）"></a>11.1 数字转字符串（2种方法）</h2><ul>
+<li>使用String类的静态方法<code>valueOf</code></li>
+<li>先把基本类型装箱为对象，然后调用对象的<code>toString</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line">         </span><br><span class="line"><span class="comment">//方法1</span></span><br><span class="line">String str = String.valueOf(i);</span><br><span class="line">         </span><br><span class="line"><span class="comment">//方法2</span></span><br><span class="line">Integer it = i;</span><br><span class="line">String str2 = it.toString();</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="11-2-字符串转数字"><a href="#11-2-字符串转数字" class="headerlink" title="11.2 字符串转数字"></a>11.2 字符串转数字</h2><ul>
+<li>调用Integer的静态方法<code>parseInt</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String str = <span class="string">&quot;999&quot;</span>;</span><br><span class="line">         </span><br><span class="line"><span class="keyword">int</span> i= Integer.parseInt(str);</span><br></pre></td></tr></table></figure>
+
+
 
 ]]></content>
       <categories>
@@ -1721,128 +1721,6 @@
 
 <p>输出：</p>
 <p><img src="https://stepimagewm.how2j.cn/744.png" alt="抛出自定义异常"></p>
-]]></content>
-      <categories>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>javaSE</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>17-容器</title>
-    <url>/2021/05/13/javaSE/17-%E5%AE%B9%E5%99%A8/</url>
-    <content><![CDATA[<hr>
-<h1 id="容-器"><a href="#容-器" class="headerlink" title="容 器"></a>容 器</h1><hr>
-<h2 id="Collectiion接口"><a href="#Collectiion接口" class="headerlink" title="Collectiion接口"></a>Collectiion接口</h2><p>Collection接口声明了以下方法：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">add</span><span class="params">(Object element)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">remove</span><span class="params">(Object element)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">contains</span><span class="params">(Object element)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">size</span><span class="params">()</span></span>;      <span class="comment">//容器中元素数量 </span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">()</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">Iterator <span class="title">iterator</span><span class="params">()</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">containsAll</span><span class="params">(Collection c)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">addAll</span><span class="params">(Collection c)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">removeAll</span><span class="params">(Collection c)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">retainAll</span><span class="params">(Collection c)</span></span>;  <span class="comment">//移除非交集元素,保留交集元素</span></span><br><span class="line"></span><br><span class="line">Object[] toArray(); <span class="comment">//转换成Object数组</span></span><br></pre></td></tr></table></figure>
-
-
-
-<blockquote>
-<p>注：List和Set是Collection的子接口</p>
-</blockquote>
-<h3 id="List接口"><a href="#List接口" class="headerlink" title="List接口"></a>List接口</h3><p>List特点：有序、元素可重复</p>
-<ul>
-<li>有序：每个元素都有索引标记</li>
-<li>List通常允许满足 <code>e1.equals(e2)</code> 的元素重复加入容器</li>
-</ul>
-<p>相比Collection接口，List中多了一些与索引有关的方法</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> index, Object element)</span></span>;</span><br><span class="line"><span class="function">Object <span class="title">set</span><span class="params">(<span class="keyword">int</span> index, Object element)</span></span>;</span><br><span class="line"><span class="function">Object <span class="title">get</span><span class="params">(<span class="keyword">int</span> index)</span></span>;</span><br><span class="line"><span class="function">Object <span class="title">remove</span><span class="params">(<span class="keyword">int</span> index)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">indexOf</span><span class="params">(Object o)</span></span>;  <span class="comment">//返回第一个匹配元素的索引，若没有返回-1</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lastIndexOf</span><span class="params">(Object o)</span></span>; <span class="comment">//返回最后一个匹配的元素的索引，若没有返回-1</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<h3 id="ArrayList类"><a href="#ArrayList类" class="headerlink" title="ArrayList类"></a>ArrayList类</h3><p>ArrayList底层是用【数组】实现的存储。==特点：查询效率高，增删效率低，线程不安全==。</p>
-<p>我们知道，数组长度是有限的，而ArrayList是可以存放任意数量的对象，长度不受限制，那么它是怎么实现的呢?</p>
-<p>本质上就是通过定义新的更大的数组，将旧数组中的内容拷贝到新数组，来实现扩容。 </p>
-<p>ArrayList的Object数组【初始化长度为10】，如果我们存储满了这个数组，需要存储第11个对象，就会定义新的长度更大的数组，并将原数组内容和新的元素一起加入到新数组中</p>
-<h3 id="LinkList类"><a href="#LinkList类" class="headerlink" title="LinkList类"></a>LinkList类</h3><p>LinkList底层用【双向链表】实现</p>
-<p>==特点：查询效率低、增删效率高，线程不安全==</p>
-<blockquote>
-<p>双向链表也叫双链表，是链表的一种，它的每个数据节点中都有两个指针，分别指向前一个节点和后一个节点。 </p>
-<p>所以，从双向链表中的任意一个节点开始，都可以很方便地找到所有节点。</p>
-</blockquote>
-<h3 id="Vector类"><a href="#Vector类" class="headerlink" title="Vector类"></a>Vector类</h3><p>Vector底层是用数组实现的List，相关的方法都加了同步检查，因此“线程安全,效率低”。 比如，indexOf方法就增加了synchronized同步标记。</p>
-<blockquote>
-<p>如何选用ArrayList、LinkedList、Vector</p>
-</blockquote>
-<ol>
-<li><p>需要线程安全时，用Vector。</p>
-</li>
-<li><p>不存在线程安全问题时，并且查找较多用ArrayList(一般使用它)。</p>
-</li>
-<li><p>不存在线程安全问题时，增加或删除元素较多用LinkedList。</p>
-</li>
-</ol>
-<h2 id="Map接口"><a href="#Map接口" class="headerlink" title="Map接口"></a>Map接口</h2><p> Map就是用来存储“<strong>键(key)-值(value) 对</strong>”的。 Map类中存储的“键值对”通过键来标识，所以“键”不能重复。</p>
-<p>Map接口常用方法：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function">Object <span class="title">put</span><span class="params">(Object key, Object value)</span></span>;</span><br><span class="line"><span class="function">Object <span class="title">get</span><span class="params">(Object key)</span></span>;</span><br><span class="line"><span class="function">Object <span class="title">remove</span><span class="params">(Object key)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">containsKey</span><span class="params">(Object Key)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">containsValue</span><span class="params">(Object value)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">size</span><span class="params">()</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">putAll</span><span class="params">(Map t)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
-
-<p> Map 接口的实现类有HashMap、TreeMap、HashTable、Properties等。</p>
-<h3 id="HashMap类"><a href="#HashMap类" class="headerlink" title="HashMap类"></a>HashMap类</h3><p>HashMap采用<strong>哈希算法</strong>实现，是Map接口最常用的实现类。</p>
-<p>由于底层采用了哈希表存储数据，我们要求<strong>键不能重复</strong>，==如果发生重复，新的键值对会替换旧的键值对==</p>
-<p>HashMap在查找、删除、修改方面都有非常高的效率</p>
-<blockquote>
-<p>HashTable类和HashMap用法几乎一样，底层实现几乎一样，只不过HashTable的方法添加了synchronized关键字确保线程同步检查，效率较低。</p>
-<p><strong>HashMap与HashTable的区别</strong></p>
-<ol>
-<li><p>HashMap: 线程不安全，效率高。<strong>允许key或value为null</strong></p>
-</li>
-<li><p>HashTable: 线程安全，效率低。<strong>不允许key或value为null</strong></p>
-</li>
-</ol>
-</blockquote>
-<h2 id="Set接口与HashSet类"><a href="#Set接口与HashSet类" class="headerlink" title="Set接口与HashSet类"></a>Set接口与HashSet类</h2><p>Set接口继承自Collection，Set接口中<strong>没有新增方法</strong>，方法和Collection保持完全一致。</p>
-<p>Set容器特点：无序、不可重复</p>
-<blockquote>
-<p>新元素如果和Set中某个元素通过<code>equals()</code>方法对比为true，则不能加入;</p>
-<p>甚至，Set中也只能放入一个null元素，不能多个。</p>
-</blockquote>
-<p>Set常用的<strong>实现类</strong>有：HashSet、TreeSet等，我们一般使用HashSet</p>
-<p>HashSet基本用法</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Set&lt;String&gt; s = <span class="keyword">new</span> HashSet&lt;String&gt;();</span><br><span class="line">        s.add(<span class="string">&quot;hello&quot;</span>);</span><br><span class="line">        s.add(<span class="string">&quot;world&quot;</span>);</span><br><span class="line">        System.out.println(s);</span><br><span class="line">        s.add(<span class="string">&quot;hello&quot;</span>); <span class="comment">//相同的元素不会被加入</span></span><br><span class="line">        System.out.println(s);</span><br><span class="line">        s.add(<span class="keyword">null</span>);</span><br><span class="line">        System.out.println(s);</span><br><span class="line">        s.add(<span class="keyword">null</span>);</span><br><span class="line">        System.out.println(s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<h2 id="迭代器"><a href="#迭代器" class="headerlink" title="迭代器"></a>迭代器</h2><p>将容器转为迭代器：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Iterator&lt;E&gt; iter = aList.iterator()</span><br></pre></td></tr></table></figure>
-
-<p>使用Iterator迭代器遍历容器元素(List/Set/Map)</p>
-<ul>
-<li>迭代器遍历ArrayList</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">List&lt;String&gt; aList = <span class="keyword">new</span> ArrayList&lt;String&gt;();</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">    aList.add(<span class="string">&quot;a&quot;</span> + i);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (Iterator&lt;String&gt; iter = aList.iterator(); iter.hasNext();)&#123;</span><br><span class="line">    String temp = iter.next();</span><br><span class="line">    System.out.print(temp + <span class="string">&quot;\t&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (temp.endsWith(<span class="string">&quot;3&quot;</span>)) &#123;<span class="comment">// 删除3结尾的字符串</span></span><br><span class="line">        iter.remove();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<ul>
-<li>迭代器遍历Map  【1】</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        Map&lt;String, String&gt; map = <span class="keyword">new</span> HashMap&lt;String String&gt;();</span><br><span class="line">        map.put(<span class="string">&quot;A&quot;</span>, <span class="string">&quot;GaoQi&quot;</span>);</span><br><span class="line">        map.put(<span class="string">&quot;B&quot;</span>, <span class="string">&quot;LiuBa&quot;</span>);</span><br><span class="line">        Set&lt;Entry&lt;String, String&gt;&gt; ss = map.entrySet();</span><br><span class="line">        <span class="keyword">for</span>(Iterator&lt;Entry&lt;String, String&gt;&gt; iterator = ss.iterator(); iterator.hasNext();)&#123;</span><br><span class="line">            Entry&lt;String, String&gt; e = iterator.next();</span><br><span class="line">            System.out.println(e.getKey() + <span class="string">&quot;--&quot;</span> + e.getValue());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<ul>
-<li>迭代器遍历Map  【2】</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Map&lt;String, String&gt; map = <span class="keyword">new</span> HashMap&lt;String, String&gt;();</span><br><span class="line">        map.put(<span class="string">&quot;A&quot;</span>, <span class="string">&quot;GaoQi&quot;</span>);</span><br><span class="line">        map.put(<span class="string">&quot;B&quot;</span>, <span class="string">&quot;LiuBa&quot;</span>);</span><br><span class="line">        Set&lt;String&gt; ss = map.keySet();</span><br><span class="line">        <span class="keyword">for</span> (Iterator&lt;String&gt; iterator = ss.iterator(); iterator.hasNext();) &#123;</span><br><span class="line">            String key = iterator.next();</span><br><span class="line">            System.out.println(key + <span class="string">&quot;--&quot;</span> + map.get(key));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<h2 id="Collections工具类"><a href="#Collections工具类" class="headerlink" title="Collections工具类"></a>Collections工具类</h2><p>类 java.util.Collections 提供了对Set、List、Map进行排序、填充、查找元素的辅助方法。</p>
-<ol>
-<li>void sort(List) //对List容器内的元素排序，排序的规则是按照升序进行排序。</li>
-<li>void shuffle(List) //对List容器内的元素进行随机排列。</li>
-<li>void reverse(List) //对List容器内的元素进行逆续排列 。</li>
-<li>void fill(List, Object) //用一个特定的对象重写整个List容器。</li>
-<li>int binarySearch(List, Object) //对于顺序的List容器，采用折半查找的方法查找特定对象。</li>
-</ol>
 ]]></content>
       <categories>
         <category>java</category>
@@ -2198,92 +2076,119 @@
       </tags>
   </entry>
   <entry>
-    <title>19-多线程系列</title>
-    <url>/2021/05/16/javaSE/19-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%B3%BB%E5%88%97/</url>
-    <content><![CDATA[<h1 id="多线程系列"><a href="#多线程系列" class="headerlink" title="多线程系列"></a>多线程系列</h1><h2 id="线程状态"><a href="#线程状态" class="headerlink" title="线程状态"></a>线程状态</h2><p>一个线程对象在它的生命周期内，需要经历5个状态。</p>
-<p><img src="https://www.sxt.cn/360shop/Public/admin/UEditor/20170526/1495787690411518.png" alt="图11-4 线程生命周期图.png"></p>
-<h3 id="新生状态-New"><a href="#新生状态-New" class="headerlink" title="新生状态(New)"></a>新生状态(New)</h3><p>用new关键字建立一个线程对象后，该线程对象就处于新生状态。</p>
-<p>处于新生状态的线程有自己的内存空间，通过调用start方法进入就绪状态。</p>
-<h3 id="就绪状态-Runnable"><a href="#就绪状态-Runnable" class="headerlink" title="就绪状态(Runnable)"></a>就绪状态(Runnable)</h3><p>处于就绪状态的线程已经具备了运行条件，但是还没有被分配到CPU，处于“线程就绪队列”，等待系统为其分配CPU。</p>
-<p><strong>就绪状态并不是执行状态</strong>，当系统选定一个等待执行的Thread对象后，它就会进入执行状态。一旦获得CPU，线程就进入运行状态并自动调用自己的run方法。有4中原因会导致线程进入就绪状态：</p>
-<ol>
-<li><p>新建线程：调用start()方法，进入就绪状态;</p>
-</li>
-<li><p>阻塞线程：阻塞解除，进入就绪状态;</p>
-</li>
-<li><p>运行线程：调用yield()方法，直接进入就绪状态;</p>
-</li>
-<li><p>运行线程：JVM将CPU资源从本线程切换到其他线程。</p>
-</li>
-</ol>
-<h3 id="运行状态-Running"><a href="#运行状态-Running" class="headerlink" title="运行状态(Running)"></a>运行状态(Running)</h3><p>在运行状态的线程<strong>执行自己run方法中</strong>的代码，直到调用其他方法而终止或等待某资源而阻塞或完成任务而死亡。</p>
-<p>如果在给定的时间片内没有执行结束，就会被系统给换下来回到就绪状态。也可能由于某些“导致阻塞的事件”而进入阻塞状态。</p>
-<h3 id="阻塞状态-Blocked"><a href="#阻塞状态-Blocked" class="headerlink" title="阻塞状态(Blocked)"></a>阻塞状态(Blocked)</h3><p>阻塞指的是暂停一个线程的执行以等待某个条件发生(如某资源就绪)。</p>
-<p>有4种原因会导致阻塞：</p>
-<ol>
-<li><p>执行sleep(int millsecond)方法，使当前线程休眠，进入阻塞状态。当指定的时间到了后，线程进入就绪状态。</p>
-</li>
-<li><p>执行wait()方法，使当前线程进入阻塞状态。当使用nofity()方法唤醒这个线程后，它进入就绪状态。</p>
-</li>
-<li><p>线程运行时，某个操作进入阻塞状态，比如执行IO流操作(read()/write()方法本身就是阻塞的方法)。只有当引起该操作阻塞的原因消失后，线程进入就绪状态。</p>
-</li>
-<li><p>join()线程联合: 当某个线程等待另一个线程执行结束后，才能继续执行时，使用join()方法</p>
-</li>
-</ol>
-<h3 id="死亡状态-Terminated"><a href="#死亡状态-Terminated" class="headerlink" title="死亡状态(Terminated)"></a>死亡状态(Terminated)</h3><p>死亡状态是线程生命周期中的最后一个阶段。线程死亡的原因有两个:</p>
-<ol>
-<li><p>正常运行的线程完成了它run()方法内的全部工作</p>
-</li>
-<li><p>线程被强制终止，如通过执行stop()或destroy()方法来终止一个线程</p>
-<p>(注：stop()/destroy()方法已经被JDK废弃，不推荐使用)。</p>
-</li>
-</ol>
-<p>当一个线程进入死亡状态以后，就不能再回到其它状态了。</p>
-<h2 id="终止线程"><a href="#终止线程" class="headerlink" title="终止线程"></a>终止线程</h2><p>终止线程一般不使用JDK提供的stop()/destroy()方法(它们本身也被JDK废弃了)。</p>
-<p>通常的做法是提供一个boolean型的终止变量，当这个变量置为false，则终止线程。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.myThread;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestThread</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">    String name;</span><br><span class="line">    <span class="keyword">boolean</span> live = <span class="keyword">true</span>;<span class="comment">// 标记变量，表示线程是否可中止；</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TestThread</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">        <span class="comment">//当live的值是true时，继续线程体；false则结束循环，继而终止线程体；</span></span><br><span class="line">        <span class="keyword">while</span> (live) &#123;</span><br><span class="line">            System.out.println(name + (i++));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">terminate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        live = <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        TestThread ttc = <span class="keyword">new</span> TestThread(<span class="string">&quot;线程A:&quot;</span>);</span><br><span class="line">        Thread t1 = <span class="keyword">new</span> Thread(ttc);<span class="comment">// 新生状态</span></span><br><span class="line">        t1.start();<span class="comment">// 就绪状态</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;主线程&quot;</span> + i);</span><br><span class="line">        &#125;</span><br><span class="line">        ttc.terminate();</span><br><span class="line">        System.out.println(<span class="string">&quot;ttc stop!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+    <title>17-容器</title>
+    <url>/2021/05/13/javaSE/17-%E5%AE%B9%E5%99%A8/</url>
+    <content><![CDATA[<hr>
+<h1 id="容-器"><a href="#容-器" class="headerlink" title="容 器"></a>容 器</h1><hr>
+<h2 id="Collectiion接口"><a href="#Collectiion接口" class="headerlink" title="Collectiion接口"></a>Collectiion接口</h2><p>Collection接口声明了以下方法：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">add</span><span class="params">(Object element)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">remove</span><span class="params">(Object element)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">contains</span><span class="params">(Object element)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">size</span><span class="params">()</span></span>;      <span class="comment">//容器中元素数量 </span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">()</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">Iterator <span class="title">iterator</span><span class="params">()</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">containsAll</span><span class="params">(Collection c)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">addAll</span><span class="params">(Collection c)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">removeAll</span><span class="params">(Collection c)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">retainAll</span><span class="params">(Collection c)</span></span>;  <span class="comment">//移除非交集元素,保留交集元素</span></span><br><span class="line"></span><br><span class="line">Object[] toArray(); <span class="comment">//转换成Object数组</span></span><br></pre></td></tr></table></figure>
 
-<p>该程序中通过主线程控制live的值，当主线程把live置为 <code>false</code>时，run()方法停止执行，子线程终止运行</p>
-<h2 id="暂停线程"><a href="#暂停线程" class="headerlink" title="暂停线程"></a>暂停线程</h2><p>暂停线程执行常用的方法有sleep()和yield()方法</p>
-<p>这两个方法的区别是：</p>
-<ol>
-<li><p>sleep()方法：可以让正在运行的线程进入阻塞状态，直到<strong>休眠时间</strong>满了，进入就绪状态。</p>
-<blockquote>
-<p>注意：是休眠期到了后才会进入就绪状态，参与竞争获取CPU使用权</p>
-</blockquote>
-</li>
-<li><p>yield()方法：可以让正在运行的线程<strong>直接进入</strong>就绪状态，<strong>让出CPU的使用权</strong>。</p>
-<blockquote>
-<p>注意：由于没有标出<strong>让出</strong>的时间，所以下一刻就会立即进入竞争获取CPU的就绪状态</p>
-</blockquote>
-</li>
-</ol>
-<h2 id="join-方法"><a href="#join-方法" class="headerlink" title="join()方法"></a>join()方法</h2><p><code>b.join()</code>可以将一个线程b插入到当前线程a中，这时a线程需要等待b执行完才会继续</p>
-<h2 id="线程基本信息获取"><a href="#线程基本信息获取" class="headerlink" title="线程基本信息获取"></a>线程基本信息获取</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">isAlive();</span><br><span class="line">getPriority();	<span class="comment">//获取线程优先级，默认为5</span></span><br><span class="line">setPriority();  <span class="comment">//设置线程优先级数值（int）</span></span><br><span class="line"></span><br><span class="line">setName();</span><br><span class="line">getName();</span><br><span class="line"></span><br><span class="line">currentThread();			<span class="comment">//获得当前线程</span></span><br></pre></td></tr></table></figure>
+
 
 <blockquote>
-<p>注意：<strong>优先级</strong>低只是意味着获得调度的概率低。并不是绝对先调用优先级高的线程后调用优先级低的线程。</p>
+<p>注：List和Set是Collection的子接口</p>
 </blockquote>
-<h2 id="线程同步"><a href="#线程同步" class="headerlink" title="线程同步"></a>线程同步</h2><p>线程同步其实就是一种等待机制，多个需要同时访问此对象的线程进入这个对象的等待池形成队列，等待前面的线程使用完毕后，下一个线程再使用。</p>
-<p>由于同一进程的多个线程共享同一块存储空间，在带来方便的同时，也带来了访问冲突的问题。Java语言提供了专门机制以解决这种冲突，有效避免了同一个数据对象被多个线程同时访问造成的这种问题。</p>
-<p>由于我们可以通过 private 关键字来保证数据对象只能被方法访问，所以我们只需针对方法提出一套机制，这套机制就是<code>synchronized</code>关键字，它包括两种用法：</p>
+<h3 id="List接口"><a href="#List接口" class="headerlink" title="List接口"></a>List接口</h3><p>List特点：有序、元素可重复</p>
 <ul>
-<li>synchronized 方法</li>
-<li>synchronized 块</li>
+<li>有序：每个元素都有索引标记</li>
+<li>List通常允许满足 <code>e1.equals(e2)</code> 的元素重复加入容器</li>
 </ul>
-<h3 id="synchronized-方法"><a href="#synchronized-方法" class="headerlink" title="synchronized 方法"></a>synchronized 方法</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> a)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>相比Collection接口，List中多了一些与索引有关的方法</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> index, Object element)</span></span>;</span><br><span class="line"><span class="function">Object <span class="title">set</span><span class="params">(<span class="keyword">int</span> index, Object element)</span></span>;</span><br><span class="line"><span class="function">Object <span class="title">get</span><span class="params">(<span class="keyword">int</span> index)</span></span>;</span><br><span class="line"><span class="function">Object <span class="title">remove</span><span class="params">(<span class="keyword">int</span> index)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">indexOf</span><span class="params">(Object o)</span></span>;  <span class="comment">//返回第一个匹配元素的索引，若没有返回-1</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lastIndexOf</span><span class="params">(Object o)</span></span>; <span class="comment">//返回最后一个匹配的元素的索引，若没有返回-1</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 
 
-<p>synchronized 方法控制对“对象的类成员变量”的访问：每个对象对应一把锁，每个 synchronized 方法都必须获得调用该方法的对象的锁方能执行，否则所属线程阻塞，方法一旦执行，就<strong>独占</strong>该锁，直到<strong>从该方法返回</strong>时才将锁释放，此后被阻塞的线程方能获得该锁，重新进入可执行状态。</p>
-<h3 id="synchronized块"><a href="#synchronized块" class="headerlink" title="synchronized块"></a>synchronized块</h3><p>synchronized 方法的缺陷：若将一个大的方法声明为synchronized 将会大大影响效率。</p>
-<p>Java 为我们提供了更好的解决办法，那就是 synchronized 块。 块可以让我们精确地控制到具体的“成员变量”，缩小同步的范围，<strong>提高效率</strong>。</p>
-<p>synchronized 块：通过 synchronized关键字来声明synchronized 块，语法如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">synchronized</span>(syncObject)&#123; </span><br><span class="line">　　 <span class="comment">//允许访问控制的代码 </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>表示在操控 syncObject时，每次只能控制一次，如果多个线程同时执行到这一条语句，则同一时间只能有一个线程操控syncObject</p>
-<h2 id="死锁问题"><a href="#死锁问题" class="headerlink" title="死锁问题"></a>死锁问题</h2><p>死锁：</p>
-<p>多个线程各自占有一些共享资源，并且互相等待其他线程占有的资源才能进行，而导致两个或者多个线程都在等待对方释放资源，都停止执行的情形。</p>
+
+<h3 id="ArrayList类"><a href="#ArrayList类" class="headerlink" title="ArrayList类"></a>ArrayList类</h3><p>ArrayList底层是用【数组】实现的存储。==特点：查询效率高，增删效率低，线程不安全==。</p>
+<p>我们知道，数组长度是有限的，而ArrayList是可以存放任意数量的对象，长度不受限制，那么它是怎么实现的呢?</p>
+<p>本质上就是通过定义新的更大的数组，将旧数组中的内容拷贝到新数组，来实现扩容。 </p>
+<p>ArrayList的Object数组【初始化长度为10】，如果我们存储满了这个数组，需要存储第11个对象，就会定义新的长度更大的数组，并将原数组内容和新的元素一起加入到新数组中</p>
+<h3 id="LinkList类"><a href="#LinkList类" class="headerlink" title="LinkList类"></a>LinkList类</h3><p>LinkList底层用【双向链表】实现</p>
+<p>==特点：查询效率低、增删效率高，线程不安全==</p>
+<blockquote>
+<p>双向链表也叫双链表，是链表的一种，它的每个数据节点中都有两个指针，分别指向前一个节点和后一个节点。 </p>
+<p>所以，从双向链表中的任意一个节点开始，都可以很方便地找到所有节点。</p>
+</blockquote>
+<h3 id="Vector类"><a href="#Vector类" class="headerlink" title="Vector类"></a>Vector类</h3><p>Vector底层是用数组实现的List，相关的方法都加了同步检查，因此“线程安全,效率低”。 比如，indexOf方法就增加了synchronized同步标记。</p>
+<blockquote>
+<p>如何选用ArrayList、LinkedList、Vector</p>
+</blockquote>
+<ol>
+<li><p>需要线程安全时，用Vector。</p>
+</li>
+<li><p>不存在线程安全问题时，并且查找较多用ArrayList(一般使用它)。</p>
+</li>
+<li><p>不存在线程安全问题时，增加或删除元素较多用LinkedList。</p>
+</li>
+</ol>
+<h2 id="Map接口"><a href="#Map接口" class="headerlink" title="Map接口"></a>Map接口</h2><p> Map就是用来存储“<strong>键(key)-值(value) 对</strong>”的。 Map类中存储的“键值对”通过键来标识，所以“键”不能重复。</p>
+<p>Map接口常用方法：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function">Object <span class="title">put</span><span class="params">(Object key, Object value)</span></span>;</span><br><span class="line"><span class="function">Object <span class="title">get</span><span class="params">(Object key)</span></span>;</span><br><span class="line"><span class="function">Object <span class="title">remove</span><span class="params">(Object key)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">containsKey</span><span class="params">(Object Key)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">containsValue</span><span class="params">(Object value)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">size</span><span class="params">()</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">putAll</span><span class="params">(Map t)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p> Map 接口的实现类有HashMap、TreeMap、HashTable、Properties等。</p>
+<h3 id="HashMap类"><a href="#HashMap类" class="headerlink" title="HashMap类"></a>HashMap类</h3><p>HashMap采用<strong>哈希算法</strong>实现，是Map接口最常用的实现类。</p>
+<p>由于底层采用了哈希表存储数据，我们要求<strong>键不能重复</strong>，==如果发生重复，新的键值对会替换旧的键值对==</p>
+<p>HashMap在查找、删除、修改方面都有非常高的效率</p>
+<blockquote>
+<p>HashTable类和HashMap用法几乎一样，底层实现几乎一样，只不过HashTable的方法添加了synchronized关键字确保线程同步检查，效率较低。</p>
+<p><strong>HashMap与HashTable的区别</strong></p>
+<ol>
+<li><p>HashMap: 线程不安全，效率高。<strong>允许key或value为null</strong></p>
+</li>
+<li><p>HashTable: 线程安全，效率低。<strong>不允许key或value为null</strong></p>
+</li>
+</ol>
+</blockquote>
+<h2 id="Set接口与HashSet类"><a href="#Set接口与HashSet类" class="headerlink" title="Set接口与HashSet类"></a>Set接口与HashSet类</h2><p>Set接口继承自Collection，Set接口中<strong>没有新增方法</strong>，方法和Collection保持完全一致。</p>
+<p>Set容器特点：无序、不可重复</p>
+<blockquote>
+<p>新元素如果和Set中某个元素通过<code>equals()</code>方法对比为true，则不能加入;</p>
+<p>甚至，Set中也只能放入一个null元素，不能多个。</p>
+</blockquote>
+<p>Set常用的<strong>实现类</strong>有：HashSet、TreeSet等，我们一般使用HashSet</p>
+<p>HashSet基本用法</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Set&lt;String&gt; s = <span class="keyword">new</span> HashSet&lt;String&gt;();</span><br><span class="line">        s.add(<span class="string">&quot;hello&quot;</span>);</span><br><span class="line">        s.add(<span class="string">&quot;world&quot;</span>);</span><br><span class="line">        System.out.println(s);</span><br><span class="line">        s.add(<span class="string">&quot;hello&quot;</span>); <span class="comment">//相同的元素不会被加入</span></span><br><span class="line">        System.out.println(s);</span><br><span class="line">        s.add(<span class="keyword">null</span>);</span><br><span class="line">        System.out.println(s);</span><br><span class="line">        s.add(<span class="keyword">null</span>);</span><br><span class="line">        System.out.println(s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="迭代器"><a href="#迭代器" class="headerlink" title="迭代器"></a>迭代器</h2><p>将容器转为迭代器：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Iterator&lt;E&gt; iter = aList.iterator()</span><br></pre></td></tr></table></figure>
+
+<p>使用Iterator迭代器遍历容器元素(List/Set/Map)</p>
+<ul>
+<li>迭代器遍历ArrayList</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">List&lt;String&gt; aList = <span class="keyword">new</span> ArrayList&lt;String&gt;();</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">    aList.add(<span class="string">&quot;a&quot;</span> + i);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (Iterator&lt;String&gt; iter = aList.iterator(); iter.hasNext();)&#123;</span><br><span class="line">    String temp = iter.next();</span><br><span class="line">    System.out.print(temp + <span class="string">&quot;\t&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (temp.endsWith(<span class="string">&quot;3&quot;</span>)) &#123;<span class="comment">// 删除3结尾的字符串</span></span><br><span class="line">        iter.remove();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li>迭代器遍历Map  【1】</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        Map&lt;String, String&gt; map = <span class="keyword">new</span> HashMap&lt;String String&gt;();</span><br><span class="line">        map.put(<span class="string">&quot;A&quot;</span>, <span class="string">&quot;GaoQi&quot;</span>);</span><br><span class="line">        map.put(<span class="string">&quot;B&quot;</span>, <span class="string">&quot;LiuBa&quot;</span>);</span><br><span class="line">        Set&lt;Entry&lt;String, String&gt;&gt; ss = map.entrySet();</span><br><span class="line">        <span class="keyword">for</span>(Iterator&lt;Entry&lt;String, String&gt;&gt; iterator = ss.iterator(); iterator.hasNext();)&#123;</span><br><span class="line">            Entry&lt;String, String&gt; e = iterator.next();</span><br><span class="line">            System.out.println(e.getKey() + <span class="string">&quot;--&quot;</span> + e.getValue());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li>迭代器遍历Map  【2】</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Map&lt;String, String&gt; map = <span class="keyword">new</span> HashMap&lt;String, String&gt;();</span><br><span class="line">        map.put(<span class="string">&quot;A&quot;</span>, <span class="string">&quot;GaoQi&quot;</span>);</span><br><span class="line">        map.put(<span class="string">&quot;B&quot;</span>, <span class="string">&quot;LiuBa&quot;</span>);</span><br><span class="line">        Set&lt;String&gt; ss = map.keySet();</span><br><span class="line">        <span class="keyword">for</span> (Iterator&lt;String&gt; iterator = ss.iterator(); iterator.hasNext();) &#123;</span><br><span class="line">            String key = iterator.next();</span><br><span class="line">            System.out.println(key + <span class="string">&quot;--&quot;</span> + map.get(key));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="Collections工具类"><a href="#Collections工具类" class="headerlink" title="Collections工具类"></a>Collections工具类</h2><p>类 java.util.Collections 提供了对Set、List、Map进行排序、填充、查找元素的辅助方法。</p>
+<ol>
+<li>void sort(List) //对List容器内的元素排序，排序的规则是按照升序进行排序。</li>
+<li>void shuffle(List) //对List容器内的元素进行随机排列。</li>
+<li>void reverse(List) //对List容器内的元素进行逆续排列 。</li>
+<li>void fill(List, Object) //用一个特定的对象重写整个List容器。</li>
+<li>int binarySearch(List, Object) //对于顺序的List容器，采用折半查找的方法查找特定对象。</li>
+</ol>
 ]]></content>
       <categories>
         <category>java</category>
@@ -2375,6 +2280,101 @@
 <blockquote>
 <p>父类转子类也不能</p>
 </blockquote>
+]]></content>
+      <categories>
+        <category>java</category>
+      </categories>
+      <tags>
+        <tag>javaSE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>19-多线程系列</title>
+    <url>/2021/05/16/javaSE/19-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%B3%BB%E5%88%97/</url>
+    <content><![CDATA[<h1 id="多线程系列"><a href="#多线程系列" class="headerlink" title="多线程系列"></a>多线程系列</h1><h2 id="线程状态"><a href="#线程状态" class="headerlink" title="线程状态"></a>线程状态</h2><p>一个线程对象在它的生命周期内，需要经历5个状态。</p>
+<p><img src="https://www.sxt.cn/360shop/Public/admin/UEditor/20170526/1495787690411518.png" alt="图11-4 线程生命周期图.png"></p>
+<h3 id="新生状态-New"><a href="#新生状态-New" class="headerlink" title="新生状态(New)"></a>新生状态(New)</h3><p>用new关键字建立一个线程对象后，该线程对象就处于新生状态。</p>
+<p>处于新生状态的线程有自己的内存空间，通过调用start方法进入就绪状态。</p>
+<h3 id="就绪状态-Runnable"><a href="#就绪状态-Runnable" class="headerlink" title="就绪状态(Runnable)"></a>就绪状态(Runnable)</h3><p>处于就绪状态的线程已经具备了运行条件，但是还没有被分配到CPU，处于“线程就绪队列”，等待系统为其分配CPU。</p>
+<p><strong>就绪状态并不是执行状态</strong>，当系统选定一个等待执行的Thread对象后，它就会进入执行状态。一旦获得CPU，线程就进入运行状态并自动调用自己的run方法。有4中原因会导致线程进入就绪状态：</p>
+<ol>
+<li><p>新建线程：调用start()方法，进入就绪状态;</p>
+</li>
+<li><p>阻塞线程：阻塞解除，进入就绪状态;</p>
+</li>
+<li><p>运行线程：调用yield()方法，直接进入就绪状态;</p>
+</li>
+<li><p>运行线程：JVM将CPU资源从本线程切换到其他线程。</p>
+</li>
+</ol>
+<h3 id="运行状态-Running"><a href="#运行状态-Running" class="headerlink" title="运行状态(Running)"></a>运行状态(Running)</h3><p>在运行状态的线程<strong>执行自己run方法中</strong>的代码，直到调用其他方法而终止或等待某资源而阻塞或完成任务而死亡。</p>
+<p>如果在给定的时间片内没有执行结束，就会被系统给换下来回到就绪状态。也可能由于某些“导致阻塞的事件”而进入阻塞状态。</p>
+<h3 id="阻塞状态-Blocked"><a href="#阻塞状态-Blocked" class="headerlink" title="阻塞状态(Blocked)"></a>阻塞状态(Blocked)</h3><p>阻塞指的是暂停一个线程的执行以等待某个条件发生(如某资源就绪)。</p>
+<p>有4种原因会导致阻塞：</p>
+<ol>
+<li><p>执行sleep(int millsecond)方法，使当前线程休眠，进入阻塞状态。当指定的时间到了后，线程进入就绪状态。</p>
+</li>
+<li><p>执行wait()方法，使当前线程进入阻塞状态。当使用nofity()方法唤醒这个线程后，它进入就绪状态。</p>
+</li>
+<li><p>线程运行时，某个操作进入阻塞状态，比如执行IO流操作(read()/write()方法本身就是阻塞的方法)。只有当引起该操作阻塞的原因消失后，线程进入就绪状态。</p>
+</li>
+<li><p>join()线程联合: 当某个线程等待另一个线程执行结束后，才能继续执行时，使用join()方法</p>
+</li>
+</ol>
+<h3 id="死亡状态-Terminated"><a href="#死亡状态-Terminated" class="headerlink" title="死亡状态(Terminated)"></a>死亡状态(Terminated)</h3><p>死亡状态是线程生命周期中的最后一个阶段。线程死亡的原因有两个:</p>
+<ol>
+<li><p>正常运行的线程完成了它run()方法内的全部工作</p>
+</li>
+<li><p>线程被强制终止，如通过执行stop()或destroy()方法来终止一个线程</p>
+<p>(注：stop()/destroy()方法已经被JDK废弃，不推荐使用)。</p>
+</li>
+</ol>
+<p>当一个线程进入死亡状态以后，就不能再回到其它状态了。</p>
+<h2 id="终止线程"><a href="#终止线程" class="headerlink" title="终止线程"></a>终止线程</h2><p>终止线程一般不使用JDK提供的stop()/destroy()方法(它们本身也被JDK废弃了)。</p>
+<p>通常的做法是提供一个boolean型的终止变量，当这个变量置为false，则终止线程。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.myThread;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestThread</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">    String name;</span><br><span class="line">    <span class="keyword">boolean</span> live = <span class="keyword">true</span>;<span class="comment">// 标记变量，表示线程是否可中止；</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TestThread</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">        <span class="comment">//当live的值是true时，继续线程体；false则结束循环，继而终止线程体；</span></span><br><span class="line">        <span class="keyword">while</span> (live) &#123;</span><br><span class="line">            System.out.println(name + (i++));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">terminate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        live = <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        TestThread ttc = <span class="keyword">new</span> TestThread(<span class="string">&quot;线程A:&quot;</span>);</span><br><span class="line">        Thread t1 = <span class="keyword">new</span> Thread(ttc);<span class="comment">// 新生状态</span></span><br><span class="line">        t1.start();<span class="comment">// 就绪状态</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;主线程&quot;</span> + i);</span><br><span class="line">        &#125;</span><br><span class="line">        ttc.terminate();</span><br><span class="line">        System.out.println(<span class="string">&quot;ttc stop!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>该程序中通过主线程控制live的值，当主线程把live置为 <code>false</code>时，run()方法停止执行，子线程终止运行</p>
+<h2 id="暂停线程"><a href="#暂停线程" class="headerlink" title="暂停线程"></a>暂停线程</h2><p>暂停线程执行常用的方法有sleep()和yield()方法</p>
+<p>这两个方法的区别是：</p>
+<ol>
+<li><p>sleep()方法：可以让正在运行的线程进入阻塞状态，直到<strong>休眠时间</strong>满了，进入就绪状态。</p>
+<blockquote>
+<p>注意：是休眠期到了后才会进入就绪状态，参与竞争获取CPU使用权</p>
+</blockquote>
+</li>
+<li><p>yield()方法：可以让正在运行的线程<strong>直接进入</strong>就绪状态，<strong>让出CPU的使用权</strong>。</p>
+<blockquote>
+<p>注意：由于没有标出<strong>让出</strong>的时间，所以下一刻就会立即进入竞争获取CPU的就绪状态</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="join-方法"><a href="#join-方法" class="headerlink" title="join()方法"></a>join()方法</h2><p><code>b.join()</code>可以将一个线程b插入到当前线程a中，这时a线程需要等待b执行完才会继续</p>
+<h2 id="线程基本信息获取"><a href="#线程基本信息获取" class="headerlink" title="线程基本信息获取"></a>线程基本信息获取</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">isAlive();</span><br><span class="line">getPriority();	<span class="comment">//获取线程优先级，默认为5</span></span><br><span class="line">setPriority();  <span class="comment">//设置线程优先级数值（int）</span></span><br><span class="line"></span><br><span class="line">setName();</span><br><span class="line">getName();</span><br><span class="line"></span><br><span class="line">currentThread();			<span class="comment">//获得当前线程</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：<strong>优先级</strong>低只是意味着获得调度的概率低。并不是绝对先调用优先级高的线程后调用优先级低的线程。</p>
+</blockquote>
+<h2 id="线程同步"><a href="#线程同步" class="headerlink" title="线程同步"></a>线程同步</h2><p>线程同步其实就是一种等待机制，多个需要同时访问此对象的线程进入这个对象的等待池形成队列，等待前面的线程使用完毕后，下一个线程再使用。</p>
+<p>由于同一进程的多个线程共享同一块存储空间，在带来方便的同时，也带来了访问冲突的问题。Java语言提供了专门机制以解决这种冲突，有效避免了同一个数据对象被多个线程同时访问造成的这种问题。</p>
+<p>由于我们可以通过 private 关键字来保证数据对象只能被方法访问，所以我们只需针对方法提出一套机制，这套机制就是<code>synchronized</code>关键字，它包括两种用法：</p>
+<ul>
+<li>synchronized 方法</li>
+<li>synchronized 块</li>
+</ul>
+<h3 id="synchronized-方法"><a href="#synchronized-方法" class="headerlink" title="synchronized 方法"></a>synchronized 方法</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> a)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>synchronized 方法控制对“对象的类成员变量”的访问：每个对象对应一把锁，每个 synchronized 方法都必须获得调用该方法的对象的锁方能执行，否则所属线程阻塞，方法一旦执行，就<strong>独占</strong>该锁，直到<strong>从该方法返回</strong>时才将锁释放，此后被阻塞的线程方能获得该锁，重新进入可执行状态。</p>
+<h3 id="synchronized块"><a href="#synchronized块" class="headerlink" title="synchronized块"></a>synchronized块</h3><p>synchronized 方法的缺陷：若将一个大的方法声明为synchronized 将会大大影响效率。</p>
+<p>Java 为我们提供了更好的解决办法，那就是 synchronized 块。 块可以让我们精确地控制到具体的“成员变量”，缩小同步的范围，<strong>提高效率</strong>。</p>
+<p>synchronized 块：通过 synchronized关键字来声明synchronized 块，语法如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">synchronized</span>(syncObject)&#123; </span><br><span class="line">　　 <span class="comment">//允许访问控制的代码 </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>表示在操控 syncObject时，每次只能控制一次，如果多个线程同时执行到这一条语句，则同一时间只能有一个线程操控syncObject</p>
+<h2 id="死锁问题"><a href="#死锁问题" class="headerlink" title="死锁问题"></a>死锁问题</h2><p>死锁：</p>
+<p>多个线程各自占有一些共享资源，并且互相等待其他线程占有的资源才能进行，而导致两个或者多个线程都在等待对方释放资源，都停止执行的情形。</p>
 ]]></content>
       <categories>
         <category>java</category>
@@ -3691,6 +3691,46 @@
       </tags>
   </entry>
   <entry>
+    <title>6-spring配置说明</title>
+    <url>/2021/05/15/java_spring/6-spring%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/</url>
+    <content><![CDATA[<h1 id="spring配置"><a href="#spring配置" class="headerlink" title="spring配置"></a>spring配置</h1><h2 id="别名alias"><a href="#别名alias" class="headerlink" title="别名alias"></a>别名alias</h2><p>bean可以拥有别名</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">alias</span> <span class="attr">name</span>=<span class="string">&quot;fromName&quot;</span> <span class="attr">alias</span>=<span class="string">&quot;toName&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>例如：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;章三&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;age&quot;</span> <span class="attr">value</span>=<span class="string">&quot;20&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">alias</span> <span class="attr">name</span>=<span class="string">&quot;user&quot;</span> <span class="attr">alias</span>=<span class="string">&quot;user2&quot;</span>/&gt;</span>   </span><br></pre></td></tr></table></figure>
+
+
+
+<p>使用别名后就可以通过别名来获取bean</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//User user = context.getBean(&quot;user&quot;, User.class);</span></span><br><span class="line">User user = context.getBean(<span class="string">&quot;user2&quot;</span>, User.class);</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="bean的配置"><a href="#bean的配置" class="headerlink" title="bean的配置"></a>bean的配置</h2><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">id: bean的唯一标识符,相当于创建对象`User user = new User()`的对象名user</span></span><br><span class="line"><span class="comment">class：指向的类</span></span><br><span class="line"><span class="comment">name：也是别名，并且可以取多个，中间可以用逗号、分号、空格隔开</span></span><br><span class="line"><span class="comment">--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span> <span class="attr">name</span>=<span class="string">&quot;n1,n2;n3 n4&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;章三&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="import"><a href="#import" class="headerlink" title="import"></a>import</h2><p>如果有多个 <code>beans</code>配置文件，可以用 <code>import</code>将多个文件导入到一个文件中</p>
+<p>例如几个配置文件如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">resources</span><br><span class="line">	|-applicationcontext.xml</span><br><span class="line">	|-beans1.xml</span><br><span class="line">	|-beans2.xml</span><br></pre></td></tr></table></figure>
+
+<p>在 <code>applicationcontext.xml</code> 中可以使用 <code>import</code> 标签导入 另外2个配置文件：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">import</span> <span class="attr">resource</span>=<span class="string">&quot;beans1.xml&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">import</span> <span class="attr">resource</span>=<span class="string">&quot;beans2.xml&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>适用于团队合作时使用</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>java</category>
+      </categories>
+      <tags>
+        <tag>java_spring</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>5-ioc创建对象方式</title>
     <url>/2021/05/14/java_spring/5-ioc%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1%E6%96%B9%E5%BC%8F/</url>
     <content><![CDATA[<h1 id="ioc创建对象方式"><a href="#ioc创建对象方式" class="headerlink" title="ioc创建对象方式"></a>ioc创建对象方式</h1><h2 id="构造函数注入"><a href="#构造函数注入" class="headerlink" title="构造函数注入"></a>构造函数注入</h2><p>User.java</p>
@@ -3723,37 +3763,35 @@
       </tags>
   </entry>
   <entry>
-    <title>6-spring配置说明</title>
-    <url>/2021/05/15/java_spring/6-spring%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/</url>
-    <content><![CDATA[<h1 id="spring配置"><a href="#spring配置" class="headerlink" title="spring配置"></a>spring配置</h1><h2 id="别名alias"><a href="#别名alias" class="headerlink" title="别名alias"></a>别名alias</h2><p>bean可以拥有别名</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">alias</span> <span class="attr">name</span>=<span class="string">&quot;fromName&quot;</span> <span class="attr">alias</span>=<span class="string">&quot;toName&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+    <title>7-spring容器注入</title>
+    <url>/2021/05/16/java_spring/7-spring%E5%AE%B9%E5%99%A8%E6%B3%A8%E5%85%A5/</url>
+    <content><![CDATA[<h1 id="spring容器注入"><a href="#spring容器注入" class="headerlink" title="spring容器注入"></a>spring容器注入</h1><p> <a href="https://codechina.csdn.net/m0_46079750/spring4/-/tree/master">跳转到项目地址</a></p>
+<p>如果是<code>String</code> 这种简单类型的数据，spring注入如下：</p>
+<p>User.java</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>beans.xml</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--前面的省略--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.xxx.User&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;张三&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 
 
-<p>例如：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;章三&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;age&quot;</span> <span class="attr">value</span>=<span class="string">&quot;20&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">alias</span> <span class="attr">name</span>=<span class="string">&quot;user&quot;</span> <span class="attr">alias</span>=<span class="string">&quot;user2&quot;</span>/&gt;</span>   </span><br></pre></td></tr></table></figure>
+<p>但是，如果要注入的不是如<code>String</code> 这种简单类型数据，而是array、list、map、prop。。。这种容器类型数据，应该如何写bean，下面是模板：</p>
+<p><a href="https://docs.spring.io/spring-framework/docs/5.2.9.RELEASE/spring-framework-reference/core.html#beans-inner-beans">官方文档说明</a></p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;moreComplexObject&quot;</span> <span class="attr">class</span>=<span class="string">&quot;example.ComplexObject&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- array注入 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;books&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">array</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>《abc》<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>《defg》<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>《hijk》<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">array</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- prop注入 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;adminEmails&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">props</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;administrator&quot;</span>&gt;</span>administrator@example.org<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;support&quot;</span>&gt;</span>support@example.org<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;development&quot;</span>&gt;</span>development@example.org<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">props</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- list注入 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;someList&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">list</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>a list element followed by a reference<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">ref</span> <span class="attr">bean</span>=<span class="string">&quot;myDataSource&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">list</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- map --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;someMap&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">map</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">&quot;an entry&quot;</span> <span class="attr">value</span>=<span class="string">&quot;just some string&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span> =<span class="string">&quot;a ref&quot;</span> <span class="attr">value-ref</span>=<span class="string">&quot;myDataSource&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">map</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- set注入 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;someSet&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">set</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>just some string<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">ref</span> <span class="attr">bean</span>=<span class="string">&quot;myDataSource&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">set</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
 
 
-<p>使用别名后就可以通过别名来获取bean</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//User user = context.getBean(&quot;user&quot;, User.class);</span></span><br><span class="line">User user = context.getBean(<span class="string">&quot;user2&quot;</span>, User.class);</span><br></pre></td></tr></table></figure>
+<p>例如要往下面这些属性注入值</p>
+<p>![image-20210730172726839](<a href="https://gitee.com/ajream/images/raw/master/img/2021-07-30">https://gitee.com/ajream/images/raw/master/img/2021-07-30</a> 17-27-28_image-20210730172726839.png)</p>
+<p>beans.xml：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="string"><span class="tag">     https://www.springframework.org/schema/beans/spring-beans.xsd&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;address&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.Address&quot;</span> &gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;addr&quot;</span> <span class="attr">value</span>=<span class="string">&quot;西安&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;student&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.Student&quot;</span>&gt;</span></span><br><span class="line">        </span><br><span class="line"><span class="comment">&lt;!--        普通值注入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;王二&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;age&quot;</span> <span class="attr">value</span>=<span class="string">&quot;30&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--        bean注入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;address&quot;</span> <span class="attr">ref</span>=<span class="string">&quot;address&quot;</span> /&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--        数组array注入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;books&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">array</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>《计算机技术》<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>《操作系统》<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>《数据结构》<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">array</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--        set注入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;games&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">set</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>王者荣耀<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>少年三国志<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">set</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--        list注入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;hobbies&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">list</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>打游戏<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>打羽毛球<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">list</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--        map注入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;grade&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">map</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">&quot;高等数学&quot;</span> <span class="attr">value</span>=<span class="string">&quot;85&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">&quot;大学英语&quot;</span> <span class="attr">value</span>=<span class="string">&quot;90&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">&quot;java基础&quot;</span> <span class="attr">value</span>=<span class="string">&quot;98&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">map</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--        prop注入，类似map--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;info&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">props</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;email&quot;</span>&gt;</span>administrator@example.org<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;phone&quot;</span>&gt;</span>13389453895<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;QQ-number&quot;</span>&gt;</span>456382987<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">props</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
 
 
-<h2 id="bean的配置"><a href="#bean的配置" class="headerlink" title="bean的配置"></a>bean的配置</h2><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">id: bean的唯一标识符,相当于创建对象`User user = new User()`的对象名user</span></span><br><span class="line"><span class="comment">class：指向的类</span></span><br><span class="line"><span class="comment">name：也是别名，并且可以取多个，中间可以用逗号、分号、空格隔开</span></span><br><span class="line"><span class="comment">--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span> <span class="attr">name</span>=<span class="string">&quot;n1,n2;n3 n4&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;章三&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
 
-
-<h2 id="import"><a href="#import" class="headerlink" title="import"></a>import</h2><p>如果有多个 <code>beans</code>配置文件，可以用 <code>import</code>将多个文件导入到一个文件中</p>
-<p>例如几个配置文件如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">resources</span><br><span class="line">	|-applicationcontext.xml</span><br><span class="line">	|-beans1.xml</span><br><span class="line">	|-beans2.xml</span><br></pre></td></tr></table></figure>
-
-<p>在 <code>applicationcontext.xml</code> 中可以使用 <code>import</code> 标签导入 另外2个配置文件：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">import</span> <span class="attr">resource</span>=<span class="string">&quot;beans1.xml&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">import</span> <span class="attr">resource</span>=<span class="string">&quot;beans2.xml&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>适用于团队合作时使用</p>
-</blockquote>
+<p>输出预览：</p>
+<p>![image-20210730173016148](<a href="https://gitee.com/ajream/images/raw/master/img/2021-07-30">https://gitee.com/ajream/images/raw/master/img/2021-07-30</a> 17-30-17_image-20210730173016148.png)</p>
 ]]></content>
       <categories>
         <category>java</category>
@@ -3815,44 +3853,6 @@
 
 
 
-]]></content>
-      <categories>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>java_spring</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>7-spring容器注入</title>
-    <url>/2021/05/16/java_spring/7-spring%E5%AE%B9%E5%99%A8%E6%B3%A8%E5%85%A5/</url>
-    <content><![CDATA[<h1 id="spring容器注入"><a href="#spring容器注入" class="headerlink" title="spring容器注入"></a>spring容器注入</h1><p> <a href="https://codechina.csdn.net/m0_46079750/spring4/-/tree/master">跳转到项目地址</a></p>
-<p>如果是<code>String</code> 这种简单类型的数据，spring注入如下：</p>
-<p>User.java</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>beans.xml</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--前面的省略--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.xxx.User&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;张三&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<p>但是，如果要注入的不是如<code>String</code> 这种简单类型数据，而是array、list、map、prop。。。这种容器类型数据，应该如何写bean，下面是模板：</p>
-<p><a href="https://docs.spring.io/spring-framework/docs/5.2.9.RELEASE/spring-framework-reference/core.html#beans-inner-beans">官方文档说明</a></p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;moreComplexObject&quot;</span> <span class="attr">class</span>=<span class="string">&quot;example.ComplexObject&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- array注入 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;books&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">array</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>《abc》<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>《defg》<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>《hijk》<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">array</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- prop注入 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;adminEmails&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">props</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;administrator&quot;</span>&gt;</span>administrator@example.org<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;support&quot;</span>&gt;</span>support@example.org<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;development&quot;</span>&gt;</span>development@example.org<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">props</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- list注入 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;someList&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">list</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>a list element followed by a reference<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">ref</span> <span class="attr">bean</span>=<span class="string">&quot;myDataSource&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">list</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- map --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;someMap&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">map</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">&quot;an entry&quot;</span> <span class="attr">value</span>=<span class="string">&quot;just some string&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span> =<span class="string">&quot;a ref&quot;</span> <span class="attr">value-ref</span>=<span class="string">&quot;myDataSource&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">map</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- set注入 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;someSet&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">set</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>just some string<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">ref</span> <span class="attr">bean</span>=<span class="string">&quot;myDataSource&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">set</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p>例如要往下面这些属性注入值</p>
-<p>![image-20210730172726839](<a href="https://gitee.com/ajream/images/raw/master/img/2021-07-30">https://gitee.com/ajream/images/raw/master/img/2021-07-30</a> 17-27-28_image-20210730172726839.png)</p>
-<p>beans.xml：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="string"><span class="tag">     https://www.springframework.org/schema/beans/spring-beans.xsd&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;address&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.Address&quot;</span> &gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;addr&quot;</span> <span class="attr">value</span>=<span class="string">&quot;西安&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;student&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.Student&quot;</span>&gt;</span></span><br><span class="line">        </span><br><span class="line"><span class="comment">&lt;!--        普通值注入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;王二&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;age&quot;</span> <span class="attr">value</span>=<span class="string">&quot;30&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--        bean注入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;address&quot;</span> <span class="attr">ref</span>=<span class="string">&quot;address&quot;</span> /&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--        数组array注入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;books&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">array</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>《计算机技术》<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>《操作系统》<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>《数据结构》<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">array</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--        set注入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;games&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">set</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>王者荣耀<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>少年三国志<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">set</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--        list注入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;hobbies&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">list</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>打游戏<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>打羽毛球<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">list</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--        map注入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;grade&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">map</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">&quot;高等数学&quot;</span> <span class="attr">value</span>=<span class="string">&quot;85&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">&quot;大学英语&quot;</span> <span class="attr">value</span>=<span class="string">&quot;90&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">&quot;java基础&quot;</span> <span class="attr">value</span>=<span class="string">&quot;98&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">map</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--        prop注入，类似map--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;info&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">props</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;email&quot;</span>&gt;</span>administrator@example.org<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;phone&quot;</span>&gt;</span>13389453895<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;QQ-number&quot;</span>&gt;</span>456382987<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">props</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p>输出预览：</p>
-<p>![image-20210730173016148](<a href="https://gitee.com/ajream/images/raw/master/img/2021-07-30">https://gitee.com/ajream/images/raw/master/img/2021-07-30</a> 17-30-17_image-20210730173016148.png)</p>
 ]]></content>
       <categories>
         <category>java</category>
