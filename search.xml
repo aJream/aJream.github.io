@@ -977,6 +977,64 @@
       </tags>
   </entry>
   <entry>
+    <title>4-NodeMCU作为客户端使用</title>
+    <url>/2021/08/14/esp8266/4-NodeMCU%E4%BD%9C%E4%B8%BA%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<!--toc-->
+
+<p>ESP8266-Arduino库中有两个库用于控制ESP8266与网络服务器进行通讯。他们是<code>WiFiClient</code>库和<code>ESP8266HTTPClient</code>库。</p>
+<p>【注意】</p>
+<ul>
+<li><p><code>WiFiClient</code> 被声明在 <code>&lt;ESP8266WiFi.h&gt;</code> 中（这种方式实现Client更复杂，但灵活）</p>
+</li>
+<li><p>而<code>ESP8266HTTPClient</code>被单独声明在 <code>&lt;ESP8266HTTPClient.h&gt;</code>（这种方式实现Client更简单，但很多功能不能根据自己意愿来定制实现）</p>
+</li>
+</ul>
+<h2 id="1、ESP8266HTTPClient-实现"><a href="#1、ESP8266HTTPClient-实现" class="headerlink" title="1、ESP8266HTTPClient 实现"></a>1、ESP8266HTTPClient 实现</h2><ol>
+<li><p>连接WiFi，具体实现看第一篇文章</p>
+</li>
+<li><p>连接WiFi后，写一个函数来访问服务器</p>
+</li>
+<li><p>函数设计，五个步骤：</p>
+<ul>
+<li>创建客户端对象</li>
+<li>配置访问地址url</li>
+<li>发送get（post）请求<ul>
+<li>请求成功：处理返回信息</li>
+<li>请求失败：（任意）</li>
+</ul>
+</li>
+<li>结束请求</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 发送HTTP请求并且将服务器响应通过串口输出</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">httpClientRequest</span><span class="params">()</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">  <span class="comment">//1 创建 HTTPClient 对象</span></span><br><span class="line">  HTTPClient httpClient;</span><br><span class="line"> </span><br><span class="line">  <span class="comment">//2 通过begin函数配置请求地址</span></span><br><span class="line">  httpClient.begin(URL); </span><br><span class="line"> </span><br><span class="line">  <span class="comment">//3 通过GET函数启动连接并发送HTTP请求</span></span><br><span class="line">  <span class="keyword">int</span> httpCode = httpClient.GET();</span><br><span class="line">  </span><br><span class="line">  <span class="comment">//4 处理服务器返回信息</span></span><br><span class="line">  <span class="keyword">if</span> (httpCode == HTTP_CODE_OK) &#123;</span><br><span class="line">    <span class="comment">// 使用getString函数获取服务器响应体内容</span></span><br><span class="line">    String responsePayload = httpClient.getString();</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">//...</span></span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">  <span class="comment">//5 关闭ESP8266与服务器连接</span></span><br><span class="line">  httpClient.end();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>完整code：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ESP8266WiFi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ESP8266HTTPClient.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  String url = <span class="string">&quot;http://www.example.com&quot;</span>;</span><br><span class="line">  </span><br><span class="line">  Serial.begin(<span class="number">115200</span>);</span><br><span class="line">  </span><br><span class="line">  WiFi.mode(WIFI_STA);</span><br><span class="line">  WiFi.begin(<span class="string">&quot;RBook&quot;</span>, <span class="string">&quot;17191719&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; WiFi.status() != WL_CONNECTED; i++)&#123;</span><br><span class="line">    delay(<span class="number">1000</span>);</span><br><span class="line">    Serial.<span class="built_in">printf</span>(<span class="string">&quot;%d &quot;</span>, i);</span><br><span class="line">  &#125;</span><br><span class="line">  Serial.print(<span class="string">&quot;\r\nwifi is connected\r\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">  getResponse(url);</span><br><span class="line">  </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// put your main code here, to run repeatedly:</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//五个步骤进行发送请求并获取数据</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">getResponse</span><span class="params">(String url)</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">  HTTPClient httpClient;  <span class="comment">// 1</span></span><br><span class="line"></span><br><span class="line">  httpClient.begin(url);  <span class="comment">// 2</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">int</span> httpCode = httpClient.GET(); <span class="comment">// 3</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 4</span></span><br><span class="line">  <span class="keyword">if</span>(httpCode == HTTP_CODE_OK)&#123;</span><br><span class="line">    Serial.<span class="built_in">printf</span>(<span class="string">&quot;httpCode: %d  Success......\n&quot;</span>, httpCode);</span><br><span class="line">    String res = httpClient.getString();</span><br><span class="line">    Serial.println(<span class="string">&quot;======================&quot;</span>);</span><br><span class="line">    Serial.println(res);</span><br><span class="line">    Serial.println(<span class="string">&quot;======================&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    Serial.<span class="built_in">printf</span>(<span class="string">&quot;httpCode: %d  Failed......\n&quot;</span>, httpCode);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 5</span></span><br><span class="line">  httpClient.end();</span><br><span class="line">  </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="【注意】"><a href="#【注意】" class="headerlink" title="【注意】"></a>【注意】</h5><blockquote>
+<p>转义字符 <code>\r</code> 表示将光标移动到本行开头（继续输出会覆盖本行内容）</p>
+<p><code>\r\n</code> 表示将光标移到开头再换行（不会覆盖本行内容），一般与 <code>\n</code> 效果相同</p>
+</blockquote>
+<h2 id="2、WiFiClient-实现"><a href="#2、WiFiClient-实现" class="headerlink" title="2、WiFiClient 实现"></a>2、WiFiClient 实现</h2><ol>
+<li>创建对象</li>
+<li>连接服务器<ul>
+<li>连接成功：（1）发送请求（2）获取并处理服务器响应的数据（3）断开与服务器的连接</li>
+<li>连接失败：断开连接</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">wifiClientRequest</span><span class="params">(String url)</span></span>&#123;</span><br><span class="line">    <span class="comment">// 建立WiFi客户端对象</span></span><br><span class="line">    WiFiClient client;    </span><br><span class="line"></span><br><span class="line">    <span class="comment">// 建立字符串，用于HTTP请求</span></span><br><span class="line">    String httpRequest =  String(<span class="string">&quot;GET /&quot;</span>) + <span class="string">&quot; HTTP/1.1\r\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;url: &quot;</span> + url + <span class="string">&quot;\r\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;Connection: close\r\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;\r\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 连接网络服务器</span></span><br><span class="line">    <span class="keyword">if</span> (client.connect(url, httpPort))&#123; 	<span class="comment">//连接成功connect会返回true</span></span><br><span class="line">        </span><br><span class="line">        client.print(httpRequest);          <span class="comment">// 向服务器发送HTTP请求</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 通过串口输出网络服务器响应信息    </span></span><br><span class="line">        <span class="keyword">while</span> (client.connected() || client.available())&#123; </span><br><span class="line">            <span class="keyword">if</span> (client.available())&#123;</span><br><span class="line">                String line = client.readStringUntil(<span class="string">&#x27;\n&#x27;</span>);  <span class="comment">//一行一行读取</span></span><br><span class="line">                Serial.println(line);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        client.stop();		<span class="comment">// 断开与服务器的连接</span></span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span>&#123;    </span><br><span class="line">        client.stop();		<span class="comment">// 如果连接不成功则断开连接</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id=""><a href="#" class="headerlink" title=""></a></h2>]]></content>
+      <categories>
+        <category>硬件学习</category>
+      </categories>
+      <tags>
+        <tag>esp8266</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>3-闪存文件系统</title>
     <url>/2021/08/14/esp8266/3-%E9%97%AA%E5%AD%98%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/</url>
     <content><![CDATA[<!-- toc -->
@@ -1042,56 +1100,29 @@
       </tags>
   </entry>
   <entry>
-    <title>4-NodeMCU作为客户端使用</title>
-    <url>/2021/08/14/esp8266/4-NodeMCU%E4%BD%9C%E4%B8%BA%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8/</url>
+    <title>5-Stream数据流</title>
+    <url>/2021/08/14/esp8266/5-Stream%E6%95%B0%E6%8D%AE%E6%B5%81/</url>
     <content><![CDATA[<!--toc-->
 
-<p>ESP8266-Arduino库中有两个库用于控制ESP8266与网络服务器进行通讯。他们是<code>WiFiClient</code>库和<code>ESP8266HTTPClient</code>库。</p>
-<p>【注意】</p>
-<ul>
-<li><p><code>WiFiClient</code> 被声明在 <code>&lt;ESP8266WiFi.h&gt;</code> 中（这种方式实现Client更复杂，但灵活）</p>
-</li>
-<li><p>而<code>ESP8266HTTPClient</code>被单独声明在 <code>&lt;ESP8266HTTPClient.h&gt;</code>（这种方式实现Client更简单，但很多功能不能根据自己意愿来定制实现）</p>
-</li>
-</ul>
-<h2 id="1、ESP8266HTTPClient-实现"><a href="#1、ESP8266HTTPClient-实现" class="headerlink" title="1、ESP8266HTTPClient 实现"></a>1、ESP8266HTTPClient 实现</h2><ol>
-<li><p>连接WiFi，具体实现看第一篇文章</p>
-</li>
-<li><p>连接WiFi后，写一个函数来访问服务器</p>
-</li>
-<li><p>函数设计，五个步骤：</p>
-<ul>
-<li>创建客户端对象</li>
-<li>配置访问地址url</li>
-<li>发送get（post）请求<ul>
-<li>请求成功：处理返回信息</li>
-<li>请求失败：（任意）</li>
-</ul>
-</li>
-<li>结束请求</li>
-</ul>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 发送HTTP请求并且将服务器响应通过串口输出</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">httpClientRequest</span><span class="params">()</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">  <span class="comment">//1 创建 HTTPClient 对象</span></span><br><span class="line">  HTTPClient httpClient;</span><br><span class="line"> </span><br><span class="line">  <span class="comment">//2 通过begin函数配置请求地址</span></span><br><span class="line">  httpClient.begin(URL); </span><br><span class="line"> </span><br><span class="line">  <span class="comment">//3 通过GET函数启动连接并发送HTTP请求</span></span><br><span class="line">  <span class="keyword">int</span> httpCode = httpClient.GET();</span><br><span class="line">  </span><br><span class="line">  <span class="comment">//4 处理服务器返回信息</span></span><br><span class="line">  <span class="keyword">if</span> (httpCode == HTTP_CODE_OK) &#123;</span><br><span class="line">    <span class="comment">// 使用getString函数获取服务器响应体内容</span></span><br><span class="line">    String responsePayload = httpClient.getString();</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">//...</span></span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">  <span class="comment">//5 关闭ESP8266与服务器连接</span></span><br><span class="line">  httpClient.end();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ol>
-<p>完整code：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ESP8266WiFi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ESP8266HTTPClient.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  String url = <span class="string">&quot;http://www.example.com&quot;</span>;</span><br><span class="line">  </span><br><span class="line">  Serial.begin(<span class="number">115200</span>);</span><br><span class="line">  </span><br><span class="line">  WiFi.mode(WIFI_STA);</span><br><span class="line">  WiFi.begin(<span class="string">&quot;RBook&quot;</span>, <span class="string">&quot;17191719&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; WiFi.status() != WL_CONNECTED; i++)&#123;</span><br><span class="line">    delay(<span class="number">1000</span>);</span><br><span class="line">    Serial.<span class="built_in">printf</span>(<span class="string">&quot;%d &quot;</span>, i);</span><br><span class="line">  &#125;</span><br><span class="line">  Serial.print(<span class="string">&quot;\r\nwifi is connected\r\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">  getResponse(url);</span><br><span class="line">  </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// put your main code here, to run repeatedly:</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//五个步骤进行发送请求并获取数据</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">getResponse</span><span class="params">(String url)</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">  HTTPClient httpClient;  <span class="comment">// 1</span></span><br><span class="line"></span><br><span class="line">  httpClient.begin(url);  <span class="comment">// 2</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">int</span> httpCode = httpClient.GET(); <span class="comment">// 3</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 4</span></span><br><span class="line">  <span class="keyword">if</span>(httpCode == HTTP_CODE_OK)&#123;</span><br><span class="line">    Serial.<span class="built_in">printf</span>(<span class="string">&quot;httpCode: %d  Success......\n&quot;</span>, httpCode);</span><br><span class="line">    String res = httpClient.getString();</span><br><span class="line">    Serial.println(<span class="string">&quot;======================&quot;</span>);</span><br><span class="line">    Serial.println(res);</span><br><span class="line">    Serial.println(<span class="string">&quot;======================&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    Serial.<span class="built_in">printf</span>(<span class="string">&quot;httpCode: %d  Failed......\n&quot;</span>, httpCode);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 5</span></span><br><span class="line">  httpClient.end();</span><br><span class="line">  </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="Stream数据流"><a href="#Stream数据流" class="headerlink" title="Stream数据流"></a>Stream数据流</h1><h2 id="1、串口收发数据"><a href="#1、串口收发数据" class="headerlink" title="1、串口收发数据"></a>1、串口收发数据</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 启动串口通讯</span></span><br><span class="line">  Serial.begin(<span class="number">9600</span>); </span><br><span class="line">  Serial.println();</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">  <span class="keyword">if</span> (Serial.available())&#123;                    <span class="comment">// 当串口接收到信息后</span></span><br><span class="line">    String serialData = Serial.readString();  <span class="comment">// 将接收到的信息存储于serialData变量</span></span><br><span class="line">    Serial.print(serialData);                 </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h5 id="【注意】"><a href="#【注意】" class="headerlink" title="【注意】"></a>【注意】</h5><blockquote>
-<p>转义字符 <code>\r</code> 表示将光标移动到本行开头（继续输出会覆盖本行内容）</p>
-<p><code>\r\n</code> 表示将光标移到开头再换行（不会覆盖本行内容），一般与 <code>\n</code> 效果相同</p>
+<p>使用<code>Serial.available</code>来判断ESP8266开发板是否接收到串口数据</p>
+<p>实际上，ESP8266开发板通过串口收发的数据通过Stream进行的</p>
+<blockquote>
+<p>下面的程序将演示：</p>
+<p>当ESP8266找到了find函数所指定的参数“ok”后，随即在后续接收到的数据中查找数字信息。一旦找到数字，则通过串口监视器输出。接下来串口监视器还将输出找到数字后剩余的串口输入信息是什么。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  Serial.begin(<span class="number">9600</span>);</span><br><span class="line">  Serial.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line">  Serial.println(<span class="string">&quot;Please enter input...&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">while</span>(Serial.available())&#123;</span><br><span class="line">    <span class="keyword">if</span>(Serial.find(<span class="string">&quot;ok&quot;</span>))&#123;</span><br><span class="line">      Serial.println(<span class="string">&quot;Found ok in user input.&quot;</span>);</span><br><span class="line"> </span><br><span class="line">      <span class="keyword">int</span> serialParseInt = Serial.parseInt();</span><br><span class="line">      Serial.print(<span class="string">&quot;serialParseInt = &quot;</span>);</span><br><span class="line">      Serial.println(serialParseInt);</span><br><span class="line">      </span><br><span class="line">      String serialInput = Serial.readString();</span><br><span class="line">      Serial.print(<span class="string">&quot;serialInput = &quot;</span>);</span><br><span class="line">      Serial.println(serialInput);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
 </blockquote>
-<h2 id="2、WiFiClient-实现"><a href="#2、WiFiClient-实现" class="headerlink" title="2、WiFiClient 实现"></a>2、WiFiClient 实现</h2><ol>
-<li>创建对象</li>
-<li>连接服务器<ul>
-<li>连接成功：（1）发送请求（2）获取并处理服务器响应的数据（3）断开与服务器的连接</li>
-<li>连接失败：断开连接</li>
-</ul>
-</li>
-</ol>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">wifiClientRequest</span><span class="params">(String url)</span></span>&#123;</span><br><span class="line">    <span class="comment">// 建立WiFi客户端对象</span></span><br><span class="line">    WiFiClient client;    </span><br><span class="line"></span><br><span class="line">    <span class="comment">// 建立字符串，用于HTTP请求</span></span><br><span class="line">    String httpRequest =  String(<span class="string">&quot;GET /&quot;</span>) + <span class="string">&quot; HTTP/1.1\r\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;url: &quot;</span> + url + <span class="string">&quot;\r\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;Connection: close\r\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;\r\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 连接网络服务器</span></span><br><span class="line">    <span class="keyword">if</span> (client.connect(url, httpPort))&#123; 	<span class="comment">//连接成功connect会返回true</span></span><br><span class="line">        </span><br><span class="line">        client.print(httpRequest);          <span class="comment">// 向服务器发送HTTP请求</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 通过串口输出网络服务器响应信息    </span></span><br><span class="line">        <span class="keyword">while</span> (client.connected() || client.available())&#123; </span><br><span class="line">            <span class="keyword">if</span> (client.available())&#123;</span><br><span class="line">                String line = client.readStringUntil(<span class="string">&#x27;\n&#x27;</span>);  <span class="comment">//一行一行读取</span></span><br><span class="line">                Serial.println(line);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        client.stop();		<span class="comment">// 断开与服务器的连接</span></span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span>&#123;    </span><br><span class="line">        client.stop();		<span class="comment">// 如果连接不成功则断开连接</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="2、使用Stream方式来读取服务器响应的信息"><a href="#2、使用Stream方式来读取服务器响应的信息" class="headerlink" title="2、使用Stream方式来读取服务器响应的信息"></a>2、使用Stream方式来读取服务器响应的信息</h2><p>（具体看第4篇文章第2点的代码）</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> (client.connected() || client.available())&#123; </span><br><span class="line">    <span class="keyword">if</span> (client.available())&#123;</span><br><span class="line">        String line = client.readStringUntil(<span class="string">&#x27;\n&#x27;</span>);     <span class="comment">//读取返回的数据</span></span><br><span class="line">        Serial.println(line);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
-<h2 id=""><a href="#" class="headerlink" title=""></a></h2>]]></content>
+<h2 id="3、使用Stream方式来读取文件内容"><a href="#3、使用Stream方式来读取文件内容" class="headerlink" title="3、使用Stream方式来读取文件内容"></a>3、使用Stream方式来读取文件内容</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">File f = SPIFFS.open(file_name, <span class="string">&quot;r&quot;</span>);     <span class="comment">// 以“r”模式再次打开闪存文件</span></span><br><span class="line">Serial.println(f.readString());				<span class="comment">// 读取文件内容</span></span><br></pre></td></tr></table></figure>
+
+]]></content>
       <categories>
         <category>硬件学习</category>
       </categories>
@@ -1141,37 +1172,6 @@
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ESP8266WiFi.h&gt;</span>          </span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;DNSServer.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ESP8266WebServer.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;WiFiManager.h&gt;</span>         </span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Serial.begin(<span class="number">9600</span>);       </span><br><span class="line">    <span class="comment">// 建立WiFiManager对象</span></span><br><span class="line">    WiFiManager wifiManager;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 自动连接WiFi。以下语句的参数是连接ESP8266时的WiFi名称</span></span><br><span class="line">    wifiManager.autoConnect(<span class="string">&quot;ESP8266-wifi&quot;</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 如果您希望该WiFi添加密码，可以使用以下语句：</span></span><br><span class="line">    <span class="comment">// wifiManager.autoConnect(&quot;ESP8266-wifi&quot;, &quot;12345678&quot;);</span></span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="comment">// WiFi连接成功后将通过串口监视器输出连接成功信息 </span></span><br><span class="line">    Serial.println(<span class="string">&quot;&quot;</span>); </span><br><span class="line">    Serial.print(<span class="string">&quot;ESP8266 Connected to &quot;</span>);</span><br><span class="line">    Serial.println(WiFi.SSID());              <span class="comment">// 连接上的WiFi名称</span></span><br><span class="line">    Serial.print(<span class="string">&quot;IP address:\t&quot;</span>);</span><br><span class="line">    Serial.println(WiFi.localIP());           <span class="comment">// IP</span></span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
 
 <p>![image-20210811095227391](<a href="https://gitee.com/ajream/images/raw/master/img/2021-08-11">https://gitee.com/ajream/images/raw/master/img/2021-08-11</a> 09-56-45_image-20210811095227391.png)</p>
-]]></content>
-      <categories>
-        <category>硬件学习</category>
-      </categories>
-      <tags>
-        <tag>esp8266</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>5-Stream数据流</title>
-    <url>/2021/08/14/esp8266/5-Stream%E6%95%B0%E6%8D%AE%E6%B5%81/</url>
-    <content><![CDATA[<!--toc-->
-
-<h1 id="Stream数据流"><a href="#Stream数据流" class="headerlink" title="Stream数据流"></a>Stream数据流</h1><h2 id="1、串口收发数据"><a href="#1、串口收发数据" class="headerlink" title="1、串口收发数据"></a>1、串口收发数据</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 启动串口通讯</span></span><br><span class="line">  Serial.begin(<span class="number">9600</span>); </span><br><span class="line">  Serial.println();</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">  <span class="keyword">if</span> (Serial.available())&#123;                    <span class="comment">// 当串口接收到信息后</span></span><br><span class="line">    String serialData = Serial.readString();  <span class="comment">// 将接收到的信息存储于serialData变量</span></span><br><span class="line">    Serial.print(serialData);                 </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>使用<code>Serial.available</code>来判断ESP8266开发板是否接收到串口数据</p>
-<p>实际上，ESP8266开发板通过串口收发的数据通过Stream进行的</p>
-<blockquote>
-<p>下面的程序将演示：</p>
-<p>当ESP8266找到了find函数所指定的参数“ok”后，随即在后续接收到的数据中查找数字信息。一旦找到数字，则通过串口监视器输出。接下来串口监视器还将输出找到数字后剩余的串口输入信息是什么。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  Serial.begin(<span class="number">9600</span>);</span><br><span class="line">  Serial.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line">  Serial.println(<span class="string">&quot;Please enter input...&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">while</span>(Serial.available())&#123;</span><br><span class="line">    <span class="keyword">if</span>(Serial.find(<span class="string">&quot;ok&quot;</span>))&#123;</span><br><span class="line">      Serial.println(<span class="string">&quot;Found ok in user input.&quot;</span>);</span><br><span class="line"> </span><br><span class="line">      <span class="keyword">int</span> serialParseInt = Serial.parseInt();</span><br><span class="line">      Serial.print(<span class="string">&quot;serialParseInt = &quot;</span>);</span><br><span class="line">      Serial.println(serialParseInt);</span><br><span class="line">      </span><br><span class="line">      String serialInput = Serial.readString();</span><br><span class="line">      Serial.print(<span class="string">&quot;serialInput = &quot;</span>);</span><br><span class="line">      Serial.println(serialInput);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-</blockquote>
-<h2 id="2、使用Stream方式来读取服务器响应的信息"><a href="#2、使用Stream方式来读取服务器响应的信息" class="headerlink" title="2、使用Stream方式来读取服务器响应的信息"></a>2、使用Stream方式来读取服务器响应的信息</h2><p>（具体看第4篇文章第2点的代码）</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> (client.connected() || client.available())&#123; </span><br><span class="line">    <span class="keyword">if</span> (client.available())&#123;</span><br><span class="line">        String line = client.readStringUntil(<span class="string">&#x27;\n&#x27;</span>);     <span class="comment">//读取返回的数据</span></span><br><span class="line">        Serial.println(line);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="3、使用Stream方式来读取文件内容"><a href="#3、使用Stream方式来读取文件内容" class="headerlink" title="3、使用Stream方式来读取文件内容"></a>3、使用Stream方式来读取文件内容</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">File f = SPIFFS.open(file_name, <span class="string">&quot;r&quot;</span>);     <span class="comment">// 以“r”模式再次打开闪存文件</span></span><br><span class="line">Serial.println(f.readString());				<span class="comment">// 读取文件内容</span></span><br></pre></td></tr></table></figure>
-
 ]]></content>
       <categories>
         <category>硬件学习</category>
@@ -1374,6 +1374,50 @@
       </tags>
   </entry>
   <entry>
+    <title>10-装箱与拆箱</title>
+    <url>/2021/05/06/javaSE/10-%E8%A3%85%E7%AE%B1%E4%B8%8E%E6%8B%86%E7%AE%B1/</url>
+    <content><![CDATA[<h1 id="10-装箱与拆箱"><a href="#10-装箱与拆箱" class="headerlink" title="10 装箱与拆箱"></a>10 装箱与拆箱</h1><h2 id="10-1封装类"><a href="#10-1封装类" class="headerlink" title="10.1封装类"></a>10.1封装类</h2><blockquote>
+<p>所有的<strong>基本类型</strong>，都有对应的<strong>类类型</strong><br>比如int对应的类是Integer<br>这种类就叫做封装类</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line">         </span><br><span class="line"><span class="comment">//把一个基本类型的变量,转换为Integer对象</span></span><br><span class="line">Integer it = <span class="keyword">new</span> Integer(i);</span><br><span class="line"></span><br><span class="line"><span class="comment">//把一个Integer对象，转换为一个基本类型的int</span></span><br><span class="line"><span class="keyword">int</span> i2 = it.intValue();</span><br></pre></td></tr></table></figure>
+
+<h2 id="10-2-Number类"><a href="#10-2-Number类" class="headerlink" title="10.2 Number类"></a>10.2 Number类</h2><blockquote>
+<p>数字封装类有</p>
+<ul>
+<li>Byte     Short    Integer    Long</li>
+<li>Float    Double</li>
+</ul>
+<p>这些类都是抽象类<code>Number</code>的子类</p>
+</blockquote>
+<h2 id="10-3-基本类型⇿封装类型"><a href="#10-3-基本类型⇿封装类型" class="headerlink" title="10.3 基本类型⇿封装类型"></a>10.3 基本类型⇿封装类型</h2><ul>
+<li>基本类型转换成封装类型</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line"> </span><br><span class="line">Integer it = <span class="keyword">new</span> Integer(i);   <span class="comment">//i转换成封装类型it</span></span><br><span class="line">         </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>封装类型转换成基本类型</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line">Integer it = <span class="keyword">new</span> Integer(i);   <span class="comment">//i转换成封装类型it</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> i2 = it.intValue(); <span class="comment">//封装类型转it换成基本类型i2，i2与i是一样的</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="10-4-自动装箱与拆箱"><a href="#10-4-自动装箱与拆箱" class="headerlink" title="10.4 自动装箱与拆箱"></a>10.4 自动装箱与拆箱</h2><ul>
+<li><p>自动装箱：通过<code>=</code>符号自动把 基本类型 —&gt; 类类型</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line">Integer it = i;   <span class="comment">//自动装箱</span></span><br></pre></td></tr></table></figure></li>
+<li><p>自动拆箱：与自动装箱相反，通过<code>=</code>符号自动把 类类型 —&gt; 基本类型</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line">Integer it = i;   <span class="comment">//自动装箱</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> i1 = it;		<span class="comment">//自动拆箱</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="10-5-int的最大值-最小值"><a href="#10-5-int的最大值-最小值" class="headerlink" title="10.5 int的最大值/最小值"></a>10.5 int的最大值/最小值</h2><p>int的最大值可以通过其对应的封装类<code>Integer.MAX_VALUE</code>获取；</p>
+<p>同理，最小值通过 <code>Integer.MIN_VALUE</code> 获取；</p>
+]]></content>
+      <categories>
+        <category>java</category>
+      </categories>
+      <tags>
+        <tag>javaSE</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>11-数字与字符串相互转换</title>
     <url>/2021/05/07/javaSE/11-%E6%95%B0%E5%AD%97%E4%B8%8E%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9B%B8%E4%BA%92%E8%BD%AC%E6%8D%A2/</url>
     <content><![CDATA[<h1 id="11-数字⇿字符串"><a href="#11-数字⇿字符串" class="headerlink" title="11 数字⇿字符串"></a>11 数字⇿字符串</h1><h2 id="11-1-数字转字符串（2种方法）"><a href="#11-1-数字转字符串（2种方法）" class="headerlink" title="11.1 数字转字符串（2种方法）"></a>11.1 数字转字符串（2种方法）</h2><ul>
@@ -1536,50 +1580,6 @@
 <li><p>把日历直接<strong>设置</strong>成上个月的第三天</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">c.setTime(now);</span><br><span class="line">c.add(Calendar.MONTH, -<span class="number">1</span>);        <span class="comment">//先改月份</span></span><br><span class="line">c.set(Calendar.DATE, <span class="number">3</span>);		<span class="comment">//再改日数，注意用set</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//如果是今天后的第三天，则用:</span></span><br><span class="line"><span class="comment">//c.add(Calendar.DATE, 3)</span></span><br></pre></td></tr></table></figure></li>
 </ol>
-]]></content>
-      <categories>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>javaSE</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>10-装箱与拆箱</title>
-    <url>/2021/05/06/javaSE/10-%E8%A3%85%E7%AE%B1%E4%B8%8E%E6%8B%86%E7%AE%B1/</url>
-    <content><![CDATA[<h1 id="10-装箱与拆箱"><a href="#10-装箱与拆箱" class="headerlink" title="10 装箱与拆箱"></a>10 装箱与拆箱</h1><h2 id="10-1封装类"><a href="#10-1封装类" class="headerlink" title="10.1封装类"></a>10.1封装类</h2><blockquote>
-<p>所有的<strong>基本类型</strong>，都有对应的<strong>类类型</strong><br>比如int对应的类是Integer<br>这种类就叫做封装类</p>
-</blockquote>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line">         </span><br><span class="line"><span class="comment">//把一个基本类型的变量,转换为Integer对象</span></span><br><span class="line">Integer it = <span class="keyword">new</span> Integer(i);</span><br><span class="line"></span><br><span class="line"><span class="comment">//把一个Integer对象，转换为一个基本类型的int</span></span><br><span class="line"><span class="keyword">int</span> i2 = it.intValue();</span><br></pre></td></tr></table></figure>
-
-<h2 id="10-2-Number类"><a href="#10-2-Number类" class="headerlink" title="10.2 Number类"></a>10.2 Number类</h2><blockquote>
-<p>数字封装类有</p>
-<ul>
-<li>Byte     Short    Integer    Long</li>
-<li>Float    Double</li>
-</ul>
-<p>这些类都是抽象类<code>Number</code>的子类</p>
-</blockquote>
-<h2 id="10-3-基本类型⇿封装类型"><a href="#10-3-基本类型⇿封装类型" class="headerlink" title="10.3 基本类型⇿封装类型"></a>10.3 基本类型⇿封装类型</h2><ul>
-<li>基本类型转换成封装类型</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line"> </span><br><span class="line">Integer it = <span class="keyword">new</span> Integer(i);   <span class="comment">//i转换成封装类型it</span></span><br><span class="line">         </span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>封装类型转换成基本类型</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line">Integer it = <span class="keyword">new</span> Integer(i);   <span class="comment">//i转换成封装类型it</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> i2 = it.intValue(); <span class="comment">//封装类型转it换成基本类型i2，i2与i是一样的</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="10-4-自动装箱与拆箱"><a href="#10-4-自动装箱与拆箱" class="headerlink" title="10.4 自动装箱与拆箱"></a>10.4 自动装箱与拆箱</h2><ul>
-<li><p>自动装箱：通过<code>=</code>符号自动把 基本类型 —&gt; 类类型</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line">Integer it = i;   <span class="comment">//自动装箱</span></span><br></pre></td></tr></table></figure></li>
-<li><p>自动拆箱：与自动装箱相反，通过<code>=</code>符号自动把 类类型 —&gt; 基本类型</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line">Integer it = i;   <span class="comment">//自动装箱</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> i1 = it;		<span class="comment">//自动拆箱</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-<h2 id="10-5-int的最大值-最小值"><a href="#10-5-int的最大值-最小值" class="headerlink" title="10.5 int的最大值/最小值"></a>10.5 int的最大值/最小值</h2><p>int的最大值可以通过其对应的封装类<code>Integer.MAX_VALUE</code>获取；</p>
-<p>同理，最小值通过 <code>Integer.MIN_VALUE</code> 获取；</p>
 ]]></content>
       <categories>
         <category>java</category>
@@ -2198,97 +2198,6 @@
       </tags>
   </entry>
   <entry>
-    <title>18-泛型</title>
-    <url>/2021/05/15/javaSE/18-%E6%B3%9B%E5%9E%8B/</url>
-    <content><![CDATA[<h1 id="泛型"><a href="#泛型" class="headerlink" title="泛型"></a>泛型</h1><h2 id="泛型用法"><a href="#泛型用法" class="headerlink" title="泛型用法"></a>泛型用法</h2><p>泛型的用法是在容器后面添加&lt;Type&gt;</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">ArrayList&lt;APHero&gt; heros = <span class="keyword">new</span> ArrayList&lt;APHero&gt;();</span><br><span class="line"></span><br><span class="line"><span class="comment">//简写：</span></span><br><span class="line">ArrayList&lt;Hero&gt; heros2 = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br></pre></td></tr></table></figure>
-
-<p>Type可以是类，抽象类，接口；</p>
-<p>泛型表示这种容器，只能存放APHero，ADHero就放不进去了。</p>
-<h2 id="创建支持泛型的类"><a href="#创建支持泛型的类" class="headerlink" title="创建支持泛型的类"></a>创建支持泛型的类</h2><ol>
-<li>设计一个支持泛型的栈 MyStack</li>
-<li>设计这个类的时候，在类的声明上，加上一个<T>，表示该类支持泛型。</li>
-<li>T是type的缩写，也可以使用任何其他的合法的变量，比如A,B,X都可以，但是一般约定成俗使用T，代表类型。</li>
-</ol>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> generic;</span><br><span class="line">   </span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.LinkedList;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> charactor.Hero;</span><br><span class="line"><span class="keyword">import</span> property.Item;</span><br><span class="line">   </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyStack</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    LinkedList&lt;T&gt; values = <span class="keyword">new</span> LinkedList&lt;T&gt;();</span><br><span class="line">       </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">push</span><span class="params">(T t)</span> </span>&#123;</span><br><span class="line">        values.addLast(t);</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">    <span class="function"><span class="keyword">public</span> T <span class="title">pull</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> values.removeLast();</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">    <span class="function"><span class="keyword">public</span> T <span class="title">peek</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> values.getLast();</span><br><span class="line">    &#125;</span><br><span class="line">       </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//在声明这个Stack的时候，使用泛型&lt;Hero&gt;就表示该Stack只能放Hero</span></span><br><span class="line">        MyStack&lt;Hero&gt; heroStack = <span class="keyword">new</span> MyStack&lt;&gt;();</span><br><span class="line">        heroStack.push(<span class="keyword">new</span> Hero());</span><br><span class="line">        <span class="comment">//不能放Item</span></span><br><span class="line">        heroStack.push(<span class="keyword">new</span> Item());</span><br><span class="line">         </span><br><span class="line">        <span class="comment">//在声明这个Stack的时候，使用泛型&lt;Item&gt;就表示该Stack只能放Item</span></span><br><span class="line">        MyStack&lt;Item&gt; itemStack = <span class="keyword">new</span> MyStack&lt;&gt;();</span><br><span class="line">        itemStack.push(<span class="keyword">new</span> Item());</span><br><span class="line">        <span class="comment">//不能放Hero</span></span><br><span class="line">        itemStack.push(<span class="keyword">new</span> Hero());</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="通配符"><a href="#通配符" class="headerlink" title="通配符"></a>通配符</h2><h3 id="extends"><a href="#extends" class="headerlink" title="? extends"></a>? extends</h3><p><code>ArrayList heroList&lt;? extends Hero&gt;</code> 表示这是一个Hero泛型或者其子类泛型（可以理解为这个heroList的元素类型是：Hero或其子类类型）：</p>
-<ul>
-<li>heroList 的泛型可能是Hero</li>
-<li>heroList 的泛型可能是APHero</li>
-<li>heroList 的泛型可能是ADHero</li>
-</ul>
-<p>所以 可以确定的是，从heroList取出来的对象，一定是可以转型成Hero的</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">ArrayList&lt;APHero&gt; apHeroList = <span class="keyword">new</span> ArrayList&lt;APHero&gt;();</span><br><span class="line">apHeroList.add(<span class="keyword">new</span> APHero());</span><br><span class="line"></span><br><span class="line">ArrayList&lt;? extends Hero&gt; heroList = apHeroList;</span><br><span class="line"></span><br><span class="line"><span class="comment">//可以确凿的是，从heroList取出来的对象，一定是可以转型成Hero的</span></span><br><span class="line">Hero h = heroList.get(<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
-
-
-
-<blockquote>
-<p>注：不能往里面<strong>放东西</strong>，因为：</p>
-<ul>
-<li>放APHero就不满足&lt;ADHero&gt;</li>
-<li>放ADHero又不满足&lt;APHero&gt;</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">heroList.add(<span class="keyword">new</span> ADHero()); <span class="comment">//编译错误，因为heroList的泛型有可能是APHero</span></span><br></pre></td></tr></table></figure>
-</blockquote>
-<h3 id="super"><a href="#super" class="headerlink" title="? super"></a>? super</h3><p><code>ArrayList heroList&lt;? super Hero&gt;</code> 表示这是一个Hero或者其父类泛型:</p>
-<ul>
-<li>heroList的泛型可能是Hero</li>
-<li>heroList的泛型可能是Object</li>
-</ul>
-<p>可以往里面插入Hero以及Hero的子类：</p>
-<ul>
-<li>放Hero没问题</li>
-<li>放APHero、ADHero也没问题</li>
-</ul>
-<blockquote>
-<p>但是<strong>取出来有风险</strong>，因为不确定取出来是Hero还是Object</p>
-</blockquote>
-<img src="https://stepimagewm.how2j.cn/838.png" alt="? super" style="zoom: 80%;" />
-
-
-
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">ArrayList&lt;? <span class="keyword">super</span> Hero&gt; heroList = <span class="keyword">new</span> ArrayList&lt;Object&gt;();</span><br><span class="line"><span class="comment">//? super Hero 表示 heroList的泛型是Hero或者其父类泛型Object</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//所以就可以插入Hero</span></span><br><span class="line">heroList.add(<span class="keyword">new</span> Hero());</span><br><span class="line"></span><br><span class="line"><span class="comment">//也可以插入Hero的子类</span></span><br><span class="line">heroList.add(<span class="keyword">new</span> APHero());</span><br><span class="line">heroList.add(<span class="keyword">new</span> ADHero());</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//但是，不能从里面取数据出来,因为其泛型可能是Object,而Object是强转Hero会失败</span></span><br><span class="line">Hero h= heroList.get(<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="泛型通配符【-】"><a href="#泛型通配符【-】" class="headerlink" title="泛型通配符【?】"></a>泛型通配符【?】</h3><p>泛型通配符<code>?</code>代表任意泛型<br>既然?代表任意泛型，那么换句话说，这个容器什么泛型都有可能；</p>
-<ul>
-<li>取：只能以Object的形式取出来</li>
-<li>放：不能往里面放对象，因为不知道到底是一个什么泛型的容器</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">ArrayList&lt;APHero&gt; apHeroList = <span class="keyword">new</span> ArrayList&lt;APHero&gt;();</span><br><span class="line"></span><br><span class="line"><span class="comment">//?泛型通配符，表示任意泛型</span></span><br><span class="line">ArrayList&lt;?&gt; generalList = apHeroList;</span><br><span class="line"></span><br><span class="line"><span class="comment">//?的缺陷1： 既然?代表任意泛型，那么换句话说，你就不知道这个容器里面是什么类型</span></span><br><span class="line"><span class="comment">//所以只能以Object的形式取出来</span></span><br><span class="line">Object o = generalList.get(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//?的缺陷2： 既然?代表任意泛型，那么既有可能是Hero,也有可能是Item</span></span><br><span class="line"><span class="comment">//所以，放哪种对象进去，都有风险，结果就什么什么类型的对象，都不能放进去</span></span><br><span class="line">generalList.add(<span class="keyword">new</span> Item()); <span class="comment">//编译错误 因为?代表任意泛型，很有可能不是Item</span></span><br><span class="line">generalList.add(<span class="keyword">new</span> Hero()); <span class="comment">//编译错误 因为?代表任意泛型，很有可能不是Hero</span></span><br><span class="line">generalList.add(<span class="keyword">new</span> APHero()); <span class="comment">//编译错误  因为?代表任意泛型，很有可能不是APHero</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>如果希望只取出，不插入，就使用<code>? extends Hero</code></p>
-<p>如果希望只插入，不取出，就使用<code>? super Hero</code></p>
-<p>如果希望，又能插入，又能取出，就<strong>不要</strong>用通配符<code>？</code></p>
-<h2 id="泛型转型"><a href="#泛型转型" class="headerlink" title="泛型转型"></a>泛型转型</h2><h3 id="对象转型"><a href="#对象转型" class="headerlink" title="对象转型"></a>对象转型</h3><p>根据面向对象学习的知识，==子类转父类== 是一定可以成功的</p>
-<h3 id="子类泛型转父类泛型"><a href="#子类泛型转父类泛型" class="headerlink" title="子类泛型转父类泛型"></a>子类泛型转父类泛型</h3><p>既然子类对象转父类对象是可以成功的，那么子类泛型转父类泛型能成功吗？（不能）<br>例如：</p>
-<ul>
-<li>hs的泛型是父类Hero</li>
-<li>adhs 的泛型是子类ADHero</li>
-</ul>
-<p>那么 把adhs转换为hs能成功吗？（不能）</p>
-<blockquote>
-<p>父类转子类也不能</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>javaSE</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>19-多线程系列</title>
     <url>/2021/05/16/javaSE/19-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%B3%BB%E5%88%97/</url>
     <content><![CDATA[<h1 id="多线程系列"><a href="#多线程系列" class="headerlink" title="多线程系列"></a>多线程系列</h1><h2 id="线程状态"><a href="#线程状态" class="headerlink" title="线程状态"></a>线程状态</h2><p>一个线程对象在它的生命周期内，需要经历5个状态。</p>
@@ -2384,6 +2293,97 @@
       </tags>
   </entry>
   <entry>
+    <title>18-泛型</title>
+    <url>/2021/05/15/javaSE/18-%E6%B3%9B%E5%9E%8B/</url>
+    <content><![CDATA[<h1 id="泛型"><a href="#泛型" class="headerlink" title="泛型"></a>泛型</h1><h2 id="泛型用法"><a href="#泛型用法" class="headerlink" title="泛型用法"></a>泛型用法</h2><p>泛型的用法是在容器后面添加&lt;Type&gt;</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">ArrayList&lt;APHero&gt; heros = <span class="keyword">new</span> ArrayList&lt;APHero&gt;();</span><br><span class="line"></span><br><span class="line"><span class="comment">//简写：</span></span><br><span class="line">ArrayList&lt;Hero&gt; heros2 = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br></pre></td></tr></table></figure>
+
+<p>Type可以是类，抽象类，接口；</p>
+<p>泛型表示这种容器，只能存放APHero，ADHero就放不进去了。</p>
+<h2 id="创建支持泛型的类"><a href="#创建支持泛型的类" class="headerlink" title="创建支持泛型的类"></a>创建支持泛型的类</h2><ol>
+<li>设计一个支持泛型的栈 MyStack</li>
+<li>设计这个类的时候，在类的声明上，加上一个<T>，表示该类支持泛型。</li>
+<li>T是type的缩写，也可以使用任何其他的合法的变量，比如A,B,X都可以，但是一般约定成俗使用T，代表类型。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> generic;</span><br><span class="line">   </span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.LinkedList;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> charactor.Hero;</span><br><span class="line"><span class="keyword">import</span> property.Item;</span><br><span class="line">   </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyStack</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    LinkedList&lt;T&gt; values = <span class="keyword">new</span> LinkedList&lt;T&gt;();</span><br><span class="line">       </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">push</span><span class="params">(T t)</span> </span>&#123;</span><br><span class="line">        values.addLast(t);</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">    <span class="function"><span class="keyword">public</span> T <span class="title">pull</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> values.removeLast();</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">    <span class="function"><span class="keyword">public</span> T <span class="title">peek</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> values.getLast();</span><br><span class="line">    &#125;</span><br><span class="line">       </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//在声明这个Stack的时候，使用泛型&lt;Hero&gt;就表示该Stack只能放Hero</span></span><br><span class="line">        MyStack&lt;Hero&gt; heroStack = <span class="keyword">new</span> MyStack&lt;&gt;();</span><br><span class="line">        heroStack.push(<span class="keyword">new</span> Hero());</span><br><span class="line">        <span class="comment">//不能放Item</span></span><br><span class="line">        heroStack.push(<span class="keyword">new</span> Item());</span><br><span class="line">         </span><br><span class="line">        <span class="comment">//在声明这个Stack的时候，使用泛型&lt;Item&gt;就表示该Stack只能放Item</span></span><br><span class="line">        MyStack&lt;Item&gt; itemStack = <span class="keyword">new</span> MyStack&lt;&gt;();</span><br><span class="line">        itemStack.push(<span class="keyword">new</span> Item());</span><br><span class="line">        <span class="comment">//不能放Hero</span></span><br><span class="line">        itemStack.push(<span class="keyword">new</span> Hero());</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="通配符"><a href="#通配符" class="headerlink" title="通配符"></a>通配符</h2><h3 id="extends"><a href="#extends" class="headerlink" title="? extends"></a>? extends</h3><p><code>ArrayList heroList&lt;? extends Hero&gt;</code> 表示这是一个Hero泛型或者其子类泛型（可以理解为这个heroList的元素类型是：Hero或其子类类型）：</p>
+<ul>
+<li>heroList 的泛型可能是Hero</li>
+<li>heroList 的泛型可能是APHero</li>
+<li>heroList 的泛型可能是ADHero</li>
+</ul>
+<p>所以 可以确定的是，从heroList取出来的对象，一定是可以转型成Hero的</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">ArrayList&lt;APHero&gt; apHeroList = <span class="keyword">new</span> ArrayList&lt;APHero&gt;();</span><br><span class="line">apHeroList.add(<span class="keyword">new</span> APHero());</span><br><span class="line"></span><br><span class="line">ArrayList&lt;? extends Hero&gt; heroList = apHeroList;</span><br><span class="line"></span><br><span class="line"><span class="comment">//可以确凿的是，从heroList取出来的对象，一定是可以转型成Hero的</span></span><br><span class="line">Hero h = heroList.get(<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<blockquote>
+<p>注：不能往里面<strong>放东西</strong>，因为：</p>
+<ul>
+<li>放APHero就不满足&lt;ADHero&gt;</li>
+<li>放ADHero又不满足&lt;APHero&gt;</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">heroList.add(<span class="keyword">new</span> ADHero()); <span class="comment">//编译错误，因为heroList的泛型有可能是APHero</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<h3 id="super"><a href="#super" class="headerlink" title="? super"></a>? super</h3><p><code>ArrayList heroList&lt;? super Hero&gt;</code> 表示这是一个Hero或者其父类泛型:</p>
+<ul>
+<li>heroList的泛型可能是Hero</li>
+<li>heroList的泛型可能是Object</li>
+</ul>
+<p>可以往里面插入Hero以及Hero的子类：</p>
+<ul>
+<li>放Hero没问题</li>
+<li>放APHero、ADHero也没问题</li>
+</ul>
+<blockquote>
+<p>但是<strong>取出来有风险</strong>，因为不确定取出来是Hero还是Object</p>
+</blockquote>
+<img src="https://stepimagewm.how2j.cn/838.png" alt="? super" style="zoom: 80%;" />
+
+
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">ArrayList&lt;? <span class="keyword">super</span> Hero&gt; heroList = <span class="keyword">new</span> ArrayList&lt;Object&gt;();</span><br><span class="line"><span class="comment">//? super Hero 表示 heroList的泛型是Hero或者其父类泛型Object</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//所以就可以插入Hero</span></span><br><span class="line">heroList.add(<span class="keyword">new</span> Hero());</span><br><span class="line"></span><br><span class="line"><span class="comment">//也可以插入Hero的子类</span></span><br><span class="line">heroList.add(<span class="keyword">new</span> APHero());</span><br><span class="line">heroList.add(<span class="keyword">new</span> ADHero());</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//但是，不能从里面取数据出来,因为其泛型可能是Object,而Object是强转Hero会失败</span></span><br><span class="line">Hero h= heroList.get(<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="泛型通配符【-】"><a href="#泛型通配符【-】" class="headerlink" title="泛型通配符【?】"></a>泛型通配符【?】</h3><p>泛型通配符<code>?</code>代表任意泛型<br>既然?代表任意泛型，那么换句话说，这个容器什么泛型都有可能；</p>
+<ul>
+<li>取：只能以Object的形式取出来</li>
+<li>放：不能往里面放对象，因为不知道到底是一个什么泛型的容器</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">ArrayList&lt;APHero&gt; apHeroList = <span class="keyword">new</span> ArrayList&lt;APHero&gt;();</span><br><span class="line"></span><br><span class="line"><span class="comment">//?泛型通配符，表示任意泛型</span></span><br><span class="line">ArrayList&lt;?&gt; generalList = apHeroList;</span><br><span class="line"></span><br><span class="line"><span class="comment">//?的缺陷1： 既然?代表任意泛型，那么换句话说，你就不知道这个容器里面是什么类型</span></span><br><span class="line"><span class="comment">//所以只能以Object的形式取出来</span></span><br><span class="line">Object o = generalList.get(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//?的缺陷2： 既然?代表任意泛型，那么既有可能是Hero,也有可能是Item</span></span><br><span class="line"><span class="comment">//所以，放哪种对象进去，都有风险，结果就什么什么类型的对象，都不能放进去</span></span><br><span class="line">generalList.add(<span class="keyword">new</span> Item()); <span class="comment">//编译错误 因为?代表任意泛型，很有可能不是Item</span></span><br><span class="line">generalList.add(<span class="keyword">new</span> Hero()); <span class="comment">//编译错误 因为?代表任意泛型，很有可能不是Hero</span></span><br><span class="line">generalList.add(<span class="keyword">new</span> APHero()); <span class="comment">//编译错误  因为?代表任意泛型，很有可能不是APHero</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>如果希望只取出，不插入，就使用<code>? extends Hero</code></p>
+<p>如果希望只插入，不取出，就使用<code>? super Hero</code></p>
+<p>如果希望，又能插入，又能取出，就<strong>不要</strong>用通配符<code>？</code></p>
+<h2 id="泛型转型"><a href="#泛型转型" class="headerlink" title="泛型转型"></a>泛型转型</h2><h3 id="对象转型"><a href="#对象转型" class="headerlink" title="对象转型"></a>对象转型</h3><p>根据面向对象学习的知识，==子类转父类== 是一定可以成功的</p>
+<h3 id="子类泛型转父类泛型"><a href="#子类泛型转父类泛型" class="headerlink" title="子类泛型转父类泛型"></a>子类泛型转父类泛型</h3><p>既然子类对象转父类对象是可以成功的，那么子类泛型转父类泛型能成功吗？（不能）<br>例如：</p>
+<ul>
+<li>hs的泛型是父类Hero</li>
+<li>adhs 的泛型是子类ADHero</li>
+</ul>
+<p>那么 把adhs转换为hs能成功吗？（不能）</p>
+<blockquote>
+<p>父类转子类也不能</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>java</category>
+      </categories>
+      <tags>
+        <tag>javaSE</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>2.1-访问修饰符</title>
     <url>/2021/05/17/javaSE/2.1-%E8%AE%BF%E9%97%AE%E4%BF%AE%E9%A5%B0%E7%AC%A6/</url>
     <content><![CDATA[<h1 id="访问修饰符"><a href="#访问修饰符" class="headerlink" title="访问修饰符"></a>访问修饰符</h1><h2 id="区分："><a href="#区分：" class="headerlink" title="区分："></a>区分：</h2><p>有 <code>public</code>、<code>private</code>、<code>protected</code></p>
@@ -2464,65 +2464,6 @@
       </tags>
   </entry>
   <entry>
-    <title>21-注解</title>
-    <url>/2021/05/20/javaSE/21-%E6%B3%A8%E8%A7%A3/</url>
-    <content><![CDATA[<h1 id="Java注解Anotation"><a href="#Java注解Anotation" class="headerlink" title="Java注解Anotation"></a>Java注解Anotation</h1><h2 id="1-什么是注解"><a href="#1-什么是注解" class="headerlink" title="1. 什么是注解"></a>1. 什么是注解</h2><p>注解是jdk5.0开始引进的新技术</p>
-<h3 id="1-1作用是什么"><a href="#1-1作用是什么" class="headerlink" title="1.1作用是什么"></a>1.1作用是什么</h3><ol>
-<li><p>注解的作用类似注释，但注释是给人（程序员）看的，而注解是给编译器看的。</p>
-</li>
-<li><p>注解通过标记包、类、字段、方法、局部变量、方法参数等元素据，告诉jvm这些元素据的信息</p>
-</li>
-</ol>
-<h3 id="1-2-格式"><a href="#1-2-格式" class="headerlink" title="1.2 格式"></a>1.2 格式</h3><p>以 <code>@注解名</code> 的格式存在，如：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@override</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@suppressWarnings(value=&quot;unchecked&quot;)</span></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-
-
-
-
-
-
-<h2 id="2-元注解"><a href="#2-元注解" class="headerlink" title="2. 元注解"></a>2. 元注解</h2><p>元注解即用来定义注解的注解，也就是在你创建注解的时候会用到，Java有4个类型的元注解：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Target</span></span><br><span class="line"><span class="meta">@Retention</span></span><br><span class="line"><span class="meta">@Documented</span> </span><br><span class="line"><span class="meta">@Inherited</span></span><br></pre></td></tr></table></figure>
-
-
-
-<ol>
-<li><p><code>@Target</code> 表示该注解用于什么地方，可以是包、类、方法……，在枚举类 <code>ElemenetType</code>中 有说明:</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">enum</span> <span class="title">ElementType</span> </span>&#123;</span><br><span class="line">    <span class="comment">/** Class, interface (including annotation type), or enum declaration */</span></span><br><span class="line">    TYPE,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Field declaration (includes enum constants) */</span></span><br><span class="line">    FIELD,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Method declaration */</span></span><br><span class="line">    METHOD,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Formal parameter declaration */</span></span><br><span class="line">    PARAMETER,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Constructor declaration */</span></span><br><span class="line">    CONSTRUCTOR,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Local variable declaration */</span></span><br><span class="line">    LOCAL_VARIABLE,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Annotation type declaration */</span></span><br><span class="line">    ANNOTATION_TYPE,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Package declaration */</span></span><br><span class="line">    PACKAGE,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Type parameter declaration</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@since</span> 1.8</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    TYPE_PARAMETER,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Use of a type</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@since</span> 1.8</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    TYPE_USE</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>例如创建一个test1注解：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Target(&#123;ElementType.METHOD, ElementType.TYPE&#125;)</span>     <span class="comment">//可以用在方法、class中</span></span><br><span class="line"><span class="meta">@interface</span> Test1&#123;</span><br><span class="line">    <span class="function">String <span class="title">value</span><span class="params">()</span> <span class="keyword">default</span> &quot;&quot;</span>;       <span class="comment">//参数，默认为空    </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li><p><code>@Retention</code> 表示在什么级别保存该注解信息。可选的参数值在枚举类型 RetentionPolicy 中，包括：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">RetentionPolicy.SOURCE        <span class="comment">//注解将被编译器丢弃 </span></span><br><span class="line">RetentionPolicy.CLASS         <span class="comment">//注解在class文件中可用，但会被VM丢弃 </span></span><br><span class="line">RetentionPolicy.RUNTIME 		<span class="comment">//JVM将在运行期也保留注释，因此可以通过反射机制读取注解的信息。通常自定义注解都用这个</span></span><br></pre></td></tr></table></figure></li>
-</ol>
-<ol start="3">
-<li><code>@Documented</code> 将此注解包含在 javadoc 中 ，它代表着此注解会被javadoc工具提取成文档。在doc文档中的内容会因为此注解的信息内容不同而不同。</li>
-</ol>
-<ol start="4">
-<li><code>@Inherited</code> 允许子类继承父类中的注解。</li>
-</ol>
-<h2 id="3-自定义注解"><a href="#3-自定义注解" class="headerlink" title="3. 自定义注解"></a>3. 自定义注解</h2><p>一般使用元注解 </p>
-<ul>
-<li>@Target，指明在哪里使用</li>
-<li>@Retention， 指明在什么时候起作用</li>
-</ul>
-<p>例如：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Target(&#123;ElementType.METHOD, ElementType.TYPE&#125;)</span></span><br><span class="line"><span class="meta">@Retention(value = RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="keyword">public</span><span class="meta">@interface</span> User&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//下面是注解的参数，定义格式：“类型 参数名();” , 默认值看自己要不要写</span></span><br><span class="line">    <span class="function">String <span class="title">name</span><span class="params">()</span> <span class="keyword">default</span> &quot;&quot;</span>;      <span class="comment">//默认值为空</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">id</span><span class="params">()</span> <span class="keyword">default</span> -1</span>;     <span class="comment">//默认值-1，代表不存在</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>javaSE</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>20-反射机制</title>
     <url>/2021/05/19/javaSE/20-%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/</url>
     <content><![CDATA[<h1 id="Java反射机制"><a href="#Java反射机制" class="headerlink" title="Java反射机制"></a>Java反射机制</h1><h2 id="获取类对象"><a href="#获取类对象" class="headerlink" title="获取类对象"></a>获取类对象</h2><h3 id="类对象"><a href="#类对象" class="headerlink" title="类对象"></a>类对象</h3><p><strong>类对象</strong>，用于描述这种类，都有什么属性，什么方法的</p>
@@ -2579,6 +2520,65 @@
 <li>调用指定对象的方法—— <code>invoke</code></li>
 </ol>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line">Hero h = <span class="keyword">new</span> Hero();</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 获取这个名字叫做setName，参数类型是String的方法</span></span><br><span class="line">Method m = h.getClass().getMethod(<span class="string">&quot;setName&quot;</span>, String.class);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对h对象，调用这个方法</span></span><br><span class="line">m.invoke(h, <span class="string">&quot;garent&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>java</category>
+      </categories>
+      <tags>
+        <tag>javaSE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>21-注解</title>
+    <url>/2021/05/20/javaSE/21-%E6%B3%A8%E8%A7%A3/</url>
+    <content><![CDATA[<h1 id="Java注解Anotation"><a href="#Java注解Anotation" class="headerlink" title="Java注解Anotation"></a>Java注解Anotation</h1><h2 id="1-什么是注解"><a href="#1-什么是注解" class="headerlink" title="1. 什么是注解"></a>1. 什么是注解</h2><p>注解是jdk5.0开始引进的新技术</p>
+<h3 id="1-1作用是什么"><a href="#1-1作用是什么" class="headerlink" title="1.1作用是什么"></a>1.1作用是什么</h3><ol>
+<li><p>注解的作用类似注释，但注释是给人（程序员）看的，而注解是给编译器看的。</p>
+</li>
+<li><p>注解通过标记包、类、字段、方法、局部变量、方法参数等元素据，告诉jvm这些元素据的信息</p>
+</li>
+</ol>
+<h3 id="1-2-格式"><a href="#1-2-格式" class="headerlink" title="1.2 格式"></a>1.2 格式</h3><p>以 <code>@注解名</code> 的格式存在，如：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@override</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@suppressWarnings(value=&quot;unchecked&quot;)</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+<h2 id="2-元注解"><a href="#2-元注解" class="headerlink" title="2. 元注解"></a>2. 元注解</h2><p>元注解即用来定义注解的注解，也就是在你创建注解的时候会用到，Java有4个类型的元注解：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Target</span></span><br><span class="line"><span class="meta">@Retention</span></span><br><span class="line"><span class="meta">@Documented</span> </span><br><span class="line"><span class="meta">@Inherited</span></span><br></pre></td></tr></table></figure>
+
+
+
+<ol>
+<li><p><code>@Target</code> 表示该注解用于什么地方，可以是包、类、方法……，在枚举类 <code>ElemenetType</code>中 有说明:</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">enum</span> <span class="title">ElementType</span> </span>&#123;</span><br><span class="line">    <span class="comment">/** Class, interface (including annotation type), or enum declaration */</span></span><br><span class="line">    TYPE,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Field declaration (includes enum constants) */</span></span><br><span class="line">    FIELD,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Method declaration */</span></span><br><span class="line">    METHOD,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Formal parameter declaration */</span></span><br><span class="line">    PARAMETER,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Constructor declaration */</span></span><br><span class="line">    CONSTRUCTOR,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Local variable declaration */</span></span><br><span class="line">    LOCAL_VARIABLE,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Annotation type declaration */</span></span><br><span class="line">    ANNOTATION_TYPE,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Package declaration */</span></span><br><span class="line">    PACKAGE,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Type parameter declaration</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@since</span> 1.8</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    TYPE_PARAMETER,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Use of a type</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@since</span> 1.8</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    TYPE_USE</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>例如创建一个test1注解：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Target(&#123;ElementType.METHOD, ElementType.TYPE&#125;)</span>     <span class="comment">//可以用在方法、class中</span></span><br><span class="line"><span class="meta">@interface</span> Test1&#123;</span><br><span class="line">    <span class="function">String <span class="title">value</span><span class="params">()</span> <span class="keyword">default</span> &quot;&quot;</span>;       <span class="comment">//参数，默认为空    </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p><code>@Retention</code> 表示在什么级别保存该注解信息。可选的参数值在枚举类型 RetentionPolicy 中，包括：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">RetentionPolicy.SOURCE        <span class="comment">//注解将被编译器丢弃 </span></span><br><span class="line">RetentionPolicy.CLASS         <span class="comment">//注解在class文件中可用，但会被VM丢弃 </span></span><br><span class="line">RetentionPolicy.RUNTIME 		<span class="comment">//JVM将在运行期也保留注释，因此可以通过反射机制读取注解的信息。通常自定义注解都用这个</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<ol start="3">
+<li><code>@Documented</code> 将此注解包含在 javadoc 中 ，它代表着此注解会被javadoc工具提取成文档。在doc文档中的内容会因为此注解的信息内容不同而不同。</li>
+</ol>
+<ol start="4">
+<li><code>@Inherited</code> 允许子类继承父类中的注解。</li>
+</ol>
+<h2 id="3-自定义注解"><a href="#3-自定义注解" class="headerlink" title="3. 自定义注解"></a>3. 自定义注解</h2><p>一般使用元注解 </p>
+<ul>
+<li>@Target，指明在哪里使用</li>
+<li>@Retention， 指明在什么时候起作用</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Target(&#123;ElementType.METHOD, ElementType.TYPE&#125;)</span></span><br><span class="line"><span class="meta">@Retention(value = RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="keyword">public</span><span class="meta">@interface</span> User&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//下面是注解的参数，定义格式：“类型 参数名();” , 默认值看自己要不要写</span></span><br><span class="line">    <span class="function">String <span class="title">name</span><span class="params">()</span> <span class="keyword">default</span> &quot;&quot;</span>;      <span class="comment">//默认值为空</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">id</span><span class="params">()</span> <span class="keyword">default</span> -1</span>;     <span class="comment">//默认值-1，代表不存在</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 ]]></content>
       <categories>
@@ -2710,54 +2710,6 @@
       </tags>
   </entry>
   <entry>
-    <title>4-变量</title>
-    <url>/2021/05/23/javaSE/4-%E5%8F%98%E9%87%8F/</url>
-    <content><![CDATA[<h1 id="4-变量"><a href="#4-变量" class="headerlink" title="4.变量"></a>4.变量</h1><h2 id="4-1-命名规则"><a href="#4-1-命名规则" class="headerlink" title="4.1 命名规则"></a>4.1 命名规则</h2><ul>
-<li>变量名只能使用 <code>字母</code>、<code>数字</code>、<code>$</code>、<code>_</code></li>
-<li>变量第一个字符 只能使用 <code>字母 、$、 _</code></li>
-<li>使用完整单词命名</li>
-</ul>
-<h2 id="4-2-类型转换"><a href="#4-2-类型转换" class="headerlink" title="4.2 类型转换"></a>4.2 类型转换</h2><ul>
-<li><p>低精度向高精度转换可以正常转换</p>
-</li>
-<li><p>高精度向低精度转换有风险</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line">  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">  </span><br><span class="line">        <span class="keyword">byte</span> b = <span class="number">5</span>;</span><br><span class="line">        <span class="keyword">int</span> i1 = <span class="number">10</span>;</span><br><span class="line">        <span class="keyword">int</span> i2 = <span class="number">300</span>;</span><br><span class="line">          </span><br><span class="line">        b = (<span class="keyword">byte</span>) i1;</span><br><span class="line">        <span class="comment">//因为i1的值是在byte范围之内，所以即便进行强制转换</span></span><br><span class="line">        <span class="comment">//最后得到的值，也是10</span></span><br><span class="line">        System.out.println(b);</span><br><span class="line">          </span><br><span class="line">        <span class="comment">//因为i2的值是在byte范围之外，所以就会按照byte的长度进行截取</span></span><br><span class="line">        <span class="comment">//i2的值是300，其对应的二进制数是 100101100</span></span><br><span class="line">        <span class="comment">//按照byte的长度8位进行截取后，其值为 00101100 即44</span></span><br><span class="line">        b =(<span class="keyword">byte</span>) i2;</span><br><span class="line">        System.out.println(b);</span><br><span class="line">         </span><br><span class="line">        <span class="comment">//查看一个整数对应的二进制的方法：</span></span><br><span class="line">        System.out.println(Integer.toBinaryString(i2));</span><br><span class="line">         </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>注意：<code>short + short = int</code></p>
-</li>
-</ul>
-<h2 id="4-3-变量分类"><a href="#4-3-变量分类" class="headerlink" title="4.3 变量分类"></a>4.3 变量分类</h2><ul>
-<li><p>成员变量（字段、属性、Field）：</p>
-<p>当一个变量被声明在类下面，变量就叫做<strong>成员变量</strong>，或<strong>字段</strong> 、<strong>属性</strong>、<strong>Field</strong></p>
-<p>比如变量下面例子中，<code>i</code>就是一个属性。那么从第2行这个变量声明的位置开始，整个类都可以访问得到；所以其作用域就是从其声明的位置开始的整个类</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> j = i;  <span class="comment">//其他的属性可以访问i</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method1</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(i); <span class="comment">//方法1里可以访问i</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method2</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(i); <span class="comment">//方法2里可以访问i</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li><p>参数</p>
-<p>如果一个变量，是声明在一个方法上的，就叫做<strong>参数</strong>，参数的作用域即为<strong>该方法</strong>内的所有代码，在该方法外面不能使用该参数</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method1</span><span class="params">(<span class="keyword">int</span> i)</span></span>&#123; <span class="comment">//参数i的作用域即方法method1</span></span><br><span class="line">        System.out.println(i);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method2</span><span class="params">()</span></span>&#123;</span><br><span class="line"> </span><br><span class="line">        System.out.println(i); <span class="comment">//method2 不能访问参数i</span></span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">    <span class="keyword">int</span> j = i;  <span class="comment">//类里面也不能访问参数i</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li><p>局部变量</p>
-<p>声明在方法内的变量，叫做局部变量，其作用域在声明开始的位置，到其所处于的块结束位置。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> i  = <span class="number">5</span>;  <span class="comment">//其作用范围是从声明的第4行，到其所处于的块结束12行位置</span></span><br><span class="line">        System.out.println(i);</span><br><span class="line">        &#123;            <span class="comment">//子块</span></span><br><span class="line">            System.out.println(i); <span class="comment">//可以访问i</span></span><br><span class="line">            <span class="keyword">int</span> j = <span class="number">6</span>;</span><br><span class="line">            System.out.println(j); <span class="comment">//可以访问j</span></span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(j); <span class="comment">//不能访问j,因为其作用域到第10行就结束了</span></span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ul>
-<ul>
-<li><p>静态变量</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> age;	<span class="comment">//(类变量)</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-<h2 id="4-4-final变量"><a href="#4-4-final变量" class="headerlink" title="4.4 final变量"></a>4.4 final变量</h2><p>用final修饰的变量，只能赋值1次，因此常<strong>用于定义常量</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line">         </span><br><span class="line">        i = <span class="number">10</span>; <span class="comment">//i在第4行已经被赋值过了，所以这里会出现编译错误</span></span><br><span class="line">         </span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>但是对于引用类型的数据，变量存储的是地址，地址不可变，但地址里存放的值可以改变</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> []a = &#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125;;</span><br><span class="line">        a[<span class="number">1</span>] = <span class="number">10</span>;</span><br><span class="line">        a[<span class="number">2</span>] = <span class="number">100</span>;</span><br><span class="line">        </span><br><span class="line">        System.out.println(a[<span class="number">1</span>]);</span><br><span class="line">        System.out.println(a[<span class="number">2</span>]);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 注意这样写：a = &#123;4,5,6&#125;; 是错误的</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>输出如下<img src="https://gitee.com/Dream-and-dreaming/images/raw/master/img/image-20210122203958650.png" alt="image-20210122203958650"></p>
-]]></content>
-      <categories>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>javaSE</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>3.2-数组</title>
     <url>/2021/05/22/javaSE/3.2-%E6%95%B0%E7%BB%84/</url>
     <content><![CDATA[<h1 id="Arrays类"><a href="#Arrays类" class="headerlink" title="Arrays类"></a>Arrays类</h1><h2 id="常用数组操作"><a href="#常用数组操作" class="headerlink" title="常用数组操作"></a>常用数组操作</h2><table>
@@ -2837,6 +2789,54 @@
 </ul>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> a[] = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">10</span>];</span><br><span class="line">  </span><br><span class="line">        Arrays.fill(a, <span class="number">5</span>);</span><br><span class="line">  </span><br><span class="line">        System.out.println(Arrays.toString(a));</span><br><span class="line">  </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//输出：[5, 5, 5, 5, 5, 5, 5, 5, 5, 5]</span></span><br></pre></td></tr></table></figure>
 
+]]></content>
+      <categories>
+        <category>java</category>
+      </categories>
+      <tags>
+        <tag>javaSE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>4-变量</title>
+    <url>/2021/05/23/javaSE/4-%E5%8F%98%E9%87%8F/</url>
+    <content><![CDATA[<h1 id="4-变量"><a href="#4-变量" class="headerlink" title="4.变量"></a>4.变量</h1><h2 id="4-1-命名规则"><a href="#4-1-命名规则" class="headerlink" title="4.1 命名规则"></a>4.1 命名规则</h2><ul>
+<li>变量名只能使用 <code>字母</code>、<code>数字</code>、<code>$</code>、<code>_</code></li>
+<li>变量第一个字符 只能使用 <code>字母 、$、 _</code></li>
+<li>使用完整单词命名</li>
+</ul>
+<h2 id="4-2-类型转换"><a href="#4-2-类型转换" class="headerlink" title="4.2 类型转换"></a>4.2 类型转换</h2><ul>
+<li><p>低精度向高精度转换可以正常转换</p>
+</li>
+<li><p>高精度向低精度转换有风险</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line">  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">  </span><br><span class="line">        <span class="keyword">byte</span> b = <span class="number">5</span>;</span><br><span class="line">        <span class="keyword">int</span> i1 = <span class="number">10</span>;</span><br><span class="line">        <span class="keyword">int</span> i2 = <span class="number">300</span>;</span><br><span class="line">          </span><br><span class="line">        b = (<span class="keyword">byte</span>) i1;</span><br><span class="line">        <span class="comment">//因为i1的值是在byte范围之内，所以即便进行强制转换</span></span><br><span class="line">        <span class="comment">//最后得到的值，也是10</span></span><br><span class="line">        System.out.println(b);</span><br><span class="line">          </span><br><span class="line">        <span class="comment">//因为i2的值是在byte范围之外，所以就会按照byte的长度进行截取</span></span><br><span class="line">        <span class="comment">//i2的值是300，其对应的二进制数是 100101100</span></span><br><span class="line">        <span class="comment">//按照byte的长度8位进行截取后，其值为 00101100 即44</span></span><br><span class="line">        b =(<span class="keyword">byte</span>) i2;</span><br><span class="line">        System.out.println(b);</span><br><span class="line">         </span><br><span class="line">        <span class="comment">//查看一个整数对应的二进制的方法：</span></span><br><span class="line">        System.out.println(Integer.toBinaryString(i2));</span><br><span class="line">         </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意：<code>short + short = int</code></p>
+</li>
+</ul>
+<h2 id="4-3-变量分类"><a href="#4-3-变量分类" class="headerlink" title="4.3 变量分类"></a>4.3 变量分类</h2><ul>
+<li><p>成员变量（字段、属性、Field）：</p>
+<p>当一个变量被声明在类下面，变量就叫做<strong>成员变量</strong>，或<strong>字段</strong> 、<strong>属性</strong>、<strong>Field</strong></p>
+<p>比如变量下面例子中，<code>i</code>就是一个属性。那么从第2行这个变量声明的位置开始，整个类都可以访问得到；所以其作用域就是从其声明的位置开始的整个类</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> j = i;  <span class="comment">//其他的属性可以访问i</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method1</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(i); <span class="comment">//方法1里可以访问i</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method2</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(i); <span class="comment">//方法2里可以访问i</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>参数</p>
+<p>如果一个变量，是声明在一个方法上的，就叫做<strong>参数</strong>，参数的作用域即为<strong>该方法</strong>内的所有代码，在该方法外面不能使用该参数</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method1</span><span class="params">(<span class="keyword">int</span> i)</span></span>&#123; <span class="comment">//参数i的作用域即方法method1</span></span><br><span class="line">        System.out.println(i);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method2</span><span class="params">()</span></span>&#123;</span><br><span class="line"> </span><br><span class="line">        System.out.println(i); <span class="comment">//method2 不能访问参数i</span></span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">    <span class="keyword">int</span> j = i;  <span class="comment">//类里面也不能访问参数i</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>局部变量</p>
+<p>声明在方法内的变量，叫做局部变量，其作用域在声明开始的位置，到其所处于的块结束位置。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> i  = <span class="number">5</span>;  <span class="comment">//其作用范围是从声明的第4行，到其所处于的块结束12行位置</span></span><br><span class="line">        System.out.println(i);</span><br><span class="line">        &#123;            <span class="comment">//子块</span></span><br><span class="line">            System.out.println(i); <span class="comment">//可以访问i</span></span><br><span class="line">            <span class="keyword">int</span> j = <span class="number">6</span>;</span><br><span class="line">            System.out.println(j); <span class="comment">//可以访问j</span></span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(j); <span class="comment">//不能访问j,因为其作用域到第10行就结束了</span></span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<ul>
+<li><p>静态变量</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> age;	<span class="comment">//(类变量)</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="4-4-final变量"><a href="#4-4-final变量" class="headerlink" title="4.4 final变量"></a>4.4 final变量</h2><p>用final修饰的变量，只能赋值1次，因此常<strong>用于定义常量</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line">         </span><br><span class="line">        i = <span class="number">10</span>; <span class="comment">//i在第4行已经被赋值过了，所以这里会出现编译错误</span></span><br><span class="line">         </span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是对于引用类型的数据，变量存储的是地址，地址不可变，但地址里存放的值可以改变</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> []a = &#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125;;</span><br><span class="line">        a[<span class="number">1</span>] = <span class="number">10</span>;</span><br><span class="line">        a[<span class="number">2</span>] = <span class="number">100</span>;</span><br><span class="line">        </span><br><span class="line">        System.out.println(a[<span class="number">1</span>]);</span><br><span class="line">        System.out.println(a[<span class="number">2</span>]);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 注意这样写：a = &#123;4,5,6&#125;; 是错误的</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出如下<img src="https://gitee.com/Dream-and-dreaming/images/raw/master/img/image-20210122203958650.png" alt="image-20210122203958650"></p>
 ]]></content>
       <categories>
         <category>java</category>
@@ -3763,44 +3763,6 @@
       </tags>
   </entry>
   <entry>
-    <title>7-spring容器注入</title>
-    <url>/2021/05/16/java_spring/7-spring%E5%AE%B9%E5%99%A8%E6%B3%A8%E5%85%A5/</url>
-    <content><![CDATA[<h1 id="spring容器注入"><a href="#spring容器注入" class="headerlink" title="spring容器注入"></a>spring容器注入</h1><p> <a href="https://codechina.csdn.net/m0_46079750/spring4/-/tree/master">跳转到项目地址</a></p>
-<p>如果是<code>String</code> 这种简单类型的数据，spring注入如下：</p>
-<p>User.java</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>beans.xml</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--前面的省略--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.xxx.User&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;张三&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<p>但是，如果要注入的不是如<code>String</code> 这种简单类型数据，而是array、list、map、prop。。。这种容器类型数据，应该如何写bean，下面是模板：</p>
-<p><a href="https://docs.spring.io/spring-framework/docs/5.2.9.RELEASE/spring-framework-reference/core.html#beans-inner-beans">官方文档说明</a></p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;moreComplexObject&quot;</span> <span class="attr">class</span>=<span class="string">&quot;example.ComplexObject&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- array注入 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;books&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">array</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>《abc》<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>《defg》<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>《hijk》<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">array</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- prop注入 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;adminEmails&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">props</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;administrator&quot;</span>&gt;</span>administrator@example.org<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;support&quot;</span>&gt;</span>support@example.org<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;development&quot;</span>&gt;</span>development@example.org<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">props</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- list注入 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;someList&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">list</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>a list element followed by a reference<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">ref</span> <span class="attr">bean</span>=<span class="string">&quot;myDataSource&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">list</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- map --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;someMap&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">map</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">&quot;an entry&quot;</span> <span class="attr">value</span>=<span class="string">&quot;just some string&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span> =<span class="string">&quot;a ref&quot;</span> <span class="attr">value-ref</span>=<span class="string">&quot;myDataSource&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">map</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- set注入 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;someSet&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">set</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>just some string<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">ref</span> <span class="attr">bean</span>=<span class="string">&quot;myDataSource&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">set</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p>例如要往下面这些属性注入值</p>
-<p>![image-20210730172726839](<a href="https://gitee.com/ajream/images/raw/master/img/2021-07-30">https://gitee.com/ajream/images/raw/master/img/2021-07-30</a> 17-27-28_image-20210730172726839.png)</p>
-<p>beans.xml：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="string"><span class="tag">     https://www.springframework.org/schema/beans/spring-beans.xsd&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;address&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.Address&quot;</span> &gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;addr&quot;</span> <span class="attr">value</span>=<span class="string">&quot;西安&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;student&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.Student&quot;</span>&gt;</span></span><br><span class="line">        </span><br><span class="line"><span class="comment">&lt;!--        普通值注入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;王二&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;age&quot;</span> <span class="attr">value</span>=<span class="string">&quot;30&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--        bean注入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;address&quot;</span> <span class="attr">ref</span>=<span class="string">&quot;address&quot;</span> /&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--        数组array注入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;books&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">array</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>《计算机技术》<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>《操作系统》<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>《数据结构》<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">array</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--        set注入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;games&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">set</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>王者荣耀<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>少年三国志<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">set</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--        list注入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;hobbies&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">list</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>打游戏<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>打羽毛球<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">list</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--        map注入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;grade&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">map</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">&quot;高等数学&quot;</span> <span class="attr">value</span>=<span class="string">&quot;85&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">&quot;大学英语&quot;</span> <span class="attr">value</span>=<span class="string">&quot;90&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">&quot;java基础&quot;</span> <span class="attr">value</span>=<span class="string">&quot;98&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">map</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--        prop注入，类似map--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;info&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">props</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;email&quot;</span>&gt;</span>administrator@example.org<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;phone&quot;</span>&gt;</span>13389453895<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;QQ-number&quot;</span>&gt;</span>456382987<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">props</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p>输出预览：</p>
-<p>![image-20210730173016148](<a href="https://gitee.com/ajream/images/raw/master/img/2021-07-30">https://gitee.com/ajream/images/raw/master/img/2021-07-30</a> 17-30-17_image-20210730173016148.png)</p>
-]]></content>
-      <categories>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>java_spring</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>8-命名空间和作用域</title>
     <url>/2021/05/17/java_spring/8-%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E5%92%8C%E4%BD%9C%E7%94%A8%E5%9F%9F/</url>
     <content><![CDATA[<h1 id="命名空间和bean作用域"><a href="#命名空间和bean作用域" class="headerlink" title="命名空间和bean作用域"></a>命名空间和bean作用域</h1><h2 id="命名空间"><a href="#命名空间" class="headerlink" title="命名空间"></a>命名空间</h2><p><a href="https://codechina.csdn.net/m0_46079750/spring5/-/tree/master/">项目地址</a></p>
@@ -3853,6 +3815,44 @@
 
 
 
+]]></content>
+      <categories>
+        <category>java</category>
+      </categories>
+      <tags>
+        <tag>java_spring</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>7-spring容器注入</title>
+    <url>/2021/05/16/java_spring/7-spring%E5%AE%B9%E5%99%A8%E6%B3%A8%E5%85%A5/</url>
+    <content><![CDATA[<h1 id="spring容器注入"><a href="#spring容器注入" class="headerlink" title="spring容器注入"></a>spring容器注入</h1><p> <a href="https://codechina.csdn.net/m0_46079750/spring4/-/tree/master">跳转到项目地址</a></p>
+<p>如果是<code>String</code> 这种简单类型的数据，spring注入如下：</p>
+<p>User.java</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>beans.xml</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--前面的省略--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.xxx.User&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;张三&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>但是，如果要注入的不是如<code>String</code> 这种简单类型数据，而是array、list、map、prop。。。这种容器类型数据，应该如何写bean，下面是模板：</p>
+<p><a href="https://docs.spring.io/spring-framework/docs/5.2.9.RELEASE/spring-framework-reference/core.html#beans-inner-beans">官方文档说明</a></p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;moreComplexObject&quot;</span> <span class="attr">class</span>=<span class="string">&quot;example.ComplexObject&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- array注入 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;books&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">array</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>《abc》<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>《defg》<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>《hijk》<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">array</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- prop注入 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;adminEmails&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">props</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;administrator&quot;</span>&gt;</span>administrator@example.org<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;support&quot;</span>&gt;</span>support@example.org<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;development&quot;</span>&gt;</span>development@example.org<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">props</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- list注入 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;someList&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">list</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>a list element followed by a reference<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">ref</span> <span class="attr">bean</span>=<span class="string">&quot;myDataSource&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">list</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- map --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;someMap&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">map</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">&quot;an entry&quot;</span> <span class="attr">value</span>=<span class="string">&quot;just some string&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span> =<span class="string">&quot;a ref&quot;</span> <span class="attr">value-ref</span>=<span class="string">&quot;myDataSource&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">map</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- set注入 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;someSet&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">set</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>just some string<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">ref</span> <span class="attr">bean</span>=<span class="string">&quot;myDataSource&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">set</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>例如要往下面这些属性注入值</p>
+<p>![image-20210730172726839](<a href="https://gitee.com/ajream/images/raw/master/img/2021-07-30">https://gitee.com/ajream/images/raw/master/img/2021-07-30</a> 17-27-28_image-20210730172726839.png)</p>
+<p>beans.xml：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="string"><span class="tag">     https://www.springframework.org/schema/beans/spring-beans.xsd&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;address&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.Address&quot;</span> &gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;addr&quot;</span> <span class="attr">value</span>=<span class="string">&quot;西安&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;student&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.Student&quot;</span>&gt;</span></span><br><span class="line">        </span><br><span class="line"><span class="comment">&lt;!--        普通值注入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;王二&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;age&quot;</span> <span class="attr">value</span>=<span class="string">&quot;30&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--        bean注入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;address&quot;</span> <span class="attr">ref</span>=<span class="string">&quot;address&quot;</span> /&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--        数组array注入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;books&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">array</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>《计算机技术》<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>《操作系统》<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>《数据结构》<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">array</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--        set注入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;games&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">set</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>王者荣耀<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>少年三国志<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">set</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--        list注入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;hobbies&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">list</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>打游戏<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">value</span>&gt;</span>打羽毛球<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">list</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--        map注入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;grade&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">map</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">&quot;高等数学&quot;</span> <span class="attr">value</span>=<span class="string">&quot;85&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">&quot;大学英语&quot;</span> <span class="attr">value</span>=<span class="string">&quot;90&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">&quot;java基础&quot;</span> <span class="attr">value</span>=<span class="string">&quot;98&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">map</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--        prop注入，类似map--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;info&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">props</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;email&quot;</span>&gt;</span>administrator@example.org<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;phone&quot;</span>&gt;</span>13389453895<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;QQ-number&quot;</span>&gt;</span>456382987<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">props</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>输出预览：</p>
+<p>![image-20210730173016148](<a href="https://gitee.com/ajream/images/raw/master/img/2021-07-30">https://gitee.com/ajream/images/raw/master/img/2021-07-30</a> 17-30-17_image-20210730173016148.png)</p>
 ]]></content>
       <categories>
         <category>java</category>
