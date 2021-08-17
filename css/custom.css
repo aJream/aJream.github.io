@@ -1,66 +1,93 @@
 @font-face{
   font-family:'Candyhome' ;  /* 字体名自定义即可 */
-  src:url('/fonts/Candy.ttf'); /* 字体文件路径 */
+  src:url('https://cdn.jsdelivr.net/gh/ajream/ajream.github.io/fonts/Candy.ttf');
+  /* 字体文件路径 */
   font-display : swap;
 }
 
-h1#site-title {
+h1#site-title, #site-subtitle {
   font-family: 'Candyhome', sans-serif;
 }
+
+
+/* 除了主页外，其他页面顶部图片设置近似透明 */
+header#page-header {
+    background: #00000000;
+}
+
+#page-header.post-bg:before{
+    background: #00000000;
+    /* color: #49B1F5; */
+}
+
+
+/* 网站颜色配置 */
+
 
 
 /* 全局默认鼠标指针 */
 body,
 html{
-  cursor: url('/mouse/Arrow.cur'),auto !important;
+  cursor: url('https://cdn.jsdelivr.net/gh/ajream/ajream.github.io/mouse/Arrow.cur'),
+  auto !important;
 }
 /* 悬停图片时的鼠标指针 */
 img{
-  cursor: url('/mouse/Hand.cur'),auto !important;
+  cursor: url('https://cdn.jsdelivr.net/gh/ajream/ajream.github.io/mouse/Hand.cur'),
+  auto !important;
 }
 /* 选择链接标签时的鼠标指针 */
 a:hover{
-    cursor: url('/mouse/Hand.cur'),auto;
+    cursor: url('https://cdn.jsdelivr.net/gh/ajream/ajream.github.io/mouse/Hand.cur'),
+    auto;
 }
 /* 选中输入框时的鼠标指针 */
 input:hover{
-    cursor: url('/mouse/IBeam.cur'),auto;
+    cursor: url('https://cdn.jsdelivr.net/gh/ajream/ajream.github.io/mouse/IBeam.cur'),
+    auto;
 }
 /* 悬停按钮时的鼠标指针 */
 button:hover{
-    cursor: url('/mouse/Hand.cur'),auto;
+    cursor: url('https://cdn.jsdelivr.net/gh/ajream/ajream.github.io/mouse/Hand.cur'),
+    auto;
 }
 /* 悬停列表标签时的鼠标指针 */
 i:hover{
-    cursor: url('/mouse/Hand.cur'),auto;
+    cursor: url('https://cdn.jsdelivr.net/gh/ajream/ajream.github.io/mouse/Hand.cur'),
+    auto;
 }
 /* 悬停页脚链接标签（例如页脚徽标）时的鼠标指针 */
 #footer-wrap a:hover{
-      cursor: url('/mouse/Hand.cur'),auto;
+      cursor: url('https://cdn.jsdelivr.net/gh/ajream/ajream.github.io/mouse/Hand.cur'),
+      auto;
 }
 /* 悬停页码时的鼠标指针 */
 #pagination .page-number:hover{
-      cursor: url('/mouse/Arrow.cur'),auto;
+      cursor: url('https://cdn.jsdelivr.net/gh/ajream/ajream.github.io/mouse/Hand.cur'),
+      auto;
 }
 /* 悬停菜单栏时的鼠标指针 */
 #nav .site-page:hover{
-      cursor: url('/mouse/Hand.cur'),auto;
+      cursor: url('https://cdn.jsdelivr.net/gh/ajream/ajream.github.io/mouse/Hand.cur'),
+      auto;
 }
 .post-meta-date{
-    cursor: url('/mouse/Arrow.cur'),auto;
+    cursor: url('https://cdn.jsdelivr.net/gh/ajream/ajream.github.io/mouse/Arrow.cur'),
+    auto;
 }
 #recent-posts > .recent-post-item >.recent-post-info > .article-meta-wrap > .post-meta-date {
-    cursor: url('/mouse/Arrow.cur'),auto;
+    cursor: url('https://cdn.jsdelivr.net/gh/ajream/ajream.github.io/mouse/Arrow.cur'),
+    auto;
 }
 
 
 
 /* SAOUI字体精简包，仅73KB */
-@font-face{
+/* @font-face{
   font-family: 'SAOUI';
   src: url('https://cdn.jsdelivr.net/npm/akilar-candyassets/fonts/SAOUI.ttf');
   font-display: swap;
-}
+} */
 
 /* 公告栏配置 */
 #aside-content .card-widget {
