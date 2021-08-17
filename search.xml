@@ -3120,19 +3120,6 @@
       </tags>
   </entry>
   <entry>
-    <title>readme</title>
-    <url>/2021/06/05/javaSE/readme/</url>
-    <content><![CDATA[<p>javaEE即Java标准版，定位于个人计算机应用，是Java平台核心</p>
-<p>包括了AWT、swing、Applet。。。但这几个功能已经过时，不必再花时间学习。</p>
-]]></content>
-      <categories>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>javaSE</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>1-spring框架介绍</title>
     <url>/2021/05/05/java_spring/1-spring%E6%A1%86%E6%9E%B6%E4%BB%8B%E7%BB%8D/</url>
     <content><![CDATA[<h1 id="spring框架介绍"><a href="#spring框架介绍" class="headerlink" title="spring框架介绍"></a>spring框架介绍</h1><h2 id="spring是什么"><a href="#spring是什么" class="headerlink" title="spring是什么"></a>spring是什么</h2><ol>
