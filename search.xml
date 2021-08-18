@@ -948,6 +948,323 @@
       </tags>
   </entry>
   <entry>
+    <title>1-简介</title>
+    <url>/posts/78903d87</url>
+    <content><![CDATA[<h2 id="1、简介"><a href="#1、简介" class="headerlink" title="1、简介"></a>1、简介</h2><h3 id="什么是-MyBatis"><a href="#什么是-MyBatis" class="headerlink" title="什么是 MyBatis"></a>什么是 MyBatis</h3><p>​        MyBatis 是一款优秀的持久层框架，它支持自定义 SQL、存储过程以及高级映射。MyBatis 免除了几乎所有的 JDBC 代码以及设置参数和获取结果集的工作。MyBatis 可以通过简单的 XML 或注解来配置和映射原始类型、接口和 Java POJO（Plain Old Java Objects，普通老式 Java 对象）为数据库中的记录。</p>
+<h2 id="2、第一个MyBatis项目"><a href="#2、第一个MyBatis项目" class="headerlink" title="2、第一个MyBatis项目"></a>2、第一个MyBatis项目</h2><p><a href="https://codechina.csdn.net/m0_46079750/mybatis-study/-/tree/master/">项目地址mybatis-01</a></p>
+<h3 id="（1）安装库"><a href="#（1）安装库" class="headerlink" title="（1）安装库"></a>（1）安装库</h3><p>​    如果使用 Maven 来构建项目，则需将下面的依赖代码置于 pom.xml 文件中：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>mysql<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mysql-connector-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>8.0.26<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--注意：由于本地系统安装了版本8的Mysql，所以这里使用版本8的驱动--&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mybatis<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mybatis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.5.6<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>4.13<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="（2）创建MyBatis工具类"><a href="#（2）创建MyBatis工具类" class="headerlink" title="（2）创建MyBatis工具类"></a>（2）创建MyBatis工具类</h3><p>为了获取数据库表中的数据，需要创建一个MyBatis工具类com.ajream.utils.MybatisUtil，用于生成Mysql的会话，通过这个会话，可以get到数据库表中的数据</p>
+<p>com/ajream/utils/MybatisUtil.java</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.ajream.utils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.io.Resources;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.session.SqlSession;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.session.SqlSessionFactory;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.session.SqlSessionFactoryBuilder;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.io.InputStream;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MybatisUtil</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> SqlSessionFactory sqlSessionFactory;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//mybatis-config.xml是mybatis配置文件，用于配置MySQL信息</span></span><br><span class="line">            String resource = <span class="string">&quot;mybatis-config.xml&quot;</span>;   </span><br><span class="line">            InputStream inputStream = Resources.getResourceAsStream(resource);</span><br><span class="line">            sqlSessionFactory = <span class="keyword">new</span> SqlSessionFactoryBuilder().build(inputStream);</span><br><span class="line">        &#125;<span class="keyword">catch</span> (IOException e)&#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//生成Mysql的会话</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> SqlSession <span class="title">getSqlSesion</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> sqlSessionFactory.openSession();   </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>配置文件：mybatis-config.xml  （用于配置连接MySQL的基本信息）</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">configuration</span></span></span><br><span class="line"><span class="meta">        <span class="meta-keyword">PUBLIC</span> <span class="meta-string">&quot;-//mybatis.org//DTD Config 3.0//EN&quot;</span></span></span><br><span class="line"><span class="meta">        <span class="meta-string">&quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">environments</span> <span class="attr">default</span>=<span class="string">&quot;development&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">environment</span> <span class="attr">id</span>=<span class="string">&quot;development&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">transactionManager</span> <span class="attr">type</span>=<span class="string">&quot;JDBC&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">dataSource</span> <span class="attr">type</span>=<span class="string">&quot;POOLED&quot;</span>&gt;</span></span><br><span class="line">                </span><br><span class="line">                <span class="comment">&lt;!--注意value=”com.mysql.cj.jdbc.Driver“中的【cj】是MySQL版本8才要使用的--&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;driver&quot;</span> <span class="attr">value</span>=<span class="string">&quot;com.mysql.cj.jdbc.Driver&quot;</span>/&gt;</span></span><br><span class="line">                </span><br><span class="line">                <span class="comment">&lt;!--连接数据库用到的url，这里连接的database是school，根据自己情况修改--&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;url&quot;</span> <span class="attr">value</span>=<span class="string">&quot;jdbc:mysql://localhost:3306/school?useSSL=true<span class="symbol">&amp;amp;</span>useUnicode=true<span class="symbol">&amp;amp;</span>characterEncoding=UTF-8&quot;</span>/&gt;</span></span><br><span class="line">                </span><br><span class="line">                <span class="comment">&lt;!--用户名和密码--&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> <span class="attr">value</span>=<span class="string">&quot;xxx&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;password&quot;</span> <span class="attr">value</span>=<span class="string">&quot;xxx&quot;</span>/&gt;</span></span><br><span class="line">                </span><br><span class="line">            <span class="tag">&lt;/<span class="name">dataSource</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">environment</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">environments</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!--com/ajream/dao的路径下还有一个配置文件，此处把它包含进来--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mappers</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mapper</span> <span class="attr">resource</span>=<span class="string">&quot;com/ajream/dao/UserMapper.xml&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">mappers</span>&gt;</span></span><br><span class="line">    </span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="（3）存放数据的容器类"><a href="#（3）存放数据的容器类" class="headerlink" title="（3）存放数据的容器类"></a>（3）存放数据的容器类</h3><p>这是某个数据库school中student表中的数据</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-08-13 00-01-58_image-20210813000155615.png" alt="image-20210813000155615"></p>
+<p>所以这里创建一个User类来表示数据库中的字段</p>
+<p>com/ajream/pojo/User.java</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.ajream.pojo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">(String id, String name, <span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">        <span class="keyword">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(String id)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;User&#123;&quot;</span> +</span><br><span class="line">                <span class="string">&quot;id=&#x27;&quot;</span> + id + <span class="string">&#x27;\&#x27;&#x27;</span> +</span><br><span class="line">                <span class="string">&quot;, name=&#x27;&quot;</span> + name + <span class="string">&#x27;\&#x27;&#x27;</span> +</span><br><span class="line">                <span class="string">&quot;, age=&quot;</span> + age +</span><br><span class="line">                <span class="string">&#x27;&#125;&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="（4）创建一个接口"><a href="#（4）创建一个接口" class="headerlink" title="（4）创建一个接口"></a>（4）创建一个接口</h3><p>（用于获取并存放拿到的数据）</p>
+<p>com/ajream/dao/UserDao.java</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.ajream.dao;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.ajream.pojo.User;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserDao</span> </span>&#123;</span><br><span class="line">    <span class="function">List&lt;User&gt; <span class="title">getUserList</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="（5）实现这个接口"><a href="#（5）实现这个接口" class="headerlink" title="（5）实现这个接口"></a>（5）实现这个接口</h3><p>（即用sql语句获取数据）</p>
+<p>通常我们会创建一个 <code>UserDaoImpl</code> 来实现这个接口，但使用mybatis可以通过配置文件来实现：</p>
+<p>com/ajream/dao/UserMapper.xml</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">mapper</span></span></span><br><span class="line"><span class="meta">        <span class="meta-keyword">PUBLIC</span> <span class="meta-string">&quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;</span></span></span><br><span class="line"><span class="meta">        <span class="meta-string">&quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--命名空间是接口名--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">&quot;com.ajream.dao.UserDao&quot;</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!--getUserList是方法名，returnType是返回的数据类型--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getUserList&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span>&gt;</span></span><br><span class="line">        select * from school.student</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line">    </span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="（6）测试"><a href="#（6）测试" class="headerlink" title="（6）测试"></a>（6）测试</h3><p>以上配置完成后，可以写个test测试程序来取出数据库中的数据了</p>
+<p>com/ajream/dao/UserDaoTest.java</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.ajream.dao;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.ajream.pojo.User;</span><br><span class="line"><span class="keyword">import</span> com.ajream.utils.MybatisUtil;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.session.SqlSession;</span><br><span class="line"><span class="keyword">import</span> org.junit.Test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDaoTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">userDaoTest</span><span class="params">()</span></span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//获取MySQL会话</span></span><br><span class="line">        SqlSession sqlSession = MybatisUtil.getSqlSesion();</span><br><span class="line">        </span><br><span class="line">        UserDao userDao = sqlSession.getMapper(UserDao.class);</span><br><span class="line">        </span><br><span class="line">        List&lt;User&gt; userList = userDao.getUserList();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(User u: userList)&#123;</span><br><span class="line">            System.out.println(u);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        sqlSession.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-08-13 00-18-01_image-20210813001800000.png" alt="image-20210813001800000"></p>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>Mybatis</category>
+      </categories>
+      <tags>
+        <tag>Mybatis</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>1-Servlet</title>
+    <url>/posts/345d8e17</url>
+    <content><![CDATA[<h1 id="Servlet"><a href="#Servlet" class="headerlink" title="Servlet"></a>Servlet</h1><h2 id="servlet技术"><a href="#servlet技术" class="headerlink" title="servlet技术"></a>servlet技术</h2><ol>
+<li>Servlet是Java EE规范之一，规范即接口</li>
+<li>是JavaWeb三大组件之一，其他2个是：Filter过滤器、Listener监听器</li>
+<li>是运行在服务器上一个Java小程序，可以接收客户端发来的请求，并相应给客户端</li>
+<li>Servlet没有 <code>main()</code>方法，由系统自动调用</li>
+</ol>
+<h2 id="IDEA创建servlet"><a href="#IDEA创建servlet" class="headerlink" title="IDEA创建servlet"></a>IDEA创建servlet</h2><p><img src="https://img-blog.csdnimg.cn/20210502184910567.png" alt="在这里插入图片描述" style="zoom:43%;" /></p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 16-37-34_image-20210502163733514.png" alt="image-20210502163733514" style="zoom: 67%;" /></p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 16-38-39_image-20210502163838549.png" alt="image-20210502163838549" style="zoom:67%;" /></p>
+<h2 id="手动实现Servlet程序"><a href="#手动实现Servlet程序" class="headerlink" title="手动实现Servlet程序"></a>手动实现Servlet程序</h2><ol>
+<li><p>编写类实现Servlet规范，有3种方式：</p>
+<ol>
+<li><p>继承 <code>HttpServlet</code>类</p>
+ <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloServlet</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>实现 <code>Servlet</code>接口</p>
+ <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.servlet01;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.servlet.*;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Servlet01</span> <span class="keyword">implements</span> <span class="title">Servlet</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(ServletConfig servletConfig)</span> <span class="keyword">throws</span> ServletException </span>&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ServletConfig <span class="title">getServletConfig</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(ServletRequest servletRequest, ServletResponse servletResponse)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;实现Servlet接口&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getServletInfo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destroy</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+</ol>
+<ol>
+<li><p>实现 <code>service()</code>方法，处理请求，响应数据</p>
+<p>【快捷键 <kbd>ctrl + o</kbd> 可以重写方法或实现接口】</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloServlet</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(HttpServletRequest req, HttpServletResponse resp)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">        <span class="comment">//控制台打印</span></span><br><span class="line">        System.out.println(<span class="string">&quot;Hello Servlet&quot;</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//通过流输出数据到浏览器</span></span><br><span class="line">        resp.getWriter().write(<span class="string">&quot;hello servlet!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置注解<code>@WebServlet</code>，指定访问路径</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@WebServlet(name=&quot;helloServlet&quot;, value = &quot;/ser01&quot;)</span> <span class="comment">//name可以不设置</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<blockquote>
+<p>在第二步中，也可以不重写 <code>Service()</code>方法，而是更具体些，重写 <code>doGet()</code>、<code>doPost</code>方法；</p>
+<p>根据浏览器请求方式来进行不同处理</p>
+<p>但实际我们不知道浏览器以何种方式请求，故两个方法都需要去写，因此这种方式用的较少</p>
+</blockquote>
+<h2 id="Servlet工作流程"><a href="#Servlet工作流程" class="headerlink" title="Servlet工作流程"></a>Servlet工作流程</h2><p>url<code>http://localhost:8083/servlet01/ser01</code>含义：</p>
+<blockquote>
+<ul>
+<li>服务器：<code>http://localhost:8083</code></li>
+<li>项目：<code>/servlet01</code></li>
+<li>资源：<code>/ser01</code></li>
+</ul>
+</blockquote>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>javaEE</category>
+      </categories>
+      <tags>
+        <tag>javaEE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>2-Servlet生命周期</title>
+    <url>/posts/e7ba7594</url>
+    <content><![CDATA[<h1 id="Servlet生命周期"><a href="#Servlet生命周期" class="headerlink" title="Servlet生命周期"></a>Servlet生命周期</h1><ol>
+<li>通过调用 <code>init()</code>方法创建、初始化服务（系统自动调用，只执行一次）</li>
+<li>调用 <code>Service()</code> 方法执行服务</li>
+<li>调用 <code>destroy()</code>销毁服务（关闭服务器时系统自动调用，只执行一次）</li>
+</ol>
+<h4 id="Servlet工作流程"><a href="#Servlet工作流程" class="headerlink" title="Servlet工作流程"></a>Servlet工作流程</h4><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 17-00-01_image-20210502165959933.png" alt="image-20210502165959933"></p>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>javaEE</category>
+      </categories>
+      <tags>
+        <tag>javaEE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>3-ServletRequest对象</title>
+    <url>/posts/4609d38b</url>
+    <content><![CDATA[<h1 id="HttpServletRequest对象"><a href="#HttpServletRequest对象" class="headerlink" title="HttpServletRequest对象"></a>HttpServletRequest对象</h1><p>该对象主要用于接收客户端发送过来的信息，如请求参数、请求头等</p>
+<p>HttpServletRequest是ServletRequest的唯一的子<strong>接口</strong></p>
+<h2 id="接收请求"><a href="#接收请求" class="headerlink" title="接收请求"></a>接收请求</h2><h3 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//完整url路径</span></span><br><span class="line">String url = req.getRequestURL().toString();</span><br><span class="line"></span><br><span class="line"><span class="comment">//部分路径</span></span><br><span class="line">String uri = req.getRequestURI();</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取请求的参数（如果有的话,即路径中`?`后面的字符串）</span></span><br><span class="line">String query = req.getQueryString();</span><br><span class="line"></span><br><span class="line"><span class="comment">//请求方式get、post</span></span><br><span class="line">String method = req.getMethod();</span><br><span class="line"></span><br><span class="line"><span class="comment">//请求协议(http/1/1)</span></span><br><span class="line">String protocol = req.getProtocol();</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取项目站点名</span></span><br><span class="line">String webapp = req.getContextPath();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>请求为【<code>localhost:8083/sr02/servlet02</code>】时输出：</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 19-25-40_image-20210502192535571.png" alt="image-20210502192535571"></p>
+<p>请求为【<code>localhost:8083/sr02/servlet02?name=xiaod&amp;passwd=123456</code>】时：</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 19-29-20_image-20210502192917681.png" alt="image-20210502192917681"></p>
+<p><strong>详细参数获取（重点）</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//获取指定参数，返回字符串</span></span><br><span class="line">String name = req.getParameter(<span class="string">&quot;name&quot;</span>);  <span class="comment">//用户名</span></span><br><span class="line">String passwd = req.getParameter(<span class="string">&quot;passwd&quot;</span>);  <span class="comment">//密码</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 19-38-47_image-20210502193840780.png" alt="image-20210502193840780"></p>
+<p>获取多个同名参数（适用于复选框）</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//多个参数名称相同，用数组收集</span></span><br><span class="line"><span class="comment">//如：参数为 name=xiaod&amp;passwd=123456&amp;hobby=sing&amp;hobby=dance</span></span><br><span class="line">String[] hobbies = req.getParameterValues(<span class="string">&quot;hobby&quot;</span>); </span><br></pre></td></tr></table></figure>
+<h2 id="中文乱码问题"><a href="#中文乱码问题" class="headerlink" title="中文乱码问题"></a>中文乱码问题</h2><p>tomcat8以上版本只有get请求会乱码，使用字符串乱码处理方式来解决</p>
+<p>使用<strong>post请求</strong>提交表单时，若含有中文，获取到的是乱码</p>
+<p><strong>验证步骤</strong></p>
+<ol>
+<li><p>在webapp下创建login.jsp文件</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 20-18-02_image-20210502201756825.png" alt="image-20210502201756825" style="zoom:50%;" /></p>
+</li>
+<li><p>在login.jsp下粘贴以下代码</p>
+<figure class="highlight jsp"><table><tr><td class="code"><pre><span class="line">&lt;%@ page contentType=<span class="string">&quot;text/html;charset=UTF-8&quot;</span> language=<span class="string">&quot;java&quot;</span> %&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt;登录&lt;/title&gt;</span><br><span class="line">    &lt;form method=<span class="string">&quot;post&quot;</span> action=<span class="string">&quot;servlet02&quot;</span>&gt;</span><br><span class="line">        账户名：&lt;input type=<span class="string">&quot;text&quot;</span> name=<span class="string">&quot;name&quot;</span>&gt; &lt;br&gt;</span><br><span class="line">        密码：&lt;input type=<span class="string">&quot;password&quot;</span> name=<span class="string">&quot;passwd&quot;</span>&gt; &lt;br&gt;</span><br><span class="line">        &lt;button&gt;登录&lt;/button&gt;   &lt;!--button默认为提交按钮--&gt;</span><br><span class="line">    &lt;/form&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line"></span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>需要注意，form标签的属性 <code>action</code>为<strong>注解@WebServlet(“/servlet02”)</strong>中的 <code>servlet02</code>（不要有斜线），这样就与这个处理类关联起来了</p>
+</blockquote>
+</li>
+<li><p>运行启动</p>
+</li>
+<li><p>浏览器访问</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 20-30-03_image-20210502202959582.png" alt="image-20210502202959582"></p>
+</li>
+<li><p>点击登录提交给 <code>Servlet01</code>类（含有注解 <code>@WebServlet(&quot;/servlet02&quot;)</code> ）处理</p>
+<p>查看获取到的数据：</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 20-32-36_image-20210502203233059.png" alt="image-20210502203233059"></p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>javaEE</category>
+      </categories>
+      <tags>
+        <tag>javaEE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>4-请求转发</title>
+    <url>/posts/1a9b2152</url>
+    <content><![CDATA[<h1 id="请求转发"><a href="#请求转发" class="headerlink" title="请求转发"></a>请求转发</h1><ol>
+<li>可以让请求从服务端跳转到另一页面（或者跳转到另一个Servlet类处理）</li>
+<li>是服务端行为</li>
+<li>特点：<ol>
+<li>浏览器地址栏不发生改变</li>
+<li>实现不同的Servlet数据贡献</li>
+</ol>
+</li>
+</ol>
+<p>步骤：</p>
+<ol>
+<li><p>分别创建类：Servlet02和Servlet03</p>
+<p>填入以下内容：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//类Servlet02</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.xxxx.servlet02;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.servlet.ServletException;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.annotation.WebServlet;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServlet;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletRequest;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletResponse;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="meta">@WebServlet(&quot;/ser02&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Servlet02</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(HttpServletRequest req, HttpServletResponse resp)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">        String name = req.getParameter(<span class="string">&quot;name&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;ser02获取到用户名：&quot;</span> + name);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//跳转到servlet03</span></span><br><span class="line">        req.getRequestDispatcher(<span class="string">&quot;ser03&quot;</span>).forward(req, resp);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+   <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//类Servlet03</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.xxxx.servlet02;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.servlet.ServletException;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.annotation.WebServlet;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServlet;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletRequest;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletResponse;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="meta">@WebServlet(&quot;/ser03&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">servlet03</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(HttpServletRequest req, HttpServletResponse resp)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">        String name = req.getParameter(<span class="string">&quot;name&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;ser03获取到用户名：&quot;</span> + name);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>   在类Servlet02中，跳转语句为：</p>
+   <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">req.getRequestDispatcher(<span class="string">&quot;ser03&quot;</span>).forward(req, resp);</span><br></pre></td></tr></table></figure>
+<p>   <code>ser03</code>(没有斜线“/”)表示servlet03的注解 “<strong>@WebServlet(“/ser03”)</strong>”</p>
+<blockquote>
+<p>也可以跳转到 login.jsp页面</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//跳转到login.jsp</span></span><br><span class="line">req.getRequestDispatcher(<span class="string">&quot;login.jsp&quot;</span>).forward(req, resp);</span><br></pre></td></tr></table></figure>
+</blockquote>
+<ol>
+<li><p>启动服务，浏览器访问servlet02，然后自动会访问servlet03，但地址栏没变</p>
+<p><img src="https://gitee.com/aJream/images/raw/master/img/2021-05-02 21-15-48_image-20210502211542653.png" alt="image-20210502211542653"></p>
+</li>
+</ol>
+<p>   <img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 21-16-32_image-20210502211627393.png" alt="image-20210502211627393"></p>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>javaEE</category>
+      </categories>
+      <tags>
+        <tag>javaEE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>IDEA配置Tomcat</title>
+    <url>/posts/1a57c6b6</url>
+    <content><![CDATA[<p>三个步骤</p>
+<ol>
+<li><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-23-11_image-20210502152308870.png" alt="image-20210502152308870"></p>
+</li>
+<li></li>
+</ol>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-28-04_image-20210502152803463.png" alt="image-20210502152803463"></p>
+<ol>
+<li><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-29-56_image-20210502152955436.png" alt="image-20210502152955436"></p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>javaEE</category>
+      </categories>
+      <tags>
+        <tag>javaEE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>http</title>
+    <url>/posts/97780db2</url>
+    <content><![CDATA[<p><img src="https://gitee.com/Dream-and-dreaming/images/raw/master/img/2021-04-28 21-16-07_image-20210428211605440.png" alt="image-20210428211605440"></p>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>javaEE</category>
+      </categories>
+      <tags>
+        <tag>javaEE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Tomcat基础</title>
+    <url>/posts/530cfffd</url>
+    <content><![CDATA[<h1 id="Tomcat基础"><a href="#Tomcat基础" class="headerlink" title="Tomcat基础"></a>Tomcat基础</h1><h2 id="web概念"><a href="#web概念" class="headerlink" title="web概念"></a>web概念</h2><ol>
+<li>软件架构<ul>
+<li>C/S：客户端/服务器端（QQ、360。。。）</li>
+<li>B/S：浏览器/服务器端（京东、淘宝、网易。。。）</li>
+</ul>
+</li>
+<li>资源分类<ul>
+<li>静态资源（所有用户访问得到的结果一样）</li>
+<li>动态资源（不同用户访问的结果不同）</li>
+</ul>
+</li>
+<li>网络通信三要素<ul>
+<li>协议<ul>
+<li>tcp：安全协议、三次握手、速度较慢</li>
+<li>udp：不安全、速度快</li>
+</ul>
+</li>
+<li>ip：电子设备在网络中唯一标识</li>
+<li>端口号</li>
+</ul>
+</li>
+</ol>
+<h2 id="常见web服务器软件"><a href="#常见web服务器软件" class="headerlink" title="常见web服务器软件"></a>常见web服务器软件</h2><ol>
+<li>webLogic：大型JavaEE服务器，属于Oracle公司，收费</li>
+<li>webSphere：IBM公司</li>
+<li>JBOSS：JBOSS公司</li>
+<li>Tomcat：Apache组织</li>
+</ol>
+<h2 id="Tomcat安装与启动"><a href="#Tomcat安装与启动" class="headerlink" title="Tomcat安装与启动"></a>Tomcat安装与启动</h2><p>下载地址：<a href="https://tomcat.apache.org/download-80.cgi">Apache Downloads</a></p>
+<h3 id="启动tomcat"><a href="#启动tomcat" class="headerlink" title="启动tomcat"></a>启动tomcat</h3><p>运行bin目录下的批处理文件 <code>startup.bat</code>（确认当前是jdk1.8或以上，用<code>java -version</code>查看）</p>
+<h3 id="部署网页"><a href="#部署网页" class="headerlink" title="部署网页"></a>部署网页</h3><p>例如部署一个test.html文件</p>
+<ol>
+<li>把test.html文件复制到<strong>D:\tomcat\webapps\ROOT</strong> 目录下</li>
+<li>启动tomcat</li>
+<li>访问 <a href="http://127.0.0.1:8080/test.html">http://127.0.0.1:8080/test.html</a></li>
+</ol>
+<h3 id="改端口号"><a href="#改端口号" class="headerlink" title="改端口号"></a>改端口号</h3><p>8080是tomcat默认端口号，而平时上网默认使用80端口</p>
+<p>tomcat的端口配置相关信息在 server.xml中，server.xml 记录了非常多的tomcat配置信息，其中就包括端口。</p>
+<p>修改端口号步骤：</p>
+<ol>
+<li>打开server.xml文件</li>
+<li><code>ctrl+f</code>查询8080，将下面这句代码的<code>8080</code>修改为其他端口号，如80，8081，8082</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Connector</span> <span class="attr">port</span>=<span class="string">&quot;8080&quot;</span> <span class="attr">protocol</span>=<span class="string">&quot;HTTP/1.1&quot;</span> <span class="attr">connectionTimeout</span>=<span class="string">&quot;20000&quot;</span> <span class="attr">redirectPort</span>=<span class="string">&quot;8543&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+<p>接着就可以直接通过 <a href="http://127.0.0.1/test.html访问网页了。">http://127.0.0.1/test.html访问网页了。</a></p>
+<p>80端口就是web服务默认的端口号，所以就不需要显式写这个端口号了。</p>
+<h3 id="端口被占用"><a href="#端口被占用" class="headerlink" title="端口被占用"></a>端口被占用</h3><p>端口被占用就无法启动tomcat</p>
+<p>所以要找到端口被占用的程序是哪一个</p>
+<p>然后再关闭对应的程序即可</p>
+<ul>
+<li><p>查看80端口被哪些程序占用</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">netstat -ano|findstr &quot;80&quot;</span><br></pre></td></tr></table></figure>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/image-20210408072223224.png" alt="image-20210408072223224"></p>
+<p>第一行就是占用端口“80”的进程（其他只是含有80这个字符串而已），最后一列对应的进程的pid</p>
+</li>
+<li><p>根据pid查询对应应用程序</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">tasklist|findstr <span class="string">&quot;4&quot;</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/image-20210408072728546.png" alt="image-20210408072728546"></p>
+<p>第一个system就是占用的程序</p>
+</li>
+<li><p>根据名称结束该进程</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">taskkill /f /t /im java.exe</span><br></pre></td></tr></table></figure>
+<p>结束java.exe</p>
+<p>结束成功会提示：<br>成功： 已终止 。。。</p>
+<p>或者通过pid终止：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">taskkill /f /pid 1828</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>  <img src="https://stepimagewm.how2j.cn/1565.png" alt="根据名称 结束该程序"></p>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>javaEE</category>
+      </categories>
+      <tags>
+        <tag>javaEE</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>1-接入点模式-无线终端模式</title>
     <url>/posts/4dc0a7a8</url>
     <content><![CDATA[<!-- toc -->
@@ -1245,31 +1562,6 @@
       </tags>
   </entry>
   <entry>
-    <title>8-OTA上传代码</title>
-    <url>/posts/1b6a7930</url>
-    <content><![CDATA[<!--toc-->
-<p>所谓OTA，就是Over-The-Air的缩写，通过OTA我们无需将ESP8266与电脑连接，而仅仅通过WiFi就可以用Arduino IDE向ESP8266上传程序。</p>
-<p>在这一节课程里，我们将分步骤向您介绍如何实现ESP8266的OTA操作。</p>
-<h2 id="1、通过数据线上传初始示例程序"><a href="#1、通过数据线上传初始示例程序" class="headerlink" title="1、通过数据线上传初始示例程序"></a>1、通过数据线上传初始示例程序</h2><p>首先，请将以下示例程序通过Arduino IDE上传到ESP8266。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ESP8266WiFi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ArduinoOTA.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;Ticker.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="comment">// 闪烁时间间隔(秒)</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> blinkInterval = <span class="number">2</span>; </span><br><span class="line"> </span><br><span class="line"><span class="comment">// 设置wifi接入信息(请根据您的WiFi信息进行修改)</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span>* ssid = <span class="string">&quot;taichimaker&quot;</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span>* password = <span class="string">&quot;12345678&quot;</span>;</span><br><span class="line"> </span><br><span class="line">Ticker ticker;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  Serial.begin(<span class="number">9600</span>);            </span><br><span class="line">  Serial.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line">  pinMode(LED_BUILTIN, OUTPUT);</span><br><span class="line"> </span><br><span class="line">  ticker.attach(blinkInterval, tickerCount);  <span class="comment">// 设置Ticker对象</span></span><br><span class="line">  </span><br><span class="line">  connectWifi();</span><br><span class="line"> </span><br><span class="line">  <span class="comment">// OTA设置并启动</span></span><br><span class="line">  ArduinoOTA.setHostname(<span class="string">&quot;ESP8266&quot;</span>);</span><br><span class="line">  ArduinoOTA.setPassword(<span class="string">&quot;12345678&quot;</span>);</span><br><span class="line">  ArduinoOTA.begin();</span><br><span class="line">  </span><br><span class="line">  Serial.println(<span class="string">&quot;OTA ready&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  ArduinoOTA.handle();</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 在Tinker对象控制下，此函数将会定时执行。</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">tickerCount</span><span class="params">()</span></span>&#123;</span><br><span class="line">  digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">connectWifi</span><span class="params">()</span></span>&#123;</span><br><span class="line">  <span class="comment">//开始连接wifi</span></span><br><span class="line">  WiFi.begin(ssid, password);</span><br><span class="line"> </span><br><span class="line">  <span class="comment">//等待WiFi连接,连接成功打印IP</span></span><br><span class="line">  <span class="keyword">while</span> (WiFi.status() != WL_CONNECTED) &#123;</span><br><span class="line">    delay(<span class="number">1000</span>);</span><br><span class="line">    Serial.print(<span class="string">&quot;.&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  Serial.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line">  Serial.println(<span class="string">&quot;WiFi Connected!&quot;</span>);  </span><br><span class="line">  Serial.print(<span class="string">&quot;IP address:\t&quot;</span>);            </span><br><span class="line">  Serial.println(WiFi.localIP());          </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="2、通过Arduino-IDE正确选择OTA端口"><a href="#2、通过Arduino-IDE正确选择OTA端口" class="headerlink" title="2、通过Arduino IDE正确选择OTA端口"></a>2、通过Arduino IDE正确选择OTA端口</h2><p>程序上传后，请重新启动Arduino IDE。并且通过Arduino IDE正确选择ESP8266的OTA端口。</p>
-<p>如下图所示：</p>
-<p><a href="http://www.taichi-maker.com/wp-content/uploads/2020/07/esp8266_select_port.jpg"><img src="http://www.taichi-maker.com/wp-content/uploads/2020/07/esp8266_select_port-1024x547.jpg" alt="esp8266 OTA 端口选择"></a></p>
-<h2 id="3、认证并上传程序"><a href="#3、认证并上传程序" class="headerlink" title="3、认证并上传程序"></a>3、认证并上传程序</h2><p>点击Arduino IDE的”上传”按钮后， IDE将会弹出对话框让用户输入OTA上传密码。请根据示例程序中的<code>setPassword</code>函数所设置的信息来输入密码。完成密码输入后，点击确定。如果密码无误，您将看到程序开始上传。</p>
-<p>程序上传结束后，ESP8266将会自动重启开发板，新的程序也将在重启后开始运行。</p>
-<h2 id="4、OTA的局限性"><a href="#4、OTA的局限性" class="headerlink" title="4、OTA的局限性"></a>4、OTA的局限性</h2><p><strong>1. 程序占用空间变大</strong><br>在OTA上传新程序过程中， ESP8266开发板将会保持旧程序的运行。这将导致ESP8266开发板的程序占用空间翻倍。假如您的程序非常复杂，占用空间很大，那么使用OTA上传就不太适合了。</p>
-<p><strong>2. Arduino IDE无法通过OTA端口与开发板进行串口通讯</strong><br>当Arduino IDE的上传端口选为“网络端口”，Arduino IDE将无法获取ESP8266的串口通讯数据。不过ESP8266的串口通讯并不会因为OTA功能而受到影响。换句话说，您可以使用其它电脑串口通讯软件，如Putty等，来实现ESP8266与电脑之间的串口通讯。</p>
-<p><strong>3.使用OTA上传程序的电脑与ESP8266必须连接同一WiFi</strong><br>若要使用OTA上传功能，那么电脑和ESP8266必须要在同一WiFi中，否则是无法实现OTA上传的。</p>
-]]></content>
-      <categories>
-        <category>硬件学习</category>
-        <category>esp8266</category>
-      </categories>
-      <tags>
-        <tag>esp8266</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>7-多任务执行</title>
     <url>/posts/c25015c5</url>
     <content><![CDATA[<!--toc-->
@@ -1305,320 +1597,28 @@
       </tags>
   </entry>
   <entry>
-    <title>1-简介</title>
-    <url>/posts/78903d87</url>
-    <content><![CDATA[<h2 id="1、简介"><a href="#1、简介" class="headerlink" title="1、简介"></a>1、简介</h2><h3 id="什么是-MyBatis"><a href="#什么是-MyBatis" class="headerlink" title="什么是 MyBatis"></a>什么是 MyBatis</h3><p>​        MyBatis 是一款优秀的持久层框架，它支持自定义 SQL、存储过程以及高级映射。MyBatis 免除了几乎所有的 JDBC 代码以及设置参数和获取结果集的工作。MyBatis 可以通过简单的 XML 或注解来配置和映射原始类型、接口和 Java POJO（Plain Old Java Objects，普通老式 Java 对象）为数据库中的记录。</p>
-<h2 id="2、第一个MyBatis项目"><a href="#2、第一个MyBatis项目" class="headerlink" title="2、第一个MyBatis项目"></a>2、第一个MyBatis项目</h2><p><a href="https://codechina.csdn.net/m0_46079750/mybatis-study/-/tree/master/">项目地址mybatis-01</a></p>
-<h3 id="（1）安装库"><a href="#（1）安装库" class="headerlink" title="（1）安装库"></a>（1）安装库</h3><p>​    如果使用 Maven 来构建项目，则需将下面的依赖代码置于 pom.xml 文件中：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>mysql<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mysql-connector-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>8.0.26<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--注意：由于本地系统安装了版本8的Mysql，所以这里使用版本8的驱动--&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mybatis<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mybatis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.5.6<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>4.13<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h3 id="（2）创建MyBatis工具类"><a href="#（2）创建MyBatis工具类" class="headerlink" title="（2）创建MyBatis工具类"></a>（2）创建MyBatis工具类</h3><p>为了获取数据库表中的数据，需要创建一个MyBatis工具类com.ajream.utils.MybatisUtil，用于生成Mysql的会话，通过这个会话，可以get到数据库表中的数据</p>
-<p>com/ajream/utils/MybatisUtil.java</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.ajream.utils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.io.Resources;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.session.SqlSession;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.session.SqlSessionFactory;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.session.SqlSessionFactoryBuilder;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.io.InputStream;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MybatisUtil</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> SqlSessionFactory sqlSessionFactory;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//mybatis-config.xml是mybatis配置文件，用于配置MySQL信息</span></span><br><span class="line">            String resource = <span class="string">&quot;mybatis-config.xml&quot;</span>;   </span><br><span class="line">            InputStream inputStream = Resources.getResourceAsStream(resource);</span><br><span class="line">            sqlSessionFactory = <span class="keyword">new</span> SqlSessionFactoryBuilder().build(inputStream);</span><br><span class="line">        &#125;<span class="keyword">catch</span> (IOException e)&#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//生成Mysql的会话</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> SqlSession <span class="title">getSqlSesion</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> sqlSessionFactory.openSession();   </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>配置文件：mybatis-config.xml  （用于配置连接MySQL的基本信息）</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">configuration</span></span></span><br><span class="line"><span class="meta">        <span class="meta-keyword">PUBLIC</span> <span class="meta-string">&quot;-//mybatis.org//DTD Config 3.0//EN&quot;</span></span></span><br><span class="line"><span class="meta">        <span class="meta-string">&quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">environments</span> <span class="attr">default</span>=<span class="string">&quot;development&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">environment</span> <span class="attr">id</span>=<span class="string">&quot;development&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">transactionManager</span> <span class="attr">type</span>=<span class="string">&quot;JDBC&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">dataSource</span> <span class="attr">type</span>=<span class="string">&quot;POOLED&quot;</span>&gt;</span></span><br><span class="line">                </span><br><span class="line">                <span class="comment">&lt;!--注意value=”com.mysql.cj.jdbc.Driver“中的【cj】是MySQL版本8才要使用的--&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;driver&quot;</span> <span class="attr">value</span>=<span class="string">&quot;com.mysql.cj.jdbc.Driver&quot;</span>/&gt;</span></span><br><span class="line">                </span><br><span class="line">                <span class="comment">&lt;!--连接数据库用到的url，这里连接的database是school，根据自己情况修改--&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;url&quot;</span> <span class="attr">value</span>=<span class="string">&quot;jdbc:mysql://localhost:3306/school?useSSL=true<span class="symbol">&amp;amp;</span>useUnicode=true<span class="symbol">&amp;amp;</span>characterEncoding=UTF-8&quot;</span>/&gt;</span></span><br><span class="line">                </span><br><span class="line">                <span class="comment">&lt;!--用户名和密码--&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> <span class="attr">value</span>=<span class="string">&quot;xxx&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;password&quot;</span> <span class="attr">value</span>=<span class="string">&quot;xxx&quot;</span>/&gt;</span></span><br><span class="line">                </span><br><span class="line">            <span class="tag">&lt;/<span class="name">dataSource</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">environment</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">environments</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!--com/ajream/dao的路径下还有一个配置文件，此处把它包含进来--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mappers</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mapper</span> <span class="attr">resource</span>=<span class="string">&quot;com/ajream/dao/UserMapper.xml&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">mappers</span>&gt;</span></span><br><span class="line">    </span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h3 id="（3）存放数据的容器类"><a href="#（3）存放数据的容器类" class="headerlink" title="（3）存放数据的容器类"></a>（3）存放数据的容器类</h3><p>这是某个数据库school中student表中的数据</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-08-13 00-01-58_image-20210813000155615.png" alt="image-20210813000155615"></p>
-<p>所以这里创建一个User类来表示数据库中的字段</p>
-<p>com/ajream/pojo/User.java</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.ajream.pojo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">(String id, String name, <span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">        <span class="keyword">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(String id)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;User&#123;&quot;</span> +</span><br><span class="line">                <span class="string">&quot;id=&#x27;&quot;</span> + id + <span class="string">&#x27;\&#x27;&#x27;</span> +</span><br><span class="line">                <span class="string">&quot;, name=&#x27;&quot;</span> + name + <span class="string">&#x27;\&#x27;&#x27;</span> +</span><br><span class="line">                <span class="string">&quot;, age=&quot;</span> + age +</span><br><span class="line">                <span class="string">&#x27;&#125;&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="（4）创建一个接口"><a href="#（4）创建一个接口" class="headerlink" title="（4）创建一个接口"></a>（4）创建一个接口</h3><p>（用于获取并存放拿到的数据）</p>
-<p>com/ajream/dao/UserDao.java</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.ajream.dao;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.ajream.pojo.User;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserDao</span> </span>&#123;</span><br><span class="line">    <span class="function">List&lt;User&gt; <span class="title">getUserList</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="（5）实现这个接口"><a href="#（5）实现这个接口" class="headerlink" title="（5）实现这个接口"></a>（5）实现这个接口</h3><p>（即用sql语句获取数据）</p>
-<p>通常我们会创建一个 <code>UserDaoImpl</code> 来实现这个接口，但使用mybatis可以通过配置文件来实现：</p>
-<p>com/ajream/dao/UserMapper.xml</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">mapper</span></span></span><br><span class="line"><span class="meta">        <span class="meta-keyword">PUBLIC</span> <span class="meta-string">&quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;</span></span></span><br><span class="line"><span class="meta">        <span class="meta-string">&quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--命名空间是接口名--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">&quot;com.ajream.dao.UserDao&quot;</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!--getUserList是方法名，returnType是返回的数据类型--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getUserList&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span>&gt;</span></span><br><span class="line">        select * from school.student</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line">    </span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h3 id="（6）测试"><a href="#（6）测试" class="headerlink" title="（6）测试"></a>（6）测试</h3><p>以上配置完成后，可以写个test测试程序来取出数据库中的数据了</p>
-<p>com/ajream/dao/UserDaoTest.java</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.ajream.dao;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.ajream.pojo.User;</span><br><span class="line"><span class="keyword">import</span> com.ajream.utils.MybatisUtil;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.session.SqlSession;</span><br><span class="line"><span class="keyword">import</span> org.junit.Test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDaoTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">userDaoTest</span><span class="params">()</span></span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//获取MySQL会话</span></span><br><span class="line">        SqlSession sqlSession = MybatisUtil.getSqlSesion();</span><br><span class="line">        </span><br><span class="line">        UserDao userDao = sqlSession.getMapper(UserDao.class);</span><br><span class="line">        </span><br><span class="line">        List&lt;User&gt; userList = userDao.getUserList();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(User u: userList)&#123;</span><br><span class="line">            System.out.println(u);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        sqlSession.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>运行结果：</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-08-13 00-18-01_image-20210813001800000.png" alt="image-20210813001800000"></p>
+    <title>8-OTA上传代码</title>
+    <url>/posts/1b6a7930</url>
+    <content><![CDATA[<!--toc-->
+<p>所谓OTA，就是Over-The-Air的缩写，通过OTA我们无需将ESP8266与电脑连接，而仅仅通过WiFi就可以用Arduino IDE向ESP8266上传程序。</p>
+<p>在这一节课程里，我们将分步骤向您介绍如何实现ESP8266的OTA操作。</p>
+<h2 id="1、通过数据线上传初始示例程序"><a href="#1、通过数据线上传初始示例程序" class="headerlink" title="1、通过数据线上传初始示例程序"></a>1、通过数据线上传初始示例程序</h2><p>首先，请将以下示例程序通过Arduino IDE上传到ESP8266。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ESP8266WiFi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ArduinoOTA.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;Ticker.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="comment">// 闪烁时间间隔(秒)</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> blinkInterval = <span class="number">2</span>; </span><br><span class="line"> </span><br><span class="line"><span class="comment">// 设置wifi接入信息(请根据您的WiFi信息进行修改)</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span>* ssid = <span class="string">&quot;taichimaker&quot;</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span>* password = <span class="string">&quot;12345678&quot;</span>;</span><br><span class="line"> </span><br><span class="line">Ticker ticker;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  Serial.begin(<span class="number">9600</span>);            </span><br><span class="line">  Serial.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line">  pinMode(LED_BUILTIN, OUTPUT);</span><br><span class="line"> </span><br><span class="line">  ticker.attach(blinkInterval, tickerCount);  <span class="comment">// 设置Ticker对象</span></span><br><span class="line">  </span><br><span class="line">  connectWifi();</span><br><span class="line"> </span><br><span class="line">  <span class="comment">// OTA设置并启动</span></span><br><span class="line">  ArduinoOTA.setHostname(<span class="string">&quot;ESP8266&quot;</span>);</span><br><span class="line">  ArduinoOTA.setPassword(<span class="string">&quot;12345678&quot;</span>);</span><br><span class="line">  ArduinoOTA.begin();</span><br><span class="line">  </span><br><span class="line">  Serial.println(<span class="string">&quot;OTA ready&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  ArduinoOTA.handle();</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 在Tinker对象控制下，此函数将会定时执行。</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">tickerCount</span><span class="params">()</span></span>&#123;</span><br><span class="line">  digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">connectWifi</span><span class="params">()</span></span>&#123;</span><br><span class="line">  <span class="comment">//开始连接wifi</span></span><br><span class="line">  WiFi.begin(ssid, password);</span><br><span class="line"> </span><br><span class="line">  <span class="comment">//等待WiFi连接,连接成功打印IP</span></span><br><span class="line">  <span class="keyword">while</span> (WiFi.status() != WL_CONNECTED) &#123;</span><br><span class="line">    delay(<span class="number">1000</span>);</span><br><span class="line">    Serial.print(<span class="string">&quot;.&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  Serial.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line">  Serial.println(<span class="string">&quot;WiFi Connected!&quot;</span>);  </span><br><span class="line">  Serial.print(<span class="string">&quot;IP address:\t&quot;</span>);            </span><br><span class="line">  Serial.println(WiFi.localIP());          </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="2、通过Arduino-IDE正确选择OTA端口"><a href="#2、通过Arduino-IDE正确选择OTA端口" class="headerlink" title="2、通过Arduino IDE正确选择OTA端口"></a>2、通过Arduino IDE正确选择OTA端口</h2><p>程序上传后，请重新启动Arduino IDE。并且通过Arduino IDE正确选择ESP8266的OTA端口。</p>
+<p>如下图所示：</p>
+<p><a href="http://www.taichi-maker.com/wp-content/uploads/2020/07/esp8266_select_port.jpg"><img src="http://www.taichi-maker.com/wp-content/uploads/2020/07/esp8266_select_port-1024x547.jpg" alt="esp8266 OTA 端口选择"></a></p>
+<h2 id="3、认证并上传程序"><a href="#3、认证并上传程序" class="headerlink" title="3、认证并上传程序"></a>3、认证并上传程序</h2><p>点击Arduino IDE的”上传”按钮后， IDE将会弹出对话框让用户输入OTA上传密码。请根据示例程序中的<code>setPassword</code>函数所设置的信息来输入密码。完成密码输入后，点击确定。如果密码无误，您将看到程序开始上传。</p>
+<p>程序上传结束后，ESP8266将会自动重启开发板，新的程序也将在重启后开始运行。</p>
+<h2 id="4、OTA的局限性"><a href="#4、OTA的局限性" class="headerlink" title="4、OTA的局限性"></a>4、OTA的局限性</h2><p><strong>1. 程序占用空间变大</strong><br>在OTA上传新程序过程中， ESP8266开发板将会保持旧程序的运行。这将导致ESP8266开发板的程序占用空间翻倍。假如您的程序非常复杂，占用空间很大，那么使用OTA上传就不太适合了。</p>
+<p><strong>2. Arduino IDE无法通过OTA端口与开发板进行串口通讯</strong><br>当Arduino IDE的上传端口选为“网络端口”，Arduino IDE将无法获取ESP8266的串口通讯数据。不过ESP8266的串口通讯并不会因为OTA功能而受到影响。换句话说，您可以使用其它电脑串口通讯软件，如Putty等，来实现ESP8266与电脑之间的串口通讯。</p>
+<p><strong>3.使用OTA上传程序的电脑与ESP8266必须连接同一WiFi</strong><br>若要使用OTA上传功能，那么电脑和ESP8266必须要在同一WiFi中，否则是无法实现OTA上传的。</p>
 ]]></content>
       <categories>
-        <category>java</category>
-        <category>Mybatis</category>
+        <category>硬件学习</category>
+        <category>esp8266</category>
       </categories>
       <tags>
-        <tag>Mybatis</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>1-Servlet</title>
-    <url>/posts/345d8e17</url>
-    <content><![CDATA[<h1 id="Servlet"><a href="#Servlet" class="headerlink" title="Servlet"></a>Servlet</h1><h2 id="servlet技术"><a href="#servlet技术" class="headerlink" title="servlet技术"></a>servlet技术</h2><ol>
-<li>Servlet是Java EE规范之一，规范即接口</li>
-<li>是JavaWeb三大组件之一，其他2个是：Filter过滤器、Listener监听器</li>
-<li>是运行在服务器上一个Java小程序，可以接收客户端发来的请求，并相应给客户端</li>
-<li>Servlet没有 <code>main()</code>方法，由系统自动调用</li>
-</ol>
-<h2 id="IDEA创建servlet"><a href="#IDEA创建servlet" class="headerlink" title="IDEA创建servlet"></a>IDEA创建servlet</h2><p><img src="https://img-blog.csdnimg.cn/20210502184910567.png" alt="在这里插入图片描述" style="zoom:43%;" /></p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 16-37-34_image-20210502163733514.png" alt="image-20210502163733514" style="zoom: 67%;" /></p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 16-38-39_image-20210502163838549.png" alt="image-20210502163838549" style="zoom:67%;" /></p>
-<h2 id="手动实现Servlet程序"><a href="#手动实现Servlet程序" class="headerlink" title="手动实现Servlet程序"></a>手动实现Servlet程序</h2><ol>
-<li><p>编写类实现Servlet规范，有3种方式：</p>
-<ol>
-<li><p>继承 <code>HttpServlet</code>类</p>
- <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloServlet</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>实现 <code>Servlet</code>接口</p>
- <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.servlet01;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.servlet.*;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Servlet01</span> <span class="keyword">implements</span> <span class="title">Servlet</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(ServletConfig servletConfig)</span> <span class="keyword">throws</span> ServletException </span>&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ServletConfig <span class="title">getServletConfig</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(ServletRequest servletRequest, ServletResponse servletResponse)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;实现Servlet接口&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getServletInfo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destroy</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-</li>
-</ol>
-<ol>
-<li><p>实现 <code>service()</code>方法，处理请求，响应数据</p>
-<p>【快捷键 <kbd>ctrl + o</kbd> 可以重写方法或实现接口】</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloServlet</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(HttpServletRequest req, HttpServletResponse resp)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">        <span class="comment">//控制台打印</span></span><br><span class="line">        System.out.println(<span class="string">&quot;Hello Servlet&quot;</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//通过流输出数据到浏览器</span></span><br><span class="line">        resp.getWriter().write(<span class="string">&quot;hello servlet!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>设置注解<code>@WebServlet</code>，指定访问路径</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@WebServlet(name=&quot;helloServlet&quot;, value = &quot;/ser01&quot;)</span> <span class="comment">//name可以不设置</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<blockquote>
-<p>在第二步中，也可以不重写 <code>Service()</code>方法，而是更具体些，重写 <code>doGet()</code>、<code>doPost</code>方法；</p>
-<p>根据浏览器请求方式来进行不同处理</p>
-<p>但实际我们不知道浏览器以何种方式请求，故两个方法都需要去写，因此这种方式用的较少</p>
-</blockquote>
-<h2 id="Servlet工作流程"><a href="#Servlet工作流程" class="headerlink" title="Servlet工作流程"></a>Servlet工作流程</h2><p>url<code>http://localhost:8083/servlet01/ser01</code>含义：</p>
-<blockquote>
-<ul>
-<li>服务器：<code>http://localhost:8083</code></li>
-<li>项目：<code>/servlet01</code></li>
-<li>资源：<code>/ser01</code></li>
-</ul>
-</blockquote>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>javaEE</category>
-      </categories>
-      <tags>
-        <tag>javaEE</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>2-Servlet生命周期</title>
-    <url>/posts/e7ba7594</url>
-    <content><![CDATA[<h1 id="Servlet生命周期"><a href="#Servlet生命周期" class="headerlink" title="Servlet生命周期"></a>Servlet生命周期</h1><ol>
-<li>通过调用 <code>init()</code>方法创建、初始化服务（系统自动调用，只执行一次）</li>
-<li>调用 <code>Service()</code> 方法执行服务</li>
-<li>调用 <code>destroy()</code>销毁服务（关闭服务器时系统自动调用，只执行一次）</li>
-</ol>
-<h4 id="Servlet工作流程"><a href="#Servlet工作流程" class="headerlink" title="Servlet工作流程"></a>Servlet工作流程</h4><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 17-00-01_image-20210502165959933.png" alt="image-20210502165959933"></p>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>javaEE</category>
-      </categories>
-      <tags>
-        <tag>javaEE</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>3-ServletRequest对象</title>
-    <url>/posts/4609d38b</url>
-    <content><![CDATA[<h1 id="HttpServletRequest对象"><a href="#HttpServletRequest对象" class="headerlink" title="HttpServletRequest对象"></a>HttpServletRequest对象</h1><p>该对象主要用于接收客户端发送过来的信息，如请求参数、请求头等</p>
-<p>HttpServletRequest是ServletRequest的唯一的子<strong>接口</strong></p>
-<h2 id="接收请求"><a href="#接收请求" class="headerlink" title="接收请求"></a>接收请求</h2><h3 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//完整url路径</span></span><br><span class="line">String url = req.getRequestURL().toString();</span><br><span class="line"></span><br><span class="line"><span class="comment">//部分路径</span></span><br><span class="line">String uri = req.getRequestURI();</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取请求的参数（如果有的话,即路径中`?`后面的字符串）</span></span><br><span class="line">String query = req.getQueryString();</span><br><span class="line"></span><br><span class="line"><span class="comment">//请求方式get、post</span></span><br><span class="line">String method = req.getMethod();</span><br><span class="line"></span><br><span class="line"><span class="comment">//请求协议(http/1/1)</span></span><br><span class="line">String protocol = req.getProtocol();</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取项目站点名</span></span><br><span class="line">String webapp = req.getContextPath();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>请求为【<code>localhost:8083/sr02/servlet02</code>】时输出：</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 19-25-40_image-20210502192535571.png" alt="image-20210502192535571"></p>
-<p>请求为【<code>localhost:8083/sr02/servlet02?name=xiaod&amp;passwd=123456</code>】时：</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 19-29-20_image-20210502192917681.png" alt="image-20210502192917681"></p>
-<p><strong>详细参数获取（重点）</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//获取指定参数，返回字符串</span></span><br><span class="line">String name = req.getParameter(<span class="string">&quot;name&quot;</span>);  <span class="comment">//用户名</span></span><br><span class="line">String passwd = req.getParameter(<span class="string">&quot;passwd&quot;</span>);  <span class="comment">//密码</span></span><br></pre></td></tr></table></figure>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 19-38-47_image-20210502193840780.png" alt="image-20210502193840780"></p>
-<p>获取多个同名参数（适用于复选框）</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//多个参数名称相同，用数组收集</span></span><br><span class="line"><span class="comment">//如：参数为 name=xiaod&amp;passwd=123456&amp;hobby=sing&amp;hobby=dance</span></span><br><span class="line">String[] hobbies = req.getParameterValues(<span class="string">&quot;hobby&quot;</span>); </span><br></pre></td></tr></table></figure>
-<h2 id="中文乱码问题"><a href="#中文乱码问题" class="headerlink" title="中文乱码问题"></a>中文乱码问题</h2><p>tomcat8以上版本只有get请求会乱码，使用字符串乱码处理方式来解决</p>
-<p>使用<strong>post请求</strong>提交表单时，若含有中文，获取到的是乱码</p>
-<p><strong>验证步骤</strong></p>
-<ol>
-<li><p>在webapp下创建login.jsp文件</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 20-18-02_image-20210502201756825.png" alt="image-20210502201756825" style="zoom:50%;" /></p>
-</li>
-<li><p>在login.jsp下粘贴以下代码</p>
-<figure class="highlight jsp"><table><tr><td class="code"><pre><span class="line">&lt;%@ page contentType=<span class="string">&quot;text/html;charset=UTF-8&quot;</span> language=<span class="string">&quot;java&quot;</span> %&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt;登录&lt;/title&gt;</span><br><span class="line">    &lt;form method=<span class="string">&quot;post&quot;</span> action=<span class="string">&quot;servlet02&quot;</span>&gt;</span><br><span class="line">        账户名：&lt;input type=<span class="string">&quot;text&quot;</span> name=<span class="string">&quot;name&quot;</span>&gt; &lt;br&gt;</span><br><span class="line">        密码：&lt;input type=<span class="string">&quot;password&quot;</span> name=<span class="string">&quot;passwd&quot;</span>&gt; &lt;br&gt;</span><br><span class="line">        &lt;button&gt;登录&lt;/button&gt;   &lt;!--button默认为提交按钮--&gt;</span><br><span class="line">    &lt;/form&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line"></span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>需要注意，form标签的属性 <code>action</code>为<strong>注解@WebServlet(“/servlet02”)</strong>中的 <code>servlet02</code>（不要有斜线），这样就与这个处理类关联起来了</p>
-</blockquote>
-</li>
-<li><p>运行启动</p>
-</li>
-<li><p>浏览器访问</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 20-30-03_image-20210502202959582.png" alt="image-20210502202959582"></p>
-</li>
-<li><p>点击登录提交给 <code>Servlet01</code>类（含有注解 <code>@WebServlet(&quot;/servlet02&quot;)</code> ）处理</p>
-<p>查看获取到的数据：</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 20-32-36_image-20210502203233059.png" alt="image-20210502203233059"></p>
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>javaEE</category>
-      </categories>
-      <tags>
-        <tag>javaEE</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>4-请求转发</title>
-    <url>/posts/1a9b2152</url>
-    <content><![CDATA[<h1 id="请求转发"><a href="#请求转发" class="headerlink" title="请求转发"></a>请求转发</h1><ol>
-<li>可以让请求从服务端跳转到另一页面（或者跳转到另一个Servlet类处理）</li>
-<li>是服务端行为</li>
-<li>特点：<ol>
-<li>浏览器地址栏不发生改变</li>
-<li>实现不同的Servlet数据贡献</li>
-</ol>
-</li>
-</ol>
-<p>步骤：</p>
-<ol>
-<li><p>分别创建类：Servlet02和Servlet03</p>
-<p>填入以下内容：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//类Servlet02</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.xxxx.servlet02;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.servlet.ServletException;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.annotation.WebServlet;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServlet;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletRequest;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletResponse;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="meta">@WebServlet(&quot;/ser02&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Servlet02</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(HttpServletRequest req, HttpServletResponse resp)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">        String name = req.getParameter(<span class="string">&quot;name&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;ser02获取到用户名：&quot;</span> + name);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//跳转到servlet03</span></span><br><span class="line">        req.getRequestDispatcher(<span class="string">&quot;ser03&quot;</span>).forward(req, resp);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-   <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//类Servlet03</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.xxxx.servlet02;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.servlet.ServletException;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.annotation.WebServlet;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServlet;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletRequest;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletResponse;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="meta">@WebServlet(&quot;/ser03&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">servlet03</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(HttpServletRequest req, HttpServletResponse resp)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">        String name = req.getParameter(<span class="string">&quot;name&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;ser03获取到用户名：&quot;</span> + name);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>   在类Servlet02中，跳转语句为：</p>
-   <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">req.getRequestDispatcher(<span class="string">&quot;ser03&quot;</span>).forward(req, resp);</span><br></pre></td></tr></table></figure>
-<p>   <code>ser03</code>(没有斜线“/”)表示servlet03的注解 “<strong>@WebServlet(“/ser03”)</strong>”</p>
-<blockquote>
-<p>也可以跳转到 login.jsp页面</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//跳转到login.jsp</span></span><br><span class="line">req.getRequestDispatcher(<span class="string">&quot;login.jsp&quot;</span>).forward(req, resp);</span><br></pre></td></tr></table></figure>
-</blockquote>
-<ol>
-<li><p>启动服务，浏览器访问servlet02，然后自动会访问servlet03，但地址栏没变</p>
-<p><img src="https://gitee.com/aJream/images/raw/master/img/2021-05-02 21-15-48_image-20210502211542653.png" alt="image-20210502211542653"></p>
-</li>
-</ol>
-<p>   <img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 21-16-32_image-20210502211627393.png" alt="image-20210502211627393"></p>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>javaEE</category>
-      </categories>
-      <tags>
-        <tag>javaEE</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>IDEA配置Tomcat</title>
-    <url>/posts/1a57c6b6</url>
-    <content><![CDATA[<p>三个步骤</p>
-<ol>
-<li><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-23-11_image-20210502152308870.png" alt="image-20210502152308870"></p>
-</li>
-<li></li>
-</ol>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-28-04_image-20210502152803463.png" alt="image-20210502152803463"></p>
-<ol>
-<li><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-29-56_image-20210502152955436.png" alt="image-20210502152955436"></p>
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>javaEE</category>
-      </categories>
-      <tags>
-        <tag>javaEE</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Tomcat基础</title>
-    <url>/posts/530cfffd</url>
-    <content><![CDATA[<h1 id="Tomcat基础"><a href="#Tomcat基础" class="headerlink" title="Tomcat基础"></a>Tomcat基础</h1><h2 id="web概念"><a href="#web概念" class="headerlink" title="web概念"></a>web概念</h2><ol>
-<li>软件架构<ul>
-<li>C/S：客户端/服务器端（QQ、360。。。）</li>
-<li>B/S：浏览器/服务器端（京东、淘宝、网易。。。）</li>
-</ul>
-</li>
-<li>资源分类<ul>
-<li>静态资源（所有用户访问得到的结果一样）</li>
-<li>动态资源（不同用户访问的结果不同）</li>
-</ul>
-</li>
-<li>网络通信三要素<ul>
-<li>协议<ul>
-<li>tcp：安全协议、三次握手、速度较慢</li>
-<li>udp：不安全、速度快</li>
-</ul>
-</li>
-<li>ip：电子设备在网络中唯一标识</li>
-<li>端口号</li>
-</ul>
-</li>
-</ol>
-<h2 id="常见web服务器软件"><a href="#常见web服务器软件" class="headerlink" title="常见web服务器软件"></a>常见web服务器软件</h2><ol>
-<li>webLogic：大型JavaEE服务器，属于Oracle公司，收费</li>
-<li>webSphere：IBM公司</li>
-<li>JBOSS：JBOSS公司</li>
-<li>Tomcat：Apache组织</li>
-</ol>
-<h2 id="Tomcat安装与启动"><a href="#Tomcat安装与启动" class="headerlink" title="Tomcat安装与启动"></a>Tomcat安装与启动</h2><p>下载地址：<a href="https://tomcat.apache.org/download-80.cgi">Apache Downloads</a></p>
-<h3 id="启动tomcat"><a href="#启动tomcat" class="headerlink" title="启动tomcat"></a>启动tomcat</h3><p>运行bin目录下的批处理文件 <code>startup.bat</code>（确认当前是jdk1.8或以上，用<code>java -version</code>查看）</p>
-<h3 id="部署网页"><a href="#部署网页" class="headerlink" title="部署网页"></a>部署网页</h3><p>例如部署一个test.html文件</p>
-<ol>
-<li>把test.html文件复制到<strong>D:\tomcat\webapps\ROOT</strong> 目录下</li>
-<li>启动tomcat</li>
-<li>访问 <a href="http://127.0.0.1:8080/test.html">http://127.0.0.1:8080/test.html</a></li>
-</ol>
-<h3 id="改端口号"><a href="#改端口号" class="headerlink" title="改端口号"></a>改端口号</h3><p>8080是tomcat默认端口号，而平时上网默认使用80端口</p>
-<p>tomcat的端口配置相关信息在 server.xml中，server.xml 记录了非常多的tomcat配置信息，其中就包括端口。</p>
-<p>修改端口号步骤：</p>
-<ol>
-<li>打开server.xml文件</li>
-<li><code>ctrl+f</code>查询8080，将下面这句代码的<code>8080</code>修改为其他端口号，如80，8081，8082</li>
-</ol>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Connector</span> <span class="attr">port</span>=<span class="string">&quot;8080&quot;</span> <span class="attr">protocol</span>=<span class="string">&quot;HTTP/1.1&quot;</span> <span class="attr">connectionTimeout</span>=<span class="string">&quot;20000&quot;</span> <span class="attr">redirectPort</span>=<span class="string">&quot;8543&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
-<p>接着就可以直接通过 <a href="http://127.0.0.1/test.html访问网页了。">http://127.0.0.1/test.html访问网页了。</a></p>
-<p>80端口就是web服务默认的端口号，所以就不需要显式写这个端口号了。</p>
-<h3 id="端口被占用"><a href="#端口被占用" class="headerlink" title="端口被占用"></a>端口被占用</h3><p>端口被占用就无法启动tomcat</p>
-<p>所以要找到端口被占用的程序是哪一个</p>
-<p>然后再关闭对应的程序即可</p>
-<ul>
-<li><p>查看80端口被哪些程序占用</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">netstat -ano|findstr &quot;80&quot;</span><br></pre></td></tr></table></figure>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/image-20210408072223224.png" alt="image-20210408072223224"></p>
-<p>第一行就是占用端口“80”的进程（其他只是含有80这个字符串而已），最后一列对应的进程的pid</p>
-</li>
-<li><p>根据pid查询对应应用程序</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">tasklist|findstr <span class="string">&quot;4&quot;</span></span><br></pre></td></tr></table></figure>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/image-20210408072728546.png" alt="image-20210408072728546"></p>
-<p>第一个system就是占用的程序</p>
-</li>
-<li><p>根据名称结束该进程</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">taskkill /f /t /im java.exe</span><br></pre></td></tr></table></figure>
-<p>结束java.exe</p>
-<p>结束成功会提示：<br>成功： 已终止 。。。</p>
-<p>或者通过pid终止：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">taskkill /f /pid 1828</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>  <img src="https://stepimagewm.how2j.cn/1565.png" alt="根据名称 结束该程序"></p>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>javaEE</category>
-      </categories>
-      <tags>
-        <tag>javaEE</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>http</title>
-    <url>/posts/97780db2</url>
-    <content><![CDATA[<p><img src="https://gitee.com/Dream-and-dreaming/images/raw/master/img/2021-04-28 21-16-07_image-20210428211605440.png" alt="image-20210428211605440"></p>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>javaEE</category>
-      </categories>
-      <tags>
-        <tag>javaEE</tag>
+        <tag>esp8266</tag>
       </tags>
   </entry>
   <entry>
@@ -3721,49 +3721,6 @@
       </tags>
   </entry>
   <entry>
-    <title>4-HelloSpring程序</title>
-    <url>/posts/59e405f3</url>
-    <content><![CDATA[<h1 id="HelloSpring项目"><a href="#HelloSpring项目" class="headerlink" title="HelloSpring项目"></a>HelloSpring项目</h1><h2 id="使用maven创建"><a href="#使用maven创建" class="headerlink" title="使用maven创建"></a>使用maven创建</h2><p>创建后目录结构如下：</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-29 12-59-47_image-20210729125943211.png" alt="image-20210729125943211"></p>
-<p>pom.xml：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.ajream<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>hello_spring<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-context<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>5.2.9.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">maven.compiler.source</span>&gt;</span>8<span class="tag">&lt;/<span class="name">maven.compiler.source</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">maven.compiler.target</span>&gt;</span>8<span class="tag">&lt;/<span class="name">maven.compiler.target</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><ol>
-<li>在java文件夹下创建<code>com.xxx.pojo.Hello</code>类</li>
-</ol>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-29 13-06-43_image-20210729130640647.png" alt="image-20210729130640647"></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.ajream.pojo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hello</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String str1;       <span class="comment">//先不管属性名为什么是str1</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setStr2</span><span class="params">(String s)</span></span>&#123;        <span class="comment">//先不管为什么函数名设置为setStr2</span></span><br><span class="line">        <span class="keyword">this</span>.str1 = s;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">printStr</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Hello:-&gt;&quot;</span> + str1);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<ol>
-<li>在resources下创建<code>beans.xml</code>配置文件</li>
-</ol>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="string"><span class="tag">        https://www.springframework.org/schema/beans/spring-beans.xsd&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;helloworld&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.Hello&quot;</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--        通过name来识别出调用了哪个函数， value为传入参数--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;str2&quot;</span> <span class="attr">value</span>=<span class="string">&quot;spring&quot;</span> /&gt;</span>   <span class="comment">&lt;!--这行代码表示调用函数 setStr2, 传入参数为字符串&quot;spring&quot; --&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>该文件内容模板可以从spring<a href="https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#spring-core">官网</a>中找到</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-29 13-13-19_image-20210729131316578.png" alt="image-20210729131316578"></p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="string"><span class="tag">        https://www.springframework.org/schema/beans/spring-beans.xsd&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;...&quot;</span> <span class="attr">class</span>=<span class="string">&quot;...&quot;</span>&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- collaborators and configuration for this bean go here --&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;...&quot;</span> <span class="attr">class</span>=<span class="string">&quot;...&quot;</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- collaborators and configuration for this bean go here --&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- more bean definitions go here --&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
-</blockquote>
-<ol>
-<li>在test/java下创建MyTest类来进行测试输出：</li>
-</ol>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> com.ajream.pojo.Hello;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.ApplicationContext;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.support.ClassPathXmlApplicationContext;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        ApplicationContext context = <span class="keyword">new</span> ClassPathXmlApplicationContext(<span class="string">&quot;beans.xml&quot;</span>);  <span class="comment">//加载xml配置文件</span></span><br><span class="line">        Hello h = (Hello) context.getBean(<span class="string">&quot;helloworld&quot;</span>);</span><br><span class="line">        h.printStr();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-29 13-17-08_image-20210729131704285.png" alt="image-20210729131704285"></p>
-<h2 id="三者之间的关系"><a href="#三者之间的关系" class="headerlink" title="三者之间的关系"></a>三者之间的关系</h2><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-29 13-46-29_image-20210729134624753.png" alt="image-20210729134624753"></p>
-<p>执行流程：</p>
-<ol>
-<li>获取 <code>beans.xml</code> 配置文件信息</li>
-<li>根据beans.xml中的id获取bean，创建对象h，并调用了setStr2方法</li>
-<li>调用函数printStr</li>
-</ol>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>java_spring</category>
-      </categories>
-      <tags>
-        <tag>java_spring</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>3-ioc控制反转</title>
     <url>/posts/d959138b</url>
     <content><![CDATA[<h1 id="IOC控制反转思想举例"><a href="#IOC控制反转思想举例" class="headerlink" title="IOC控制反转思想举例"></a>IOC控制反转思想举例</h1><h2 id="创建工程"><a href="#创建工程" class="headerlink" title="创建工程"></a>创建工程</h2><p>利用Maven创建一个空白工程spring1，其目录结构如下：</p>
@@ -3817,6 +3774,49 @@
 <p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-28 22-17-57_image-20210728221756345.png" alt="image-20210728221756345"></p>
 <h2 id="一张图表示三者之间关系"><a href="#一张图表示三者之间关系" class="headerlink" title="一张图表示三者之间关系"></a>一张图表示三者之间关系</h2><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-28 21-17-37_ioc.svg" alt="ioc"></p>
 <p>用户希望通过调用业务层来实现各个具体的业务如 <code>Mysql</code>、<code>Oracle</code>，…</p>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>java_spring</category>
+      </categories>
+      <tags>
+        <tag>java_spring</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>4-HelloSpring程序</title>
+    <url>/posts/59e405f3</url>
+    <content><![CDATA[<h1 id="HelloSpring项目"><a href="#HelloSpring项目" class="headerlink" title="HelloSpring项目"></a>HelloSpring项目</h1><h2 id="使用maven创建"><a href="#使用maven创建" class="headerlink" title="使用maven创建"></a>使用maven创建</h2><p>创建后目录结构如下：</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-29 12-59-47_image-20210729125943211.png" alt="image-20210729125943211"></p>
+<p>pom.xml：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.ajream<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>hello_spring<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-context<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>5.2.9.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">maven.compiler.source</span>&gt;</span>8<span class="tag">&lt;/<span class="name">maven.compiler.source</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">maven.compiler.target</span>&gt;</span>8<span class="tag">&lt;/<span class="name">maven.compiler.target</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><ol>
+<li>在java文件夹下创建<code>com.xxx.pojo.Hello</code>类</li>
+</ol>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-29 13-06-43_image-20210729130640647.png" alt="image-20210729130640647"></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.ajream.pojo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hello</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String str1;       <span class="comment">//先不管属性名为什么是str1</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setStr2</span><span class="params">(String s)</span></span>&#123;        <span class="comment">//先不管为什么函数名设置为setStr2</span></span><br><span class="line">        <span class="keyword">this</span>.str1 = s;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">printStr</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Hello:-&gt;&quot;</span> + str1);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ol>
+<li>在resources下创建<code>beans.xml</code>配置文件</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="string"><span class="tag">        https://www.springframework.org/schema/beans/spring-beans.xsd&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;helloworld&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.Hello&quot;</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--        通过name来识别出调用了哪个函数， value为传入参数--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;str2&quot;</span> <span class="attr">value</span>=<span class="string">&quot;spring&quot;</span> /&gt;</span>   <span class="comment">&lt;!--这行代码表示调用函数 setStr2, 传入参数为字符串&quot;spring&quot; --&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>该文件内容模板可以从spring<a href="https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#spring-core">官网</a>中找到</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-29 13-13-19_image-20210729131316578.png" alt="image-20210729131316578"></p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="string"><span class="tag">        https://www.springframework.org/schema/beans/spring-beans.xsd&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;...&quot;</span> <span class="attr">class</span>=<span class="string">&quot;...&quot;</span>&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- collaborators and configuration for this bean go here --&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;...&quot;</span> <span class="attr">class</span>=<span class="string">&quot;...&quot;</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- collaborators and configuration for this bean go here --&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- more bean definitions go here --&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<ol>
+<li>在test/java下创建MyTest类来进行测试输出：</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> com.ajream.pojo.Hello;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.ApplicationContext;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.support.ClassPathXmlApplicationContext;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        ApplicationContext context = <span class="keyword">new</span> ClassPathXmlApplicationContext(<span class="string">&quot;beans.xml&quot;</span>);  <span class="comment">//加载xml配置文件</span></span><br><span class="line">        Hello h = (Hello) context.getBean(<span class="string">&quot;helloworld&quot;</span>);</span><br><span class="line">        h.printStr();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-29 13-17-08_image-20210729131704285.png" alt="image-20210729131704285"></p>
+<h2 id="三者之间的关系"><a href="#三者之间的关系" class="headerlink" title="三者之间的关系"></a>三者之间的关系</h2><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-29 13-46-29_image-20210729134624753.png" alt="image-20210729134624753"></p>
+<p>执行流程：</p>
+<ol>
+<li>获取 <code>beans.xml</code> 配置文件信息</li>
+<li>根据beans.xml中的id获取bean，创建对象h，并调用了setStr2方法</li>
+<li>调用函数printStr</li>
+</ol>
 ]]></content>
       <categories>
         <category>java</category>
