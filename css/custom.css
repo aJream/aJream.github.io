@@ -5,8 +5,9 @@
   font-display : swap;
 }
 
+
 h1#site-title, #site-subtitle {
-  font-family: 'Candyhome', sans-serif;
+  font-family: 'Candyhome','snowfont', sans-serif;
 }
 
 

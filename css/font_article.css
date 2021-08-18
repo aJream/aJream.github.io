@@ -1,0 +1,23 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 2746409 */
+  src: url('//at.alicdn.com/t/font_2746409_0dac6qu6gtz.woff2?t=1629072747730') format('woff2'),
+       url('//at.alicdn.com/t/font_2746409_0dac6qu6gtz.woff?t=1629072747730') format('woff'),
+       url('//at.alicdn.com/t/font_2746409_0dac6qu6gtz.ttf?t=1629072747730') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-bilibili:before {
+  content: "\e68d";
+}
+
+.icon-Bilibili:before {
+  content: "\e627";
+}
+
