@@ -4795,4 +4795,233 @@
         <tag>javaSE</tag>
       </tags>
   </entry>
+  <entry>
+    <title>MQTT的认识及原理和操作</title>
+    <url>/posts/73ba8569</url>
+    <content><![CDATA[<h2 id="什么是MQTT"><a href="#什么是MQTT" class="headerlink" title="什么是MQTT"></a>什么是MQTT</h2><p>MQTT是一个客户端服务端架构的发布/订阅模式的<strong>消息传输协议</strong>。</p>
+<p>优点：</p>
+<p>轻巧、开放、简单、规范，易于实现。</p>
+<p>这些特点使得它对很多场景来说都是很好的选择，特别是对于受限的环境如机器与机器的通信（M2M）以及物联网环境（IoT）。</p>
+<h2 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h2><p>在MQTT协议通讯中，有两个最为重要的角色。它们分别是<strong>服务端</strong>和<strong>客户端</strong>。</p>
+<p><strong>服务端</strong>：</p>
+<p>是消息传输的枢纽</p>
+<p><strong>客户端</strong>：</p>
+<p>客户端有多个，它们之间不能直接相互通信，中间使用服务端来处理消息分配。</p>
+<p>客户端要获取某个主题信息，要向服务端进行主题 “订阅”，订阅后可以向服务端发送与主题相关的信息，其他客户端再从服务端获取信息。</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-08-10 22-08-14_image-20210810220807339.png" alt="image-20210810220807339"></p>
+<h2 id="客户端连接服务端"><a href="#客户端连接服务端" class="headerlink" title="客户端连接服务端"></a>客户端连接服务端</h2><p>分2个步骤</p>
+<ol>
+<li>客户端向服务端发送请求数据包“CONNECT”（也叫报文），其中包含了连接请求的信息</li>
+<li>服务端收到请求后，发送数据包“CONNACK”进行确认</li>
+</ol>
+<h3 id="CONNECT报文"><a href="#CONNECT报文" class="headerlink" title="CONNECT报文"></a>CONNECT报文</h3><p>这是该报文的信息：</p>
+<p><img src="http://www.taichi-maker.com/wp-content/uploads/2020/09/MQTT-connect.gif" alt="MQTT CONNECT 报文内容"></p>
+<p><strong>clientID</strong></p>
+<p>clientId是MQTT客户端的唯一标识，MQTT服务端以此来识别客户端</p>
+<p><strong>cleanSession – 清除会话</strong></p>
+<p>表示如果客户端未能正确接收到数据时，服务端是否要对数据进行保存；</p>
+<p>取值true表示保存，false表示不保存</p>
+<blockquote>
+<p>注意：如果数据很重要，客户端没有正确接收到会造成严重后果，建议取值true，让服务端先把会话保留，待客户端能正常接收再发送。</p>
+<p>反之如果数据不会重要，可以取值为false</p>
+</blockquote>
+<p><strong>keepAlive</strong>  —— 间隔时间</p>
+<p>用于服务端每隔多久就了解一下客户端是否与其保持连接的情况</p>
+<h3 id="CONNACK-–-确认连接请求"><a href="#CONNACK-–-确认连接请求" class="headerlink" title="CONNACK – 确认连接请求"></a>CONNACK – 确认连接请求</h3><p><img src="http://www.taichi-maker.com/wp-content/uploads/2020/09/connack.gif" alt="MQTT CONNACK 信息内容"></p>
+<p><strong>sessionPresent</strong></p>
+<p>CONNACK报文的sessionPresent与CONNECT报文的cleanSession相互配合。</p>
+<p>cleanSession=true时，sessionPresent应该配置为false，即不需要保存信息；反之sessionPresent应该配置为true，即需要保存会话信息。</p>
+<p>总之，sessionPresent作用是客户端发送连接请求时，服务端告知客户端有没有保存报文信息。这个被服务端保存的报文信息是来自于<u>上一次</u>客户端连接时，服务端曾经发送此报文给客户端，但是发送后没有收到客户端接收确认。</p>
+<p><strong>returnCode</strong>  —— 返回码</p>
+<p>当服务端收到了客户端的连接请求后，会向客户端发送returnCode(返回码)，用以说明连接情况</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">返回码</th>
+<th style="text-align:left">返回码描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:left">成功连接</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:left">连接被服务端拒绝，原因是不支持客户端的MQTT协议版本</td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:left">连接被服务端拒绝，原因是不支持客户端标识符的编码。 可能造成此原因的是客户端标识符编码是UTF-8，但是服务端不允许使用此编码。</td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:left">连接被服务端拒绝，原因是服务端不可用。 即，网络连接已经建立，但MQTT服务不可用。</td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:left">连接被服务端拒绝，原因是用户名或密码无效。</td>
+</tr>
+<tr>
+<td style="text-align:center">5</td>
+<td style="text-align:left">连接被服务端拒绝，原因是客户端未被授权连接到此服务端。</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="ESP8266连接MQTT服务端"><a href="#ESP8266连接MQTT服务端" class="headerlink" title="ESP8266连接MQTT服务端"></a>ESP8266连接MQTT服务端</h2><p><a href="http://test.ranye-iot.net">http://test.ranye-iot.net</a> 是国内一个MQTT服务器平台地址，TCP端口为1883</p>
+<p>接下来使用<code>PubSubClient</code>库（去<a href="https://github.com/knolleary/pubsubclient/">GitHub</a>下载zip包后通过ArduinoIDE添加即可）来实现MQTT物联网应用。</p>
+<ol>
+<li><p>配置WiFi</p>
+</li>
+<li><p>创建mqtt客户端对象（间接创建）</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">WiFiClient wifiClient;</span><br><span class="line"><span class="function">PubSubClient <span class="title">mqttClient</span><span class="params">(wifiClient)</span></span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置客户端要连接哪个服务端（绑定服务端）</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">String mqttServer = <span class="string">&quot;test.ranye-iot.net&quot;</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> port = <span class="number">1883</span>;</span><br><span class="line">mqttClient.setServer(mqttServer, port);  <span class="comment">//连接服务端</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>连接服务端</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//用设备的mac地址来生成唯一标识该设备的clientID</span></span><br><span class="line">String clientID = <span class="string">&quot;esp8266-&quot;</span> + WiFi.macAddress();  </span><br><span class="line"></span><br><span class="line">mqttClient.connect(clientId.c_str()) <span class="comment">//连接成功返回true</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li><p>连接成功后保持 “心跳”，否则…（可以尝试继续连接）</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123; </span><br><span class="line">    <span class="keyword">if</span> (mqttClient.connected()) &#123; <span class="comment">// 如果开发板成功连接服务器    </span></span><br><span class="line">        mqttClient.loop();          <span class="comment">// 保持客户端心跳</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;                  <span class="comment">// 如果开发板未能成功连接服务器</span></span><br><span class="line">        connectMQTTServer();    <span class="comment">// 则尝试连接服务器</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>完整code：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ESP8266WiFi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;PubSubClient.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="comment">// 设置wifi接入信息(请根据您的WiFi信息进行修改)</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span>* ssid = <span class="string">&quot;rbook&quot;</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span>* password = <span class="string">&quot;12345678&quot;</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span>* mqttServer = <span class="string">&quot;test.ranye-iot.net&quot;</span>;</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 如以上MQTT服务器无法正常连接，请前往以下页面寻找解决方案</span></span><br><span class="line"><span class="comment">// http://www.taichi-maker.com/public-mqtt-broker/</span></span><br><span class="line"> </span><br><span class="line">WiFiClient wifiClient;</span><br><span class="line"><span class="function">PubSubClient <span class="title">mqttClient</span><span class="params">(wifiClient)</span></span>;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Serial.begin(<span class="number">9600</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置ESP8266工作模式为无线终端模式</span></span><br><span class="line">    WiFi.mode(WIFI_STA);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 连接WiFi</span></span><br><span class="line">    connectWifi();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 设置MQTT服务器和端口号</span></span><br><span class="line">    mqttClient.setServer(mqttServer, <span class="number">1883</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 连接MQTT服务器</span></span><br><span class="line">    connectMQTTServer();</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123; </span><br><span class="line">    <span class="keyword">if</span> (mqttClient.connected()) &#123; <span class="comment">// 如果开发板成功连接服务器    </span></span><br><span class="line">        mqttClient.loop();          <span class="comment">// 保持客户端心跳</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;                  <span class="comment">// 如果开发板未能成功连接服务器</span></span><br><span class="line">        connectMQTTServer();    <span class="comment">// 则尝试连接服务器</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">connectMQTTServer</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">// 根据ESP8266的MAC地址生成客户端ID（避免与其它ESP8266的客户端ID重名）</span></span><br><span class="line">    String clientId = <span class="string">&quot;esp8266-&quot;</span> + WiFi.macAddress();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 连接MQTT服务器</span></span><br><span class="line">    <span class="keyword">if</span> (mqttClient.connect(clientId.c_str())) &#123; </span><br><span class="line">        Serial.println(<span class="string">&quot;MQTT Server Connected.&quot;</span>);</span><br><span class="line">        Serial.println(<span class="string">&quot;Server Address: &quot;</span>);</span><br><span class="line">        Serial.println(mqttServer);</span><br><span class="line">        Serial.println(<span class="string">&quot;ClientId:&quot;</span>);</span><br><span class="line">        Serial.println(clientId);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        Serial.print(<span class="string">&quot;MQTT Server Connect Failed. Client State:&quot;</span>);</span><br><span class="line">        Serial.println(mqttClient.state());</span><br><span class="line">        delay(<span class="number">3000</span>);</span><br><span class="line">    &#125;   </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ESP8266连接wifi</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">connectWifi</span><span class="params">()</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    WiFi.begin(ssid, password);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//等待WiFi连接,成功连接后输出成功信息</span></span><br><span class="line">    <span class="keyword">while</span> (WiFi.status() != WL_CONNECTED) &#123;</span><br><span class="line">        delay(<span class="number">1000</span>);</span><br><span class="line">        Serial.print(<span class="string">&quot;.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    Serial.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line">    Serial.println(<span class="string">&quot;WiFi Connected!&quot;</span>);  </span><br><span class="line">    Serial.println(<span class="string">&quot;&quot;</span>); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>硬件学习</category>
+        <category>物联网开发</category>
+      </categories>
+      <tags>
+        <tag>esp8266</tag>
+        <tag>物联网</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>关于MQTT的主题</title>
+    <url>/posts/894e18ee</url>
+    <content><![CDATA[<h2 id="主题"><a href="#主题" class="headerlink" title="主题"></a>主题</h2><h3 id="主题基本形式"><a href="#主题基本形式" class="headerlink" title="主题基本形式"></a>主题基本形式</h3><p>​        主题基本形式就是一个字符串，比如：currentTime，carSpeed</p>
+<p>​        注意：主题区分大小写、可以用空格（<u>但尽量不要用</u>）、尽量使用英文字符</p>
+<h3 id="主题分级"><a href="#主题分级" class="headerlink" title="主题分级"></a>主题分级</h3><p>​        MQTT主题各个级别之间可以使用<code>/</code>来分隔。如：<code>Tyler-1/motor/1/speed</code></p>
+<p>​        示例中一共有四级主题，分别是第1级 Tyler-1、第2级motor、第三级1、第4级speed。</p>
+<h3 id="主题通配符"><a href="#主题通配符" class="headerlink" title="主题通配符"></a>主题通配符</h3><p>​        当客户端订阅主题时，可以使用通配符同时订阅多个主题。通配符只能在订阅主题时使用</p>
+<ul>
+<li><p>单级通配符: <code>+</code>        示例：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">home/sensor/+/temperature</span><br><span class="line"></span><br><span class="line"><span class="comment"># 可以表示：</span></span><br><span class="line"><span class="comment"># home/sensor/aaa/temperature</span></span><br><span class="line"><span class="comment"># home/sensor/bbb/temperature</span></span><br><span class="line"><span class="comment"># ......</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><p>多级通配符 :<code>#</code>        示例：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">home/sensor/<span class="comment">#</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 可以表示：</span></span><br><span class="line"><span class="comment"># home/sensor/aaa</span></span><br><span class="line"><span class="comment"># home/sensor/bbb/ccc</span></span><br><span class="line"><span class="comment"># home/sensor/aaa/ccc</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><ul>
+<li><p>以$开始的主题</p>
+<p>以$开始的主题是MQTT服务端<strong>系统保留的特殊主题</strong>，不能随意订阅或者向其发布信息。如：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash">SYS/broker/clients/connected</span></span><br><span class="line"><span class="meta">$</span><span class="bash">SYS/broker/clients/disconnected</span></span><br><span class="line"><span class="meta">$</span><span class="bash">SYS/broker/clients/total</span></span><br><span class="line"><span class="meta">$</span><span class="bash">SYS/broker/messages/sent</span></span><br><span class="line"><span class="meta">$</span><span class="bash">SYS/broker/uptime</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>避免使用<code>/</code>作为主题的开头</p>
+</li>
+<li><p>主题中尽量<strong>不要使用空格</strong></p>
+</li>
+<li><p>主题中尽量使用<strong>ASCII字符</strong></p>
+</li>
+<li><p>建议在主题中嵌入客户端ID<br>【通过主题中的客户端ID内容，可以很容易的了解该主题信息是由哪一台设备所发布的】</p>
+</li>
+</ul>
+<h2 id="ESP8266订阅主题"><a href="#ESP8266订阅主题" class="headerlink" title="ESP8266订阅主题"></a>ESP8266订阅主题</h2>]]></content>
+      <categories>
+        <category>硬件学习</category>
+        <category>物联网开发</category>
+      </categories>
+      <tags>
+        <tag>esp8266</tag>
+        <tag>物联网</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>消息的发布、订阅与取消订阅</title>
+    <url>/posts/adfcabaa</url>
+    <content><![CDATA[<h2 id="发布信息"><a href="#发布信息" class="headerlink" title="发布信息"></a>发布信息</h2><ol>
+<li>mqtt客户端连接到服务端后即可发布信息，每条信息必须包含一个主题</li>
+<li>服务端根据主题决定将信息转发给哪些客户端</li>
+</ol>
+<p><img src="http://www.taichi-maker.com/wp-content/uploads/2020/09/MQTT-PUBLISH.png" alt="PUBLISH - 发布消息"></p>
+<p>发布信息时，会向服务端发送一个<strong>PUBLISH报文</strong>：</p>
+<p><img src="http://www.taichi-maker.com/wp-content/uploads/2020/09/MQTT-Publish-Packet.png" alt="MQTT PUBLISH 报文"></p>
+<p>topicName：主题名</p>
+<p>qos：服务质量等级，分0、1、2共三个等级</p>
+<p>packetId：报文标识符，用于区别不同报文</p>
+<p>​        【注意】：报文标识符的内容与QoS级别有密不可分的关系。只有QoS级别大于0时，报文标识符才是非零数值。如果QoS等于0，报文标识符为0。</p>
+<p>retainFlag：保留标志。</p>
+<p>​        一般情况，客户端订阅某个主题的信息后，服务器不会立刻返回该主题的信息，要等服务器收到新信息时才会返回；</p>
+<p>​        特殊情况，我们要求客户端订阅一个主题后，服务器就要立刻返回新信息</p>
+<p>payLoad：有效载荷，可以使用mqtt协议发送文本、图片等内容，这些内容是通过payLoad来发送的</p>
+<p>dupFlag：重发标志。当接收方没有及时确认收到报文时，发送方会重复发送MQTT报文。在重复发送MQTT报文时，发送方会将此“重发标志”设置为true。</p>
+<p>【注意】重发标志只在QoS级别大于0时使用。</p>
+<h2 id="订阅主题"><a href="#订阅主题" class="headerlink" title="订阅主题"></a>订阅主题</h2><p>当客户端连接到服务端后，除了可以发布消息，也可以接收消息，而客户端要想接收消息，首先要订阅该消息的主题。</p>
+<p>客户端是通过向服务端发送<strong>SUBSCRIBE报文</strong>来实现订阅主题</p>
+<p>【注意】一个SUBSCRIBE报文可以包含有单个或者多个订阅主题名。</p>
+<p>qos：客户端在订阅主题时也可以明确QoS。服务端会根据SUBSCRIBE中的QoS来提供相应的服务保证。</p>
+<p>MQTT设备可以通过<strong>“报文标识符”</strong>对MQTT报文进行甄别和管理。</p>
+<hr>
+<p><strong>订阅确认：</strong></p>
+<p>服务端接收到客户端的订阅报文后，会向客户端发送<strong>SUBACK报文</strong>确认订阅。</p>
+<p>该报文包含<strong>”订阅返回码“</strong>和<strong>”报文标识符“</strong>两个信息</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:left">返回码</th>
+<th style="text-align:left">Return Code Response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">0</td>
+<td style="text-align:left">订阅成功 – QoS 0</td>
+</tr>
+<tr>
+<td style="text-align:left">1</td>
+<td style="text-align:left">订阅成功- QoS 1</td>
+</tr>
+<tr>
+<td style="text-align:left">2</td>
+<td style="text-align:left">订阅成功- QoS 2</td>
+</tr>
+<tr>
+<td style="text-align:left">128</td>
+<td style="text-align:left">订阅失败</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+<p>【注意】针对不同的主题订阅QoS，服务端的返回码会有所不同。</p>
+<p><strong>报文标识符</strong>：MQTT设备可以通过该标识符对报文进行管理。</p>
+<h2 id="取消订阅"><a href="#取消订阅" class="headerlink" title="取消订阅"></a>取消订阅</h2><p>客户端要取消订阅某主题时，可通过向服务端发送<strong>UNSUBSCRIBE</strong> 报文来实现。</p>
+<p><img src="http://www.taichi-maker.com/wp-content/uploads/2020/09/unsubscribe_packet.png" alt="MQTT-UNSUBSCRIBE-取消订阅报文"></p>
+<p>UNSUBSCRIBE报文包含两个重要信息：</p>
+<ol>
+<li>packetId：“报文标识符”</li>
+<li>topic1、topic2、…… ：取消订阅的主题的名称</li>
+</ol>
+<p>当服务端接收到UNSUBSCRIBE报文后，会向客户端发送取消订阅确认报文 – UNSUBACK报文。该报文含有客户端所发送的“取消订阅报文标识符”。</p>
+<p>客户端接收到UNSUBACK报文后就可以确认取消主题订阅</p>
+<h2 id="ESP8266发布MQTT消息"><a href="#ESP8266发布MQTT消息" class="headerlink" title="ESP8266发布MQTT消息"></a>ESP8266发布MQTT消息</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ESP8266WiFi.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;PubSubClient.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;Ticker.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置wifi接入信息(请根据您的WiFi信息进行修改)</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span>* ssid = <span class="string">&quot;RBook&quot;</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span>* password = <span class="string">&quot;1719171945678&quot;</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span>* mqttServer = <span class="string">&quot;test.ranye-iot.net&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如以上MQTT服务器无法正常连接，请前往以下页面寻找解决方案</span></span><br><span class="line"><span class="comment">// http://www.taichi-maker.com/public-mqtt-broker/</span></span><br><span class="line"></span><br><span class="line">Ticker ticker;</span><br><span class="line">WiFiClient wifiClient;</span><br><span class="line"><span class="function">PubSubClient <span class="title">mqttClient</span><span class="params">(wifiClient)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> count;    <span class="comment">// Ticker计数用变量</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Serial.begin(<span class="number">9600</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置ESP8266工作模式为无线终端模式</span></span><br><span class="line">    WiFi.mode(WIFI_STA);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 连接WiFi</span></span><br><span class="line">    connectWifi();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 设置MQTT服务器和端口号</span></span><br><span class="line">    mqttClient.setServer(mqttServer, <span class="number">1883</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 连接MQTT服务器</span></span><br><span class="line">    connectMQTTServer();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Ticker定时对象</span></span><br><span class="line">    ticker.attach(<span class="number">1</span>, tickerCount);  </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123; </span><br><span class="line">    <span class="keyword">if</span> (mqttClient.connected()) &#123; <span class="comment">// 如果开发板成功连接服务器</span></span><br><span class="line">        <span class="comment">// 每隔3秒钟发布一次信息</span></span><br><span class="line">        <span class="keyword">if</span> (count &gt;= <span class="number">3</span>)&#123;</span><br><span class="line">            pubMQTTmsg();</span><br><span class="line">            count = <span class="number">0</span>;</span><br><span class="line">        &#125;    </span><br><span class="line">        <span class="comment">// 保持心跳</span></span><br><span class="line">        mqttClient.loop();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;                  <span class="comment">// 如果开发板未能成功连接服务器</span></span><br><span class="line">        connectMQTTServer();    <span class="comment">// 则尝试连接服务器</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">tickerCount</span><span class="params">()</span></span>&#123;</span><br><span class="line">    count++;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">connectMQTTServer</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">// 根据ESP8266的MAC地址生成客户端ID（避免与其它ESP8266的客户端ID重名）</span></span><br><span class="line">    String clientId = <span class="string">&quot;esp8266-&quot;</span> + WiFi.macAddress();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 连接MQTT服务器</span></span><br><span class="line">    <span class="keyword">if</span> (mqttClient.connect(clientId.c_str())) &#123; </span><br><span class="line">        Serial.println(<span class="string">&quot;MQTT Server Connected.&quot;</span>);</span><br><span class="line">        Serial.println(<span class="string">&quot;Server Address: &quot;</span>);</span><br><span class="line">        Serial.println(mqttServer);</span><br><span class="line">        Serial.println(<span class="string">&quot;ClientId:&quot;</span>);</span><br><span class="line">        Serial.println(clientId);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        Serial.print(<span class="string">&quot;MQTT Server Connect Failed. Client State:&quot;</span>);</span><br><span class="line">        Serial.println(mqttClient.state());</span><br><span class="line">        delay(<span class="number">3000</span>);</span><br><span class="line">    &#125;   </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 发布信息</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">pubMQTTmsg</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> value; <span class="comment">// 客户端发布信息用数字</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 建立发布主题。主题名称以Taichi-Maker-为前缀，后面添加设备的MAC地址。</span></span><br><span class="line">    <span class="comment">// 这么做是为确保不同用户进行MQTT信息发布时，ESP8266客户端名称各不相同，</span></span><br><span class="line">    String topicString = <span class="string">&quot;Taichi-Maker-Pub-&quot;</span> + WiFi.macAddress();</span><br><span class="line">    <span class="keyword">char</span> publishTopic[topicString.length() + <span class="number">1</span>];  </span><br><span class="line">    <span class="built_in">strcpy</span>(publishTopic, topicString.c_str());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 建立发布信息。信息内容以Hello World为起始，后面添加发布次数。</span></span><br><span class="line">    String messageString = <span class="string">&quot;Hello World &quot;</span> + String(value++); </span><br><span class="line">    <span class="keyword">char</span> publishMsg[messageString.length() + <span class="number">1</span>];   </span><br><span class="line">    <span class="built_in">strcpy</span>(publishMsg, messageString.c_str());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 实现ESP8266向主题发布信息</span></span><br><span class="line">    <span class="keyword">if</span>(mqttClient.publish(publishTopic, publishMsg))&#123;</span><br><span class="line">        Serial.println(<span class="string">&quot;Publish Topic:&quot;</span>);Serial.println(publishTopic);</span><br><span class="line">        Serial.println(<span class="string">&quot;Publish message:&quot;</span>);Serial.println(publishMsg);    </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        Serial.println(<span class="string">&quot;Message Publish Failed.&quot;</span>); </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ESP8266连接wifi</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">connectWifi</span><span class="params">()</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    WiFi.begin(ssid, password);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//等待WiFi连接,成功连接后输出成功信息</span></span><br><span class="line">    <span class="keyword">while</span> (WiFi.status() != WL_CONNECTED) &#123;</span><br><span class="line">        delay(<span class="number">1000</span>);</span><br><span class="line">        Serial.print(<span class="string">&quot;.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    Serial.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line">    Serial.println(<span class="string">&quot;WiFi Connected!&quot;</span>);  </span><br><span class="line">    Serial.println(<span class="string">&quot;&quot;</span>); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>硬件学习</category>
+        <category>物联网开发</category>
+      </categories>
+      <tags>
+        <tag>esp8266</tag>
+        <tag>物联网</tag>
+      </tags>
+  </entry>
 </search>
