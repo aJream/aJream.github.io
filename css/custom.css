@@ -210,3 +210,8 @@ i:hover{
   background: 0 0 !important;
 }
 
+
+/* Aplayer栏目ui配置 */
+#toggle-sidebar {
+  left:100px;
+}
