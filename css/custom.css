@@ -5,9 +5,31 @@
   font-display : swap;
 }
 
+@font-face {
+  font-family: 'HanyiYahei';
+  src: url('/fonts/HanYiYaHei.ttf');
+  font-display: wrap;
+}
+
+@font-face {
+  font-family: 'CircleBlack';
+  src: url('/fonts/CircleBlack.ttf');
+  font-display: wrap;
+}
+@font-face {
+  font-family: 'ajLangMan';
+  src: url('/fonts/ajLangMan.ttf');
+  font-display: wrap;
+}
+
 
 h1#site-title, #site-subtitle {
-  font-family: 'Candyhome','snowfont', sans-serif;
+  font-family: 'ajLangMan', 'Candyhome', sans-serif;
+}
+
+/* 文章内容 */
+.post-content, #article-containner {
+  font-size: 18px;
 }
 
 
@@ -107,7 +129,7 @@ i:hover{
   transition: box-shadow 0.3s;
 }
 
-/* 应用于除了作者卡片以为的所有侧栏卡片 */
+/* 应用于除了作者卡片以外的所有侧栏卡片 */
 .card-widget:not(.card-info) {
   overflow: visible !important;
   margin-bottom: 45px !important;
@@ -163,7 +185,7 @@ i:hover{
   bottom: 0;
   left: -3px;
   z-index: 1;
-  background: rgba(255,255,255,0.9);
+  background: rgba(255,255,255, 1);
   border: 1px solid rgba(255,255,255,0.9);
   border-bottom: 0 solid #fff;
   /* 关键形变 */
@@ -206,12 +228,36 @@ i:hover{
   background: rgba(255,255,255,0.9);
 }
 
+
+
+/* [data-theme="light"] #rightside>div>button,
+#rightside>div>a {
+  background-color: #7e7bd5cf;
+}
+
+[data-theme="light"] #aside-content .card-info #card-info-btn {
+  background-color: #7e7bd5cf;
+}
+
+[data-theme="light"] .button--animated:before {
+  background: #ec63a1e0;
+} */
+
 #footer{
   background: 0 0 !important;
 }
 
 
+
+
 /* Aplayer栏目ui配置 */
-#toggle-sidebar {
-  left:100px;
+
+.aplayer.aplayer-fixed.aplayer-narrow .aplayer-body {
+  left: -66px !important;
+  /* 默认情况下缩进左侧66px，只留一点箭头部分 */
+}
+
+.aplayer.aplayer-fixed.aplayer-narrow .aplayer-body:hover {
+  left: 0 !important;
+  /* 鼠标悬停是左侧缩进归零，完全显示按钮 */
 }
