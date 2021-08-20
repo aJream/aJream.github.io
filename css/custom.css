@@ -261,3 +261,16 @@ i:hover{
   left: 0 !important;
   /* 鼠标悬停是左侧缩进归零，完全显示按钮 */
 }
+
+
+/* 12生肖图标 */
+svg.icon {
+  /* 这里定义svg.icon，避免和Butterfly自带的note标签冲突 */
+  width: 1em;
+  height: 1em;
+  /* width和height定义图标的默认宽度和高度*/
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
+}
+
