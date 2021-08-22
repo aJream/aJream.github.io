@@ -98,18 +98,11 @@
 <p> <img src="https://gitee.com/ajream/images/raw/master/img/20210821204131_image-20210821204130367.png" alt="image-20210821204130367"></p>
 <p> <img src="https://gitee.com/ajream/images/raw/master/img/20210821204229_image-20210821204227781.png" alt="image-20210821204227781"></p>
 </li>
-</ol>
-<ol>
 <li><p>添加如下代码</p>
- <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;reg52.h&gt;</span> <span class="comment">//引用51头文件</span></span></span><br><span class="line"></span><br><span class="line">sbit LED = P1^<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	LED = <span class="number">0</span>;	<span class="comment">//点亮LED2	</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<ol>
+ <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;reg52.h&gt;</span> <span class="comment">//引用51头文件</span></span></span><br><span class="line"></span><br><span class="line">sbit LED = P1^<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	LED = <span class="number">0</span>;	<span class="comment">//点亮LED2	</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
 <li><p>编译前要先配置，让编译器在编译完成后输出hex文件，hex文件用来烧录进单片机里面</p>
 <p><img src="https://gitee.com/ajream/images/raw/master/img/20210821204724_image-20210821204723747.png" alt="image-20210821204723747"></p>
 </li>
-</ol>
-<ol>
 <li><p>编译</p>
 <p><img src="https://gitee.com/ajream/images/raw/master/img/20210821205110_image-20210821205109242.png" alt="image-20210821205109242"></p>
 </li>
@@ -117,8 +110,8 @@
 <p><img src="https://gitee.com/ajream/images/raw/master/img/20210821205435_image-20210821205434569.png" alt="image-20210821205434569"></p>
 </li>
 </ol>
-<pre><code>&gt; 到此第一个点灯小程序结束
-</code></pre><h1 id="流水灯"><a href="#流水灯" class="headerlink" title="流水灯"></a>流水灯</h1><p>按照之前的步骤再建立一个新工程，写下如下代码：</p>
+<p>到此第一个点灯小程序结束</p>
+<h1 id="流水灯"><a href="#流水灯" class="headerlink" title="流水灯"></a>流水灯</h1><p>按照之前的步骤再建立一个新工程，写下如下代码：</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;reg52.h&gt;</span>	 <span class="comment">//包含51头文件</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;intrins.h&gt;</span> <span class="comment">//包含移位标准库函数头文件</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> uint unsigned int</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> uchar unsigned char</span></span><br><span class="line"></span><br><span class="line">uchar temp; <span class="comment">//LED灯相关变量</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//延时函数</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">delay</span><span class="params">(uint z)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	uint x, y;</span><br><span class="line">	<span class="keyword">for</span>(x = z; x &gt; <span class="number">0</span>; x--)</span><br><span class="line">		<span class="keyword">for</span>(y = <span class="number">114</span>; y &gt; <span class="number">0</span> ; y--); 		</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	temp = <span class="number">0xfe</span>;</span><br><span class="line">	P1 = temp; <span class="comment">//1111 1110  初值LED1亮</span></span><br><span class="line">	delay(<span class="number">1000</span>);<span class="comment">//毫秒级延时 100毫秒</span></span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		temp = _cror_(temp, <span class="number">1</span>);<span class="comment">//循环左移</span></span><br><span class="line">		P1 = temp;<span class="comment">//移位完成后赋值给P1 每个一个灯点亮</span></span><br><span class="line">		delay(<span class="number">1000</span>);<span class="comment">//毫秒级延时 100毫秒</span></span><br><span class="line">	&#125;	</span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
 <p>说明：</p>
 <ul>
