@@ -5222,4 +5222,83 @@
         <tag>51单片机</tag>
       </tags>
   </entry>
+  <entry>
+    <title>51单片机学习笔记(三)</title>
+    <url>/posts/383e39e3.html</url>
+    <content><![CDATA[<h1 id="串口通信"><a href="#串口通信" class="headerlink" title="串口通信"></a>串口通信</h1><h2 id="原理简介"><a href="#原理简介" class="headerlink" title="原理简介"></a>原理简介</h2><p>通信有并行通信和串行通信两种方式。在多微机系统以及现代测控系统中信息的交换多采用串行通信方式</p>
+<p><strong>并行通信</strong></p>
+<p>并行通信通常是将数据字节的各位用多条数据线同时进行传送</p>
+<p>特点：并行通信控制简单、传输速度快；由于传输线较多，长距离传送时成本高且接收方的各位同时接收存在困难。</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210822131937_image-20210822131931271.png" alt="image-20210822131931271"></p>
+<p><strong>串行通信</strong></p>
+<p>串行通信是使用一条数据线，将数据一位一位地依次传输，每一位数据占据一个固定的时间长度。其只需要少数几条线就可以在系统间交换信息。</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210822132216_image-20210822132211661.png" alt="image-20210822132211661"></p>
+<p><strong>同步、异步通信</strong></p>
+<p>串行通信又分 同步、异步两种</p>
+<p>同步：接收方与发送方时钟一致</p>
+<p>异步：双方使用各自的时钟，但应该尽可能保持一致</p>
+<p><strong>数据传输方向</strong></p>
+<p>单工：一台设备只能收/发</p>
+<p>半双工：同一时间只能收或发</p>
+<p>全双工：可同时进行收发</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210822134041_image-20210822134038629.png" alt="image-20210822134038629"></p>
+<p><strong>奇偶校验</strong></p>
+<p>在发送数据时，数据位尾随的1位为奇偶校验位（1或0）。</p>
+<ul>
+<li><p>奇校验时，数据中“1”的个数与校验位“1”的个数之和应为奇数；</p>
+</li>
+<li><p>偶校验时，数据中“1”的个数与校验位“1”的个数之和应为偶数。接收字符时，对“1”的个数进行校验，若发现不一致，则说明传输数据过程中出现了差错。</p>
+</li>
+</ul>
+<p><strong>代码和校验</strong></p>
+<p>代码和校验是发送方将所发数据块求和（或各字节异或），产生一个字节的校验字符（校验和）附加到数据块末尾。接收方接收数据同时对数据块（除校验字节外）求和（或各字节异或），将所得的结果与发送方的“校验和”进行比较，相符则无差错，否则即认为传送过程中出现了差错。</p>
+<p><strong>循环冗余校验</strong></p>
+<p>这种校验是通过某种数学运算实现有效信息与校验位之间的循环校验，常用于对磁盘信息的传输、存储区的完整性校验等。这种校验方法纠错能力强，广泛应用于同步通信中。</p>
+<h2 id="使用串口进行数据发送和接收"><a href="#使用串口进行数据发送和接收" class="headerlink" title="使用串口进行数据发送和接收"></a>使用串口进行数据发送和接收</h2><h3 id="初始化配置"><a href="#初始化配置" class="headerlink" title="初始化配置"></a>初始化配置</h3><ol>
+<li><p><strong>打开总中断和串口中断</strong></p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210822141909_image-20210822141906412.png" alt="image-20210822141906412"></p>
+</li>
+</ol>
+<ol>
+<li><p><strong>选择串口工作方式（配置串口控制寄存器SCON）</strong>不懂就先选方式1</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210822142220_image-20210822142218968.png" alt="image-20210822142218968"></p>
+</li>
+</ol>
+<ol>
+<li><p><strong>允许串口接收（配置串口控制寄存器SCON）</strong></p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210822142736_image-20210822142735027.png" alt="image-20210822142735027"></p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210822150205_image-20210822150203890.png" alt="image-20210822150203890"></p>
+</li>
+<li><p><strong>配置波特率</strong></p>
+<p>假如选择波特率为9600，根据下面的公式计算出定时计数器的初值，SMOD没有配置默认为0，fosc为频率11.0592MHz，定时计数器选择工作方式2（8位自动重装），计算得到初值为253，即0xFD</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210822143115_image-20210822143113859.png" alt="image-20210822143113859"></p>
+<p>代码如下：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">UARTInit</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	EA = <span class="number">1</span>;	<span class="comment">//打开总中断</span></span><br><span class="line">	ES = <span class="number">1</span>; <span class="comment">//打开串口中断</span></span><br><span class="line">	SM0 = <span class="number">0</span>;	SM1 = <span class="number">1</span>;   <span class="comment">//串口工作方式1,8位UART波特率可变</span></span><br><span class="line">	REN = <span class="number">1</span>;<span class="comment">//串口允许接收</span></span><br><span class="line">    </span><br><span class="line">	TR1 = <span class="number">1</span>;<span class="comment">//启动定时器1</span></span><br><span class="line">	TMOD |= <span class="number">0x20</span>;<span class="comment">//定时器1，工作模式2 8位自动重装</span></span><br><span class="line">	TH1 = <span class="number">0xfd</span>;</span><br><span class="line">	TL1 = <span class="number">0xfd</span>;<span class="comment">//设置比特率9600</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>说明：TMOD |= 1， 使用了 <code>|=</code> 运算符，因为这里使用T1定时器，在前面实际还有关于定时器T0的配置，要让T0, T1同时工作， 就要同时设置T1和T0的工作方式</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210822100641_image-20210822100638172.png" alt="image-20210822100638172"></p>
+<p>这是T0的初始化：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">T0_init</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	EA = <span class="number">1</span>;	<span class="comment">//打开总中断</span></span><br><span class="line">	ET0 = <span class="number">1</span>;<span class="comment">//打开定时器0中断</span></span><br><span class="line">	TR0 = <span class="number">1</span>;	 <span class="comment">//启动定时器0</span></span><br><span class="line">	REN = <span class="number">1</span>;<span class="comment">//允许串口接收</span></span><br><span class="line">	TMOD |= <span class="number">0X01</span>; <span class="comment">//定时器工作模式1，16位定时模式</span></span><br><span class="line">	TH0 = <span class="number">0xED</span>;</span><br><span class="line">	TL0 = <span class="number">0xFF</span>; <span class="comment">//定时5ms</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">UARTInit</span><span class="params">()</span></span>&#123;</span><br><span class="line"><span class="comment">//......</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+</ol>
+<h3 id="发送、接收数据"><a href="#发送、接收数据" class="headerlink" title="发送、接收数据"></a>发送、接收数据</h3><p><img src="https://gitee.com/ajream/images/raw/master/img/20210822145359_image-20210822145358670.png" alt="image-20210822145358670"></p>
+<p>接收：通过读取接收缓冲器SBUF中的数据</p>
+<p>发送：通过往发送缓冲器SBUF写入数据</p>
+<p>发送、接收缓冲器物理上是相互独立的，但它们占用同一地址0x99</p>
+<p>RI、TI看这2幅图，如下</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210822142736_image-20210822142735027.png" alt="image-20210822142735027"></p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210822150205_image-20210822150203890.png" alt="image-20210822150203890"></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">UART</span><span class="params">()</span> interrupt 4</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	uchar temp;</span><br><span class="line">	<span class="keyword">if</span>(RI)					<span class="comment">//判断接收是否完成</span></span><br><span class="line">	&#123;</span><br><span class="line">		num = SBUF;			<span class="comment">//读SBUF，读出串口接收到的数据</span></span><br><span class="line">		RI = <span class="number">0</span>;				<span class="comment">//软件清零接收标志位	</span></span><br><span class="line">		temp = num;</span><br><span class="line">		SBUF = ++temp;  	<span class="comment">//写SBUF，把要发送的数据送给发送缓存器</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span>(TI)					<span class="comment">//判断是否发送完成</span></span><br><span class="line">		TI = <span class="number">0</span>;				<span class="comment">//清零发送完成标志位	</span></span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+<p>完整代码：使用串口接收数据，用数码管显示，然后把数据+1后发出</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;reg52.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;intrins.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> uint unsigned int</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> uchar unsigned char</span></span><br><span class="line"></span><br><span class="line">sbit DU = P2^<span class="number">6</span>;<span class="comment">//数码管段选</span></span><br><span class="line">sbit WE = P2^<span class="number">7</span>;<span class="comment">//数码管段选</span></span><br><span class="line">uchar num;<span class="comment">//数码管显示的值</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//共阴数码管段选表0-9</span></span><br><span class="line">uchar code SMGduan[]= &#123;<span class="number">0x3F</span>, <span class="number">0x06</span>, <span class="number">0x5B</span>, <span class="number">0x4F</span>, <span class="number">0x66</span>, <span class="number">0x6D</span>, <span class="number">0x7D</span>, <span class="number">0x07</span>, <span class="number">0x7F</span>, <span class="number">0x6F</span>,&#125;;</span><br><span class="line"><span class="comment">//数码管位选码</span></span><br><span class="line">uchar code SMGwei[] = &#123;<span class="number">0xfe</span>, <span class="number">0xfd</span>, <span class="number">0xfb</span>&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">display</span><span class="params">(uchar i)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">static</span> uchar wei; 		</span><br><span class="line">	P0 = <span class="number">0XFF</span>;<span class="comment">//清除断码</span></span><br><span class="line">	WE = <span class="number">1</span>;<span class="comment">//打开位选锁存器</span></span><br><span class="line">	P0 = SMGwei[wei];</span><br><span class="line">	WE = <span class="number">0</span>;<span class="comment">//锁存位选数据</span></span><br><span class="line">	<span class="keyword">switch</span>(wei)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">case</span> <span class="number">0</span>: DU = <span class="number">1</span>; P0 = SMGduan[i / <span class="number">100</span>]; DU = <span class="number">0</span>; <span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> <span class="number">1</span>: DU = <span class="number">1</span>; P0 = SMGduan[i % <span class="number">100</span> / <span class="number">10</span>]; DU = <span class="number">0</span>; <span class="keyword">break</span>;	</span><br><span class="line">		<span class="keyword">case</span> <span class="number">2</span>: DU = <span class="number">1</span>; P0 = SMGduan[i % <span class="number">10</span>]; DU = <span class="number">0</span>; <span class="keyword">break</span>;		</span><br><span class="line">	&#125;</span><br><span class="line">	wei++;</span><br><span class="line">	<span class="keyword">if</span>(wei == <span class="number">3</span>)</span><br><span class="line">		wei = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//定时器0初始化</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">T0_init</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	EA = <span class="number">1</span>;	<span class="comment">//打开总中断</span></span><br><span class="line">	ET0 = <span class="number">1</span>;<span class="comment">//打开定时器0中断</span></span><br><span class="line">	TR0 = <span class="number">1</span>;	 <span class="comment">//启动定时器0</span></span><br><span class="line">	REN = <span class="number">1</span>;<span class="comment">//允许串口接收</span></span><br><span class="line">	TMOD |= <span class="number">0X01</span>; <span class="comment">//定时器工作模式1，16位定时模式</span></span><br><span class="line">	TH0 = <span class="number">0xED</span>;</span><br><span class="line">	TL0 = <span class="number">0xFF</span>; <span class="comment">//定时5ms</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//串口初始化</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">UART_init</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	EA = <span class="number">1</span>;	<span class="comment">//打开总中断</span></span><br><span class="line">	ES = <span class="number">1</span>; <span class="comment">//打开串口中断</span></span><br><span class="line">	SM0 = <span class="number">0</span>;	SM1 = <span class="number">1</span>;<span class="comment">//串口工作方式1,8位UART波特率可变</span></span><br><span class="line">	REN = <span class="number">1</span>;<span class="comment">//串口允许接收</span></span><br><span class="line">	TR1 = <span class="number">1</span>;<span class="comment">//启动定时器1</span></span><br><span class="line">	TMOD |= <span class="number">0x20</span>;<span class="comment">//定时器1，工作模式2 8位自动重装</span></span><br><span class="line">	TH1 = <span class="number">0xfd</span>;</span><br><span class="line">	TL1 = <span class="number">0xfd</span>;<span class="comment">//设置比特率9600</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span><span class="comment">//main函数自身会循环</span></span></span><br><span class="line"><span class="function"></span>&#123;	</span><br><span class="line">	T0_init();<span class="comment">//定时器0初始化</span></span><br><span class="line">	UART_init();<span class="comment">//串口初始化</span></span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>);	</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="comment">//定时器0中断函数</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">t0</span><span class="params">()</span> interrupt 1</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	TH0 = <span class="number">0xED</span>;</span><br><span class="line">	TL0 = <span class="number">0xFF</span>; <span class="comment">//定时5ms</span></span><br><span class="line">	display(num); <span class="comment">//数码管显示函数	</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//串口中断函数</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">UART</span><span class="params">()</span> interrupt 4</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	uchar temp;</span><br><span class="line">	<span class="keyword">if</span>(RI)<span class="comment">//判断接收是否完成</span></span><br><span class="line">	&#123;</span><br><span class="line">		num = SBUF;<span class="comment">//读SBUF，读出串口接收到的数据</span></span><br><span class="line">		RI = <span class="number">0</span>;<span class="comment">//软件清零接收标志位	</span></span><br><span class="line">		temp = num;<span class="comment">//</span></span><br><span class="line">		SBUF = ++temp;<span class="comment">//写SBUF，把要发送的数据送给发送缓存器</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span>(TI)<span class="comment">//判断是否发送完成</span></span><br><span class="line">		TI = <span class="number">0</span>;<span class="comment">//清零发送完成标志位	</span></span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>硬件学习</category>
+        <category>51单片机</category>
+      </categories>
+      <tags>
+        <tag>51单片机</tag>
+      </tags>
+  </entry>
 </search>
