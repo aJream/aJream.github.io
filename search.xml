@@ -5258,13 +5258,9 @@
 <li><p><strong>打开总中断和串口中断</strong></p>
 <p><img src="https://gitee.com/ajream/images/raw/master/img/20210822141909_image-20210822141906412.png" alt="image-20210822141906412"></p>
 </li>
-</ol>
-<ol>
 <li><p><strong>选择串口工作方式（配置串口控制寄存器SCON）</strong>不懂就先选方式1</p>
 <p><img src="https://gitee.com/ajream/images/raw/master/img/20210822142220_image-20210822142218968.png" alt="image-20210822142218968"></p>
 </li>
-</ol>
-<ol>
 <li><p><strong>允许串口接收（配置串口控制寄存器SCON）</strong></p>
 <p><img src="https://gitee.com/ajream/images/raw/master/img/20210822142736_image-20210822142735027.png" alt="image-20210822142735027"></p>
 <p><img src="https://gitee.com/ajream/images/raw/master/img/20210822150205_image-20210822150203890.png" alt="image-20210822150203890"></p>
