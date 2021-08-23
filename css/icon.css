@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 2746409 */
-  src: url('//at.alicdn.com/t/font_2746409_h2mesn6tpl.woff2?t=1629294431840') format('woff2'),
-       url('//at.alicdn.com/t/font_2746409_h2mesn6tpl.woff?t=1629294431840') format('woff'),
-       url('//at.alicdn.com/t/font_2746409_h2mesn6tpl.ttf?t=1629294431840') format('truetype');
+  src: url('//at.alicdn.com/t/font_2746409_bgh7nmn4ko6.woff2?t=1629735744005') format('woff2'),
+       url('//at.alicdn.com/t/font_2746409_bgh7nmn4ko6.woff?t=1629735744005') format('woff'),
+       url('//at.alicdn.com/t/font_2746409_bgh7nmn4ko6.ttf?t=1629735744005') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,28 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-wangyiyunyinle:before {
+  content: "\e601";
+  font-size: large;
+  color: crimson;
+}
+
+.icon-kugoulingsheng:before {
+  content: "\eaf9";
+  color: rgb(64, 64, 184);
+}
+
+.icon-qqyinle:before {
+  content: "\e9b7";
+  color: rgb(8, 146, 49);
+  
+}
+
+.icon-wangyiyun:before {
+  content: "\e603";
+  color: rgb(219, 25, 25);
 }
 
 .icon-wenzhang:before {
@@ -34,3 +56,5 @@
 .icon-Bilibili:before {
   content: "\e627";
 }
+
+
