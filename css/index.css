@@ -1317,7 +1317,7 @@ canvas:not(#ribbon-canvas),
   --tab-button-active-bg: #fff;
   --card-bg: #fff;
   --sidebar-bg: #f6f8fa;
-  --btn-hover-color: #db50c3;
+  --btn-hover-color: #9ba4ec;
   --btn-color: #fff;
   --btn-bg: rgba(145,113,188,0.98);
   --text-bg-hover: rgba(145,113,188,0.7);
@@ -2125,7 +2125,7 @@ blockquote footer cite:before {
   font-size: 1.72em;
 }
 .article-sort-title:hover:before {
-  border-color: #db50c3;
+  border-color: #9ba4ec;
 }
 .article-sort-title:before {
   position: absolute;
@@ -2177,7 +2177,7 @@ blockquote footer cite:before {
   transition: all 0.2s ease-in-out;
 }
 .article-sort-item:hover:before {
-  border-color: #db50c3;
+  border-color: #9ba4ec;
 }
 .article-sort-item:before {
   position: absolute;
@@ -2207,7 +2207,7 @@ blockquote footer cite:before {
   border-color: rgba(145,113,188,0.98);
 }
 .article-sort-item.year:before {
-  border-color: #db50c3;
+  border-color: #9ba4ec;
 }
 .article-sort-item-time {
   color: #858585;
@@ -2331,7 +2331,7 @@ blockquote footer cite:before {
   content: '';
 }
 #page .category-lists ul li:hover:before {
-  border-color: #db50c3;
+  border-color: #9ba4ec;
 }
 #body-wrap {
   display: -webkit-box;
@@ -4300,7 +4300,7 @@ blockquote footer cite:before {
   padding: 0.2em 0.2em 0.2em 1.4em;
 }
 #article-container.post-content ul > li:not(.tab):hover:before {
-  border-color: #db50c3;
+  border-color: #9ba4ec;
 }
 #article-container.post-content ul > li:not(.tab):before {
   top: 0.78em;
@@ -4661,7 +4661,7 @@ blockquote footer cite:before {
   padding: 0.2em 0.2em 0.2em 1.4em;
 }
 #article-container.post-content ul > li:not(.tab):hover:before {
-  border-color: #db50c3;
+  border-color: #9ba4ec;
 }
 #article-container.post-content ul > li:not(.tab):before {
   top: 0.78em;
@@ -5115,7 +5115,7 @@ blockquote footer cite:before {
 #waline-wrap {
   --waline-font-size: 1.1em;
   --waline-theme-color: rgba(145,113,188,0.98);
-  --waline-active-color: #db50c3;
+  --waline-active-color: #9ba4ec;
   --waline-avatar-size: 2.75rem;
 }
 #waline-wrap .vuser {
@@ -6509,7 +6509,7 @@ blockquote.pullquote.right {
   line-height: 1.7;
 }
 #local-search .search-dialog .local-search__hit-item:hover:before {
-  border-color: #db50c3;
+  border-color: #9ba4ec;
 }
 #local-search .search-dialog .local-search__hit-item:before {
   position: absolute;
