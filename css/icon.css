@@ -18,6 +18,7 @@
 
 .icon-youjian:before {
   content: "\e670";
+  font-size: 23px;
 }
 
 .icon-youjian1:before {
@@ -30,6 +31,7 @@
 
 .icon-zhihu:before {
   content: "\eac3";
+  font-size: 22px;
 }
 
 .icon-youxiang:before {
@@ -50,6 +52,7 @@
 
 .icon-wenzhang:before {
   content: "\e712";
+  font-size: 16px;
 }
 
 .icon-bilibili1:before {
