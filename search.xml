@@ -2740,6 +2740,53 @@
       </tags>
   </entry>
   <entry>
+    <title>3-ServletRequest对象</title>
+    <url>/posts/4609d38b.html</url>
+    <content><![CDATA[<h1 id="HttpServletRequest对象"><a href="#HttpServletRequest对象" class="headerlink" title="HttpServletRequest对象"></a>HttpServletRequest对象</h1><p>该对象主要用于接收客户端发送过来的信息，如请求参数、请求头等</p>
+<p>HttpServletRequest是ServletRequest的唯一的子<strong>接口</strong></p>
+<h2 id="接收请求"><a href="#接收请求" class="headerlink" title="接收请求"></a>接收请求</h2><h3 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//完整url路径</span></span><br><span class="line">String url = req.getRequestURL().toString();</span><br><span class="line"></span><br><span class="line"><span class="comment">//部分路径</span></span><br><span class="line">String uri = req.getRequestURI();</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取请求的参数（如果有的话,即路径中`?`后面的字符串）</span></span><br><span class="line">String query = req.getQueryString();</span><br><span class="line"></span><br><span class="line"><span class="comment">//请求方式get、post</span></span><br><span class="line">String method = req.getMethod();</span><br><span class="line"></span><br><span class="line"><span class="comment">//请求协议(http/1/1)</span></span><br><span class="line">String protocol = req.getProtocol();</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取项目站点名</span></span><br><span class="line">String webapp = req.getContextPath();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>请求为【<code>localhost:8083/sr02/servlet02</code>】时输出：</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 19-25-40_image-20210502192535571.png" alt="image-20210502192535571"></p>
+<p>请求为【<code>localhost:8083/sr02/servlet02?name=xiaod&amp;passwd=123456</code>】时：</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 19-29-20_image-20210502192917681.png" alt="image-20210502192917681"></p>
+<p><strong>详细参数获取（重点）</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//获取指定参数，返回字符串</span></span><br><span class="line">String name = req.getParameter(<span class="string">&quot;name&quot;</span>);  <span class="comment">//用户名</span></span><br><span class="line">String passwd = req.getParameter(<span class="string">&quot;passwd&quot;</span>);  <span class="comment">//密码</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 19-38-47_image-20210502193840780.png" alt="image-20210502193840780"></p>
+<p>获取多个同名参数（适用于复选框）</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//多个参数名称相同，用数组收集</span></span><br><span class="line"><span class="comment">//如：参数为 name=xiaod&amp;passwd=123456&amp;hobby=sing&amp;hobby=dance</span></span><br><span class="line">String[] hobbies = req.getParameterValues(<span class="string">&quot;hobby&quot;</span>); </span><br></pre></td></tr></table></figure>
+<h2 id="中文乱码问题"><a href="#中文乱码问题" class="headerlink" title="中文乱码问题"></a>中文乱码问题</h2><p>tomcat8以上版本只有get请求会乱码，使用字符串乱码处理方式来解决</p>
+<p>使用<strong>post请求</strong>提交表单时，若含有中文，获取到的是乱码</p>
+<p><strong>验证步骤</strong></p>
+<ol>
+<li><p>在webapp下创建login.jsp文件</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 20-18-02_image-20210502201756825.png" alt="image-20210502201756825" style="zoom:50%;" /></p>
+</li>
+<li><p>在login.jsp下粘贴以下代码</p>
+<figure class="highlight jsp"><table><tr><td class="code"><pre><span class="line">&lt;%@ page contentType=<span class="string">&quot;text/html;charset=UTF-8&quot;</span> language=<span class="string">&quot;java&quot;</span> %&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt;登录&lt;/title&gt;</span><br><span class="line">    &lt;form method=<span class="string">&quot;post&quot;</span> action=<span class="string">&quot;servlet02&quot;</span>&gt;</span><br><span class="line">        账户名：&lt;input type=<span class="string">&quot;text&quot;</span> name=<span class="string">&quot;name&quot;</span>&gt; &lt;br&gt;</span><br><span class="line">        密码：&lt;input type=<span class="string">&quot;password&quot;</span> name=<span class="string">&quot;passwd&quot;</span>&gt; &lt;br&gt;</span><br><span class="line">        &lt;button&gt;登录&lt;/button&gt;   &lt;!--button默认为提交按钮--&gt;</span><br><span class="line">    &lt;/form&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line"></span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>需要注意，form标签的属性 <code>action</code>为<strong>注解@WebServlet(“/servlet02”)</strong>中的 <code>servlet02</code>（不要有斜线），这样就与这个处理类关联起来了</p>
+</blockquote>
+</li>
+<li><p>运行启动</p>
+</li>
+<li><p>浏览器访问</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 20-30-03_image-20210502202959582.png" alt="image-20210502202959582"></p>
+</li>
+<li><p>点击登录提交给 <code>Servlet01</code>类（含有注解 <code>@WebServlet(&quot;/servlet02&quot;)</code> ）处理</p>
+<p>查看获取到的数据：</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 20-32-36_image-20210502203233059.png" alt="image-20210502203233059"></p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>javaEE</category>
+      </categories>
+      <tags>
+        <tag>javaEE</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>4-请求转发</title>
     <url>/posts/1a9b2152.html</url>
     <content><![CDATA[<h1 id="请求转发"><a href="#请求转发" class="headerlink" title="请求转发"></a>请求转发</h1><ol>
@@ -2793,53 +2840,6 @@
 <p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-28-04_image-20210502152803463.png" alt="image-20210502152803463"></p>
 <ol>
 <li><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-29-56_image-20210502152955436.png" alt="image-20210502152955436"></p>
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>javaEE</category>
-      </categories>
-      <tags>
-        <tag>javaEE</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>3-ServletRequest对象</title>
-    <url>/posts/4609d38b.html</url>
-    <content><![CDATA[<h1 id="HttpServletRequest对象"><a href="#HttpServletRequest对象" class="headerlink" title="HttpServletRequest对象"></a>HttpServletRequest对象</h1><p>该对象主要用于接收客户端发送过来的信息，如请求参数、请求头等</p>
-<p>HttpServletRequest是ServletRequest的唯一的子<strong>接口</strong></p>
-<h2 id="接收请求"><a href="#接收请求" class="headerlink" title="接收请求"></a>接收请求</h2><h3 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//完整url路径</span></span><br><span class="line">String url = req.getRequestURL().toString();</span><br><span class="line"></span><br><span class="line"><span class="comment">//部分路径</span></span><br><span class="line">String uri = req.getRequestURI();</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取请求的参数（如果有的话,即路径中`?`后面的字符串）</span></span><br><span class="line">String query = req.getQueryString();</span><br><span class="line"></span><br><span class="line"><span class="comment">//请求方式get、post</span></span><br><span class="line">String method = req.getMethod();</span><br><span class="line"></span><br><span class="line"><span class="comment">//请求协议(http/1/1)</span></span><br><span class="line">String protocol = req.getProtocol();</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取项目站点名</span></span><br><span class="line">String webapp = req.getContextPath();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>请求为【<code>localhost:8083/sr02/servlet02</code>】时输出：</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 19-25-40_image-20210502192535571.png" alt="image-20210502192535571"></p>
-<p>请求为【<code>localhost:8083/sr02/servlet02?name=xiaod&amp;passwd=123456</code>】时：</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 19-29-20_image-20210502192917681.png" alt="image-20210502192917681"></p>
-<p><strong>详细参数获取（重点）</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//获取指定参数，返回字符串</span></span><br><span class="line">String name = req.getParameter(<span class="string">&quot;name&quot;</span>);  <span class="comment">//用户名</span></span><br><span class="line">String passwd = req.getParameter(<span class="string">&quot;passwd&quot;</span>);  <span class="comment">//密码</span></span><br></pre></td></tr></table></figure>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 19-38-47_image-20210502193840780.png" alt="image-20210502193840780"></p>
-<p>获取多个同名参数（适用于复选框）</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//多个参数名称相同，用数组收集</span></span><br><span class="line"><span class="comment">//如：参数为 name=xiaod&amp;passwd=123456&amp;hobby=sing&amp;hobby=dance</span></span><br><span class="line">String[] hobbies = req.getParameterValues(<span class="string">&quot;hobby&quot;</span>); </span><br></pre></td></tr></table></figure>
-<h2 id="中文乱码问题"><a href="#中文乱码问题" class="headerlink" title="中文乱码问题"></a>中文乱码问题</h2><p>tomcat8以上版本只有get请求会乱码，使用字符串乱码处理方式来解决</p>
-<p>使用<strong>post请求</strong>提交表单时，若含有中文，获取到的是乱码</p>
-<p><strong>验证步骤</strong></p>
-<ol>
-<li><p>在webapp下创建login.jsp文件</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 20-18-02_image-20210502201756825.png" alt="image-20210502201756825" style="zoom:50%;" /></p>
-</li>
-<li><p>在login.jsp下粘贴以下代码</p>
-<figure class="highlight jsp"><table><tr><td class="code"><pre><span class="line">&lt;%@ page contentType=<span class="string">&quot;text/html;charset=UTF-8&quot;</span> language=<span class="string">&quot;java&quot;</span> %&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt;登录&lt;/title&gt;</span><br><span class="line">    &lt;form method=<span class="string">&quot;post&quot;</span> action=<span class="string">&quot;servlet02&quot;</span>&gt;</span><br><span class="line">        账户名：&lt;input type=<span class="string">&quot;text&quot;</span> name=<span class="string">&quot;name&quot;</span>&gt; &lt;br&gt;</span><br><span class="line">        密码：&lt;input type=<span class="string">&quot;password&quot;</span> name=<span class="string">&quot;passwd&quot;</span>&gt; &lt;br&gt;</span><br><span class="line">        &lt;button&gt;登录&lt;/button&gt;   &lt;!--button默认为提交按钮--&gt;</span><br><span class="line">    &lt;/form&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line"></span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>需要注意，form标签的属性 <code>action</code>为<strong>注解@WebServlet(“/servlet02”)</strong>中的 <code>servlet02</code>（不要有斜线），这样就与这个处理类关联起来了</p>
-</blockquote>
-</li>
-<li><p>运行启动</p>
-</li>
-<li><p>浏览器访问</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 20-30-03_image-20210502202959582.png" alt="image-20210502202959582"></p>
-</li>
-<li><p>点击登录提交给 <code>Servlet01</code>类（含有注解 <code>@WebServlet(&quot;/servlet02&quot;)</code> ）处理</p>
-<p>查看获取到的数据：</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 20-32-36_image-20210502203233059.png" alt="image-20210502203233059"></p>
 </li>
 </ol>
 ]]></content>
@@ -5151,6 +5151,33 @@
       </tags>
   </entry>
   <entry>
+    <title>6-spring配置说明</title>
+    <url>/posts/3fb3b16d.html</url>
+    <content><![CDATA[<h1 id="spring配置"><a href="#spring配置" class="headerlink" title="spring配置"></a>spring配置</h1><h2 id="别名alias"><a href="#别名alias" class="headerlink" title="别名alias"></a>别名alias</h2><p>bean可以拥有别名</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">alias</span> <span class="attr">name</span>=<span class="string">&quot;fromName&quot;</span> <span class="attr">alias</span>=<span class="string">&quot;toName&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;章三&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;age&quot;</span> <span class="attr">value</span>=<span class="string">&quot;20&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">alias</span> <span class="attr">name</span>=<span class="string">&quot;user&quot;</span> <span class="attr">alias</span>=<span class="string">&quot;user2&quot;</span>/&gt;</span>   </span><br></pre></td></tr></table></figure>
+<p>使用别名后就可以通过别名来获取bean</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//User user = context.getBean(&quot;user&quot;, User.class);</span></span><br><span class="line">User user = context.getBean(<span class="string">&quot;user2&quot;</span>, User.class);</span><br></pre></td></tr></table></figure>
+<h2 id="bean的配置"><a href="#bean的配置" class="headerlink" title="bean的配置"></a>bean的配置</h2><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">id: bean的唯一标识符,相当于创建对象`User user = new User()`的对象名user</span></span><br><span class="line"><span class="comment">class：指向的类</span></span><br><span class="line"><span class="comment">name：也是别名，并且可以取多个，中间可以用逗号、分号、空格隔开</span></span><br><span class="line"><span class="comment">--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span> <span class="attr">name</span>=<span class="string">&quot;n1,n2;n3 n4&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;章三&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="import"><a href="#import" class="headerlink" title="import"></a>import</h2><p>如果有多个 <code>beans</code>配置文件，可以用 <code>import</code>将多个文件导入到一个文件中</p>
+<p>例如几个配置文件如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">resources</span><br><span class="line">	|-applicationcontext.xml</span><br><span class="line">	|-beans1.xml</span><br><span class="line">	|-beans2.xml</span><br></pre></td></tr></table></figure>
+<p>在 <code>applicationcontext.xml</code> 中可以使用 <code>import</code> 标签导入 另外2个配置文件：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">import</span> <span class="attr">resource</span>=<span class="string">&quot;beans1.xml&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">import</span> <span class="attr">resource</span>=<span class="string">&quot;beans2.xml&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>适用于团队合作时使用</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>java_spring</category>
+      </categories>
+      <tags>
+        <tag>java_spring</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>5-ioc创建对象方式</title>
     <url>/posts/d8642fb9.html</url>
     <content><![CDATA[<h1 id="ioc创建对象方式"><a href="#ioc创建对象方式" class="headerlink" title="ioc创建对象方式"></a>ioc创建对象方式</h1><h2 id="构造函数注入"><a href="#构造函数注入" class="headerlink" title="构造函数注入"></a>构造函数注入</h2><p>User.java</p>
@@ -5175,33 +5202,6 @@
 </ol>
 <h2 id="set注入"><a href="#set注入" class="headerlink" title="set注入"></a>set注入</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.ajream.pojo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span></span>&#123;   <span class="comment">// set注入</span></span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;name: &quot;</span> + name);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;李四&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>java_spring</category>
-      </categories>
-      <tags>
-        <tag>java_spring</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>6-spring配置说明</title>
-    <url>/posts/3fb3b16d.html</url>
-    <content><![CDATA[<h1 id="spring配置"><a href="#spring配置" class="headerlink" title="spring配置"></a>spring配置</h1><h2 id="别名alias"><a href="#别名alias" class="headerlink" title="别名alias"></a>别名alias</h2><p>bean可以拥有别名</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">alias</span> <span class="attr">name</span>=<span class="string">&quot;fromName&quot;</span> <span class="attr">alias</span>=<span class="string">&quot;toName&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
-<p>例如：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;章三&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;age&quot;</span> <span class="attr">value</span>=<span class="string">&quot;20&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">alias</span> <span class="attr">name</span>=<span class="string">&quot;user&quot;</span> <span class="attr">alias</span>=<span class="string">&quot;user2&quot;</span>/&gt;</span>   </span><br></pre></td></tr></table></figure>
-<p>使用别名后就可以通过别名来获取bean</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//User user = context.getBean(&quot;user&quot;, User.class);</span></span><br><span class="line">User user = context.getBean(<span class="string">&quot;user2&quot;</span>, User.class);</span><br></pre></td></tr></table></figure>
-<h2 id="bean的配置"><a href="#bean的配置" class="headerlink" title="bean的配置"></a>bean的配置</h2><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">id: bean的唯一标识符,相当于创建对象`User user = new User()`的对象名user</span></span><br><span class="line"><span class="comment">class：指向的类</span></span><br><span class="line"><span class="comment">name：也是别名，并且可以取多个，中间可以用逗号、分号、空格隔开</span></span><br><span class="line"><span class="comment">--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span> <span class="attr">name</span>=<span class="string">&quot;n1,n2;n3 n4&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;章三&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h2 id="import"><a href="#import" class="headerlink" title="import"></a>import</h2><p>如果有多个 <code>beans</code>配置文件，可以用 <code>import</code>将多个文件导入到一个文件中</p>
-<p>例如几个配置文件如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">resources</span><br><span class="line">	|-applicationcontext.xml</span><br><span class="line">	|-beans1.xml</span><br><span class="line">	|-beans2.xml</span><br></pre></td></tr></table></figure>
-<p>在 <code>applicationcontext.xml</code> 中可以使用 <code>import</code> 标签导入 另外2个配置文件：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">import</span> <span class="attr">resource</span>=<span class="string">&quot;beans1.xml&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">import</span> <span class="attr">resource</span>=<span class="string">&quot;beans2.xml&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>适用于团队合作时使用</p>
-</blockquote>
 ]]></content>
       <categories>
         <category>java</category>
