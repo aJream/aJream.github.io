@@ -21,7 +21,17 @@
   src: url('/fonts/ajLangMan.ttf');
   font-display: wrap;
 }
+@font-face {
+  font-family: 'SSblack';
+  src: url('/fonts/shishangblack.ttf');
+  font-display: wrap;
+}
 
+@font-face {
+  font-family: 'Love';
+  src: url('/fonts/loving.ttf');
+  font-display: wrap;
+}
 
 h1#site-title, #site-subtitle {
   font-family: 'ajLangMan', 'Candyhome', sans-serif;
@@ -30,30 +40,37 @@ h1#site-title, #site-subtitle {
 /* 文章内容 */
 .post-content, #article-containner {
   font-size: 16px;
+  /* font-family: 'Love', 'SSblack', sans-serif; */
 }
+
+
+/* 全局背景透明渐变 */
+/* #recent-posts>.recent-post-item,.layout_page>div:first-child:not(.recent-posts),.layout_post>#page,.layout_post>#post,.read-mode .layout_post>#post {
+    background: var(--light_bg_color)
+}
+
+#aside-content .card-widget {
+    background: var(--light_bg_color)
+}
+
+#web_bg {
+    background: linear-gradient(90deg,rgba(247,149,51,.1),rgba(243,112,85,.1) 15%,rgba(239,78,123,.1) 30%,rgba(161,102,171,.1) 44%,rgba(80,115,184,.1) 58%,rgba(16,152,173,.1) 72%,rgba(7,179,155,.1) 86%,rgba(109,186,130,.1))
+} */
+
 
 
 /* 除了主页外，其他页面顶部图片设置近似透明 */
-header#page-header {
+/* header#page-header {
     background: #00000000;
-}
+} */
 
-#page-header.post-bg:before{
+/* #page-header.post-bg:before{
     background: #00000000;
-    /* color: #49B1F5; */
-}
+    /* color: #49B1F5; 
+} */
 
 
 /* 网站颜色配置 */
-
-
-
-
-
-
-
-
-
 
 
 /* [data-theme="light"] #rightside>div>button,
@@ -69,9 +86,9 @@ header#page-header {
   background: #ec63a1e0;
 } */
 
-#footer{
+/* #footer{
   background: 0 0 !important;
-}
+} */
 
 
 
