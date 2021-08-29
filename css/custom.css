@@ -91,7 +91,9 @@ h1#site-title, #site-subtitle {
 } */
 
 
-
+#page h1.page-title, #post>#post-info {
+    text-align: center;
+}
 
 /* Aplayer栏目ui配置 */
 
