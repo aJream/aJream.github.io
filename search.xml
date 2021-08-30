@@ -213,6 +213,78 @@
       </tags>
   </entry>
   <entry>
+    <title>51单片机学习笔记(九)</title>
+    <url>/posts/17528481.html</url>
+    <content><![CDATA[<h2 id="简单介绍"><a href="#简单介绍" class="headerlink" title="简单介绍"></a>简单介绍</h2><h3 id="主要参数"><a href="#主要参数" class="headerlink" title="主要参数"></a>主要参数</h3><p>显示容量：16X2个字符</p>
+<p>芯片工作电压：4.5~5.5V， 最佳工作电压5.0V（2.0mA）</p>
+<h3 id="引脚说明"><a href="#引脚说明" class="headerlink" title="引脚说明"></a>引脚说明</h3><p>RS：为0时是指令输入，也就是表示显示在哪个“格子”的（1602有16X2共32个”格子”）;</p>
+<p>​    为1时表示数据输入，即每个”格子“显示的内容</p>
+<p>R/W：为1时是读，0是写；</p>
+<p>E：读写数据时要置1</p>
+<p>D0~D7：数据输入输出</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210825154252_image-20210825154248774.png" alt="image-20210825154248774"></p>
+<h2 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h2><h3 id="读写操作"><a href="#读写操作" class="headerlink" title="读写操作"></a>读写操作</h3><ul>
+<li><p>读状态，输入：RS=0, RW=1, E=0; </p>
+<p>此时输出数据D0~D7为状态字，每一位都有各自的状态；</p>
+<p>其中D0-D6表示当前数据地址指针的数值，D7的状态表示读写操作使能，如果是1表示禁止读写，0表示允许读写；</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210825155603_image-20210825155602088.png" alt="image-20210825155602088"></p>
+</li>
+<li><p>写指令（即告诉1602要显示的位置）：RS=0, RW=0, E=高脉冲，D0-D7为指令码</p>
+</li>
+<li>读数据：RS=1, RW=1, E=1, 此时D0-D7输出数据</li>
+<li>写数据：RS=1, RW=0, D0-D7表示要写入的数据，E=高脉冲</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Read_Busy</span><span class="params">()</span> <span class="comment">//读状态判断是芯片否处于”忙“状态</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	uchar busy;</span><br><span class="line">	P0 = <span class="number">0xff</span>;</span><br><span class="line">	RS = <span class="number">0</span>;</span><br><span class="line">	RW = <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">do</span></span><br><span class="line">	&#123;</span><br><span class="line">		EN = <span class="number">1</span>;</span><br><span class="line">		busy = P0;</span><br><span class="line">		EN = <span class="number">0</span>;</span><br><span class="line">	&#125;<span class="keyword">while</span>(busy &amp; <span class="number">0x80</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//写LCD1602命令一个字节</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Write_Cmd</span><span class="params">(uchar cmd)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Read_Busy();<span class="comment">//判断忙</span></span><br><span class="line">    RS = <span class="number">0</span>;</span><br><span class="line">    RW = <span class="number">0</span>;</span><br><span class="line">    P0 = cmd;</span><br><span class="line">    EN = <span class="number">1</span>;</span><br><span class="line">    EN = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//写一个字节数据</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Write_Dat</span><span class="params">(uchar dat)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Read_Busy();</span><br><span class="line">	RS = <span class="number">1</span>;</span><br><span class="line">	RW = <span class="number">0</span>;</span><br><span class="line">	P0 = dat;</span><br><span class="line">	EN = <span class="number">1</span>;</span><br><span class="line">	EN = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="RAM地址映射"><a href="#RAM地址映射" class="headerlink" title="RAM地址映射"></a>RAM地址映射</h3><p>控制器内部自带了80X8位（即80Bytes）的RAM缓冲区，对应关系如下图：</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210825160548_image-20210825160547241.png" alt="image-20210825160547241"></p>
+<p>注意：第10——27和50——67的地址上的字符是无法显示的，只能显示前面16X2个地址上所存放的字符</p>
+<h3 id="指令说明"><a href="#指令说明" class="headerlink" title="指令说明"></a>指令说明</h3><p>初始化设置：</p>
+<ol>
+<li><p>显示模式设置：指令码0x38（二进制是00111000），表示设置16X2显示，5X7点阵，8位数据接口</p>
+</li>
+<li><p>开/关光标设置：（配置时要转为16进制）</p>
+<p>指令码（二进制形式）<code>00001DCB</code></p>
+<ul>
+<li><p>D=1开显示，D=0关显示</p>
+</li>
+<li><p>C=1显示光标，C=0不显示光标</p>
+</li>
+<li>B=1光标闪烁，B=0不闪烁</li>
+</ul>
+<p>指令码（二进制形式）<code>000001NS</code></p>
+<ul>
+<li><p>N=1当读或写一个字符后<u>地址和光标</u>自动+1，N=0则为自动-1；</p>
+</li>
+<li><p>S=1当写入一个字符整屏显示左移（N=1）或右移（N=0）达到光标不动屏幕移动的效果；</p>
+<p>S=0当写入一个字符，屏幕显示不移动</p>
+</li>
+</ul>
+</li>
+<li><p>数据控制</p>
+<p>控制器内部有地址指针，通过发送指令 <code>80H+地址码</code> （地址码范围是0——27H，40H——67H） 即可访问地址上的数据，进而进行设置</p>
+</li>
+<li><p>其他指令：</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210825162337_image-20210825162336247.png" alt="image-20210825162336247"></p>
+</li>
+</ol>
+<h3 id="时序图"><a href="#时序图" class="headerlink" title="时序图"></a>时序图</h3><p>读操作时序图</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210825162508_image-20210825162506774.png" alt="image-20210825162506774"></p>
+<p>写操作时序图</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210825162528_image-20210825162527365.png" alt="image-20210825162527365"></p>
+<p>时序参数</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210825162602_image-20210825162600974.png" alt="image-20210825162600974"></p>
+<h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><p>控制LCD1602显示字符12345</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;reg52.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">unsigned</span> <span class="keyword">char</span> uchar;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">unsigned</span> <span class="keyword">int</span> uint;</span><br><span class="line"></span><br><span class="line">sbit RS = P3^<span class="number">5</span>;</span><br><span class="line">sbit RW = P3^<span class="number">6</span>;</span><br><span class="line">sbit EN = P3^<span class="number">4</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//判断液晶忙，如果忙则等待</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Read_Busy</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	uchar busy;</span><br><span class="line">	P0 = <span class="number">0xff</span>;</span><br><span class="line">	RS = <span class="number">0</span>;</span><br><span class="line">	RW = <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">do</span></span><br><span class="line">	&#123;</span><br><span class="line">		EN = <span class="number">1</span>;</span><br><span class="line">		busy = P0;</span><br><span class="line">		EN = <span class="number">0</span>;</span><br><span class="line">	&#125;<span class="keyword">while</span>(busy &amp; <span class="number">0x80</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//写LCD1602命令一个字节</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Write_Cmd</span><span class="params">(uchar cmd)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Read_Busy();<span class="comment">//判断忙</span></span><br><span class="line">	RS = <span class="number">0</span>;</span><br><span class="line">	RW = <span class="number">0</span>;</span><br><span class="line">	P0 = cmd;</span><br><span class="line">	EN = <span class="number">1</span>;</span><br><span class="line">	EN = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//写一个字节数据</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Write_Dat</span><span class="params">(uchar dat)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Read_Busy();</span><br><span class="line">	RS = <span class="number">1</span>;</span><br><span class="line">	RW = <span class="number">0</span>;</span><br><span class="line">	P0 = dat;</span><br><span class="line">	EN = <span class="number">1</span>;</span><br><span class="line">	EN = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Write_Cmd(<span class="number">0x38</span>);<span class="comment">//设置16*2显示</span></span><br><span class="line">	Write_Cmd(<span class="number">0x0f</span>);<span class="comment">//开显示，显示光标，光标闪烁</span></span><br><span class="line">	Write_Cmd(<span class="number">0x01</span>);<span class="comment">//清屏</span></span><br><span class="line"></span><br><span class="line">	Write_Cmd(<span class="number">0x06</span>);<span class="comment">//地址指针移位命令</span></span><br><span class="line">	Write_Cmd(<span class="number">0x80</span> | <span class="number">0x06</span>);<span class="comment">//显示地址</span></span><br><span class="line"></span><br><span class="line">	Write_Dat(<span class="number">1</span> + <span class="string">&#x27;0&#x27;</span>);   <span class="comment">//写入的字符要转换位ASCII码</span></span><br><span class="line">	Write_Dat(<span class="number">2</span> + <span class="string">&#x27;0&#x27;</span>);</span><br><span class="line">	Write_Dat(<span class="number">3</span> + <span class="string">&#x27;0&#x27;</span>);</span><br><span class="line">	Write_Dat(<span class="number">4</span> + <span class="string">&#x27;0&#x27;</span>);</span><br><span class="line">	Write_Dat(<span class="number">5</span> + <span class="string">&#x27;0&#x27;</span>);</span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>硬件学习</category>
+        <category>51单片机</category>
+      </categories>
+      <tags>
+        <tag>51单片机</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>51单片机学习笔记(二)</title>
     <url>/posts/46cd19c8.html</url>
     <content><![CDATA[<h1 id="定时计数器"><a href="#定时计数器" class="headerlink" title="定时计数器"></a>定时计数器</h1><p>51单片机有2个16位定时器/计数器：定时器T0（T0为P3.4）和定时器T1（T1为P3.5）</p>
@@ -307,78 +379,6 @@
 <p><img src="https://gitee.com/ajream/images/raw/master/img/20210822120238_image-20210822120231820.png" alt="image-20210822120231820"></p>
 </blockquote>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">定时器0, 工作模式1, 16位定时计数</span></span><br><span class="line"><span class="comment">数码管动态显示0-10，每隔1秒显示一次</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;reg52.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;intrins.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> uint unsigned int</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> uchar unsigned char</span></span><br><span class="line"></span><br><span class="line">sbit DU = P2^<span class="number">6</span>;<span class="comment">//数码管段选</span></span><br><span class="line">sbit WE = P2^<span class="number">7</span>;<span class="comment">//数码管段选</span></span><br><span class="line">sbit key_s2 = P3^<span class="number">0</span>;<span class="comment">//独立按键S2</span></span><br><span class="line">sbit key_s3 = P3^<span class="number">1</span>;<span class="comment">//独立按键S3</span></span><br><span class="line">uchar num;<span class="comment">//数码管显示的值</span></span><br><span class="line">uchar mSec, Sec;<span class="comment">//毫秒和秒储存变量</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//共阴数码管段选表0-9</span></span><br><span class="line">uchar code SMGduan[]= &#123;<span class="number">0x3F</span>, <span class="number">0x06</span>, <span class="number">0x5B</span>, <span class="number">0x4F</span>, <span class="number">0x66</span>, <span class="number">0x6D</span>, <span class="number">0x7D</span>, <span class="number">0x07</span>, <span class="number">0x7F</span>, <span class="number">0x6F</span>,&#125;;</span><br><span class="line"><span class="comment">//数码管位选码</span></span><br><span class="line">uchar code SMGwei[] = &#123;<span class="number">0xfe</span>, <span class="number">0xfd</span>, <span class="number">0xfb</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">delay</span><span class="params">(uint z)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	uint x,y;</span><br><span class="line">	<span class="keyword">for</span>(x = z; x &gt; <span class="number">0</span>; x--)</span><br><span class="line">		<span class="keyword">for</span>(y = <span class="number">114</span>; y &gt; <span class="number">0</span> ; y--); 		</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">display</span><span class="params">(uchar i)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">static</span> uchar wei; 		</span><br><span class="line">	P0 = <span class="number">0XFF</span>;<span class="comment">//清除断码</span></span><br><span class="line">	WE = <span class="number">1</span>;<span class="comment">//打开位选锁存器</span></span><br><span class="line">	P0 = SMGwei[wei];</span><br><span class="line">	WE = <span class="number">0</span>;<span class="comment">//锁存位选数据</span></span><br><span class="line">	<span class="keyword">switch</span>(wei)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">case</span> <span class="number">0</span>: DU = <span class="number">1</span>; P0 = SMGduan[i / <span class="number">100</span>]; DU = <span class="number">0</span>; <span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> <span class="number">1</span>: DU = <span class="number">1</span>; P0 = SMGduan[i % <span class="number">100</span> / <span class="number">10</span>]; DU = <span class="number">0</span>; <span class="keyword">break</span>;	</span><br><span class="line">		<span class="keyword">case</span> <span class="number">2</span>: DU = <span class="number">1</span>; P0 = SMGduan[i % <span class="number">10</span>]; DU = <span class="number">0</span>; <span class="keyword">break</span>;		</span><br><span class="line">	&#125;</span><br><span class="line">	wei++;</span><br><span class="line">	<span class="keyword">if</span>(wei == <span class="number">3</span>)</span><br><span class="line">		wei = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//定时器0初始化</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">T0_init</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	EA = <span class="number">1</span>;	<span class="comment">//打开总中断</span></span><br><span class="line">	ET0 = <span class="number">1</span>;<span class="comment">//打开定时器0中断</span></span><br><span class="line">	TR0 = <span class="number">1</span>;	 <span class="comment">//启动定时器0</span></span><br><span class="line">	TMOD = <span class="number">0X01</span>; <span class="comment">//定时器工作模式1，16位定时模式</span></span><br><span class="line">	TH0 = <span class="number">0xED</span>;</span><br><span class="line">	TL0 = <span class="number">0xFF</span>; <span class="comment">//定时5ms</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span>    <span class="comment">//主程序执行按键扫描</span></span></span><br><span class="line"><span class="function"></span>&#123;	</span><br><span class="line">	T0_init();<span class="comment">//定时器0初始化</span></span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(key_s2 == <span class="number">0</span>)<span class="comment">//判断S2是否被按下</span></span><br><span class="line">		&#123;</span><br><span class="line">			delay(<span class="number">20</span>);<span class="comment">//按键消抖</span></span><br><span class="line">			<span class="keyword">if</span>(key_s2 == <span class="number">0</span>)</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="keyword">if</span>(num != <span class="number">120</span>)</span><br><span class="line">				num++;</span><br><span class="line">				<span class="keyword">while</span>(!key_s2);<span class="comment">//松手检测</span></span><br><span class="line">			&#125;	</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span>(key_s3 == <span class="number">0</span>)<span class="comment">//判断S3是否被按下</span></span><br><span class="line">		&#123;</span><br><span class="line">			delay(<span class="number">20</span>);<span class="comment">//按键消抖</span></span><br><span class="line">			<span class="keyword">if</span>(key_s3 == <span class="number">0</span>)</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="keyword">if</span>(num &gt; <span class="number">0</span>)</span><br><span class="line">					num--;</span><br><span class="line">				<span class="keyword">while</span>(!key_s3);<span class="comment">//松手检测</span></span><br><span class="line">			&#125;	</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;	</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="comment">//定时器0中断处理函数</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">timer0</span><span class="params">()</span> interrupt 1                    <span class="comment">//T0中断入口为1</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	TH0 = <span class="number">0xED</span>;</span><br><span class="line">	TL0 = <span class="number">0xFF</span>; <span class="comment">//定时5ms</span></span><br><span class="line">	display(num); <span class="comment">//数码管显示s</span></span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>硬件学习</category>
-        <category>51单片机</category>
-      </categories>
-      <tags>
-        <tag>51单片机</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>51单片机学习笔记(九)</title>
-    <url>/posts/17528481.html</url>
-    <content><![CDATA[<h2 id="简单介绍"><a href="#简单介绍" class="headerlink" title="简单介绍"></a>简单介绍</h2><h3 id="主要参数"><a href="#主要参数" class="headerlink" title="主要参数"></a>主要参数</h3><p>显示容量：16X2个字符</p>
-<p>芯片工作电压：4.5~5.5V， 最佳工作电压5.0V（2.0mA）</p>
-<h3 id="引脚说明"><a href="#引脚说明" class="headerlink" title="引脚说明"></a>引脚说明</h3><p>RS：为0时是指令输入，也就是表示显示在哪个“格子”的（1602有16X2共32个”格子”）;</p>
-<p>​    为1时表示数据输入，即每个”格子“显示的内容</p>
-<p>R/W：为1时是读，0是写；</p>
-<p>E：读写数据时要置1</p>
-<p>D0~D7：数据输入输出</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/20210825154252_image-20210825154248774.png" alt="image-20210825154248774"></p>
-<h2 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h2><h3 id="读写操作"><a href="#读写操作" class="headerlink" title="读写操作"></a>读写操作</h3><ul>
-<li><p>读状态，输入：RS=0, RW=1, E=0; </p>
-<p>此时输出数据D0~D7为状态字，每一位都有各自的状态；</p>
-<p>其中D0-D6表示当前数据地址指针的数值，D7的状态表示读写操作使能，如果是1表示禁止读写，0表示允许读写；</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/20210825155603_image-20210825155602088.png" alt="image-20210825155602088"></p>
-</li>
-<li><p>写指令（即告诉1602要显示的位置）：RS=0, RW=0, E=高脉冲，D0-D7为指令码</p>
-</li>
-<li>读数据：RS=1, RW=1, E=1, 此时D0-D7输出数据</li>
-<li>写数据：RS=1, RW=0, D0-D7表示要写入的数据，E=高脉冲</li>
-</ul>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Read_Busy</span><span class="params">()</span> <span class="comment">//读状态判断是芯片否处于”忙“状态</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	uchar busy;</span><br><span class="line">	P0 = <span class="number">0xff</span>;</span><br><span class="line">	RS = <span class="number">0</span>;</span><br><span class="line">	RW = <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">do</span></span><br><span class="line">	&#123;</span><br><span class="line">		EN = <span class="number">1</span>;</span><br><span class="line">		busy = P0;</span><br><span class="line">		EN = <span class="number">0</span>;</span><br><span class="line">	&#125;<span class="keyword">while</span>(busy &amp; <span class="number">0x80</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//写LCD1602命令一个字节</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Write_Cmd</span><span class="params">(uchar cmd)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Read_Busy();<span class="comment">//判断忙</span></span><br><span class="line">    RS = <span class="number">0</span>;</span><br><span class="line">    RW = <span class="number">0</span>;</span><br><span class="line">    P0 = cmd;</span><br><span class="line">    EN = <span class="number">1</span>;</span><br><span class="line">    EN = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//写一个字节数据</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Write_Dat</span><span class="params">(uchar dat)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Read_Busy();</span><br><span class="line">	RS = <span class="number">1</span>;</span><br><span class="line">	RW = <span class="number">0</span>;</span><br><span class="line">	P0 = dat;</span><br><span class="line">	EN = <span class="number">1</span>;</span><br><span class="line">	EN = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="RAM地址映射"><a href="#RAM地址映射" class="headerlink" title="RAM地址映射"></a>RAM地址映射</h3><p>控制器内部自带了80X8位（即80Bytes）的RAM缓冲区，对应关系如下图：</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/20210825160548_image-20210825160547241.png" alt="image-20210825160547241"></p>
-<p>注意：第10——27和50——67的地址上的字符是无法显示的，只能显示前面16X2个地址上所存放的字符</p>
-<h3 id="指令说明"><a href="#指令说明" class="headerlink" title="指令说明"></a>指令说明</h3><p>初始化设置：</p>
-<ol>
-<li><p>显示模式设置：指令码0x38（二进制是00111000），表示设置16X2显示，5X7点阵，8位数据接口</p>
-</li>
-<li><p>开/关光标设置：（配置时要转为16进制）</p>
-<p>指令码（二进制形式）<code>00001DCB</code></p>
-<ul>
-<li><p>D=1开显示，D=0关显示</p>
-</li>
-<li><p>C=1显示光标，C=0不显示光标</p>
-</li>
-<li>B=1光标闪烁，B=0不闪烁</li>
-</ul>
-<p>指令码（二进制形式）<code>000001NS</code></p>
-<ul>
-<li><p>N=1当读或写一个字符后<u>地址和光标</u>自动+1，N=0则为自动-1；</p>
-</li>
-<li><p>S=1当写入一个字符整屏显示左移（N=1）或右移（N=0）达到光标不动屏幕移动的效果；</p>
-<p>S=0当写入一个字符，屏幕显示不移动</p>
-</li>
-</ul>
-</li>
-<li><p>数据控制</p>
-<p>控制器内部有地址指针，通过发送指令 <code>80H+地址码</code> （地址码范围是0——27H，40H——67H） 即可访问地址上的数据，进而进行设置</p>
-</li>
-<li><p>其他指令：</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/20210825162337_image-20210825162336247.png" alt="image-20210825162336247"></p>
-</li>
-</ol>
-<h3 id="时序图"><a href="#时序图" class="headerlink" title="时序图"></a>时序图</h3><p>读操作时序图</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/20210825162508_image-20210825162506774.png" alt="image-20210825162506774"></p>
-<p>写操作时序图</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/20210825162528_image-20210825162527365.png" alt="image-20210825162527365"></p>
-<p>时序参数</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/20210825162602_image-20210825162600974.png" alt="image-20210825162600974"></p>
-<h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><p>控制LCD1602显示字符12345</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;reg52.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">unsigned</span> <span class="keyword">char</span> uchar;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">unsigned</span> <span class="keyword">int</span> uint;</span><br><span class="line"></span><br><span class="line">sbit RS = P3^<span class="number">5</span>;</span><br><span class="line">sbit RW = P3^<span class="number">6</span>;</span><br><span class="line">sbit EN = P3^<span class="number">4</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//判断液晶忙，如果忙则等待</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Read_Busy</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	uchar busy;</span><br><span class="line">	P0 = <span class="number">0xff</span>;</span><br><span class="line">	RS = <span class="number">0</span>;</span><br><span class="line">	RW = <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">do</span></span><br><span class="line">	&#123;</span><br><span class="line">		EN = <span class="number">1</span>;</span><br><span class="line">		busy = P0;</span><br><span class="line">		EN = <span class="number">0</span>;</span><br><span class="line">	&#125;<span class="keyword">while</span>(busy &amp; <span class="number">0x80</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//写LCD1602命令一个字节</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Write_Cmd</span><span class="params">(uchar cmd)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Read_Busy();<span class="comment">//判断忙</span></span><br><span class="line">	RS = <span class="number">0</span>;</span><br><span class="line">	RW = <span class="number">0</span>;</span><br><span class="line">	P0 = cmd;</span><br><span class="line">	EN = <span class="number">1</span>;</span><br><span class="line">	EN = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//写一个字节数据</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Write_Dat</span><span class="params">(uchar dat)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Read_Busy();</span><br><span class="line">	RS = <span class="number">1</span>;</span><br><span class="line">	RW = <span class="number">0</span>;</span><br><span class="line">	P0 = dat;</span><br><span class="line">	EN = <span class="number">1</span>;</span><br><span class="line">	EN = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Write_Cmd(<span class="number">0x38</span>);<span class="comment">//设置16*2显示</span></span><br><span class="line">	Write_Cmd(<span class="number">0x0f</span>);<span class="comment">//开显示，显示光标，光标闪烁</span></span><br><span class="line">	Write_Cmd(<span class="number">0x01</span>);<span class="comment">//清屏</span></span><br><span class="line"></span><br><span class="line">	Write_Cmd(<span class="number">0x06</span>);<span class="comment">//地址指针移位命令</span></span><br><span class="line">	Write_Cmd(<span class="number">0x80</span> | <span class="number">0x06</span>);<span class="comment">//显示地址</span></span><br><span class="line"></span><br><span class="line">	Write_Dat(<span class="number">1</span> + <span class="string">&#x27;0&#x27;</span>);   <span class="comment">//写入的字符要转换位ASCII码</span></span><br><span class="line">	Write_Dat(<span class="number">2</span> + <span class="string">&#x27;0&#x27;</span>);</span><br><span class="line">	Write_Dat(<span class="number">3</span> + <span class="string">&#x27;0&#x27;</span>);</span><br><span class="line">	Write_Dat(<span class="number">4</span> + <span class="string">&#x27;0&#x27;</span>);</span><br><span class="line">	Write_Dat(<span class="number">5</span> + <span class="string">&#x27;0&#x27;</span>);</span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>硬件学习</category>
@@ -532,6 +532,28 @@
       </tags>
   </entry>
   <entry>
+    <title>Hexo添加百度统计分析</title>
+    <url>/posts/c8eb4af9.html</url>
+    <content><![CDATA[<ol>
+<li><p>注册登录<br>登录百度统计的<a href="https://tongji.baidu.com/web/welcome/login">官方网站</a></p>
+</li>
+<li><p>添加网站，填写相关信息</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210830205231_image-20210830205228402.png" alt="image-20210830205228402"></p>
+</li>
+<li><p>获取代码<img src="https://gitee.com/ajream/images/raw/master/img/20210830205616_image-20210830205615284.png" alt="image-20210830205615284"></p>
+<p>将上面这串字符填在主题的配置文件<code>_config.butterfly.yml</code>中：</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Baidu Analytics</span></span><br><span class="line"><span class="comment"># https://tongji.baidu.com/web/welcome/login</span></span><br><span class="line"><span class="attr">baidu_analytics:</span>  <span class="comment">#填在这里</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>51单片机学习笔记(四)</title>
     <url>/posts/c27dd6ec.html</url>
     <content><![CDATA[<p>目前常用的微机与外设之间进行数据传输的串行总线主要有UART、1-wire、I2C和SPI总线</p>
@@ -617,110 +639,6 @@
       </categories>
       <tags>
         <tag>51单片机</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hexo添加百度统计分析</title>
-    <url>/posts/dc7f8ae1.html</url>
-    <content><![CDATA[<ol>
-<li><p>注册登录<br>登录百度统计的<a href="https://tongji.baidu.com/web/welcome/login">官方网站</a></p>
-</li>
-<li><p>添加网站，填写相关信息</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/20210830205231_image-20210830205228402.png" alt="image-20210830205228402"></p>
-</li>
-<li><p>获取代码<img src="https://gitee.com/ajream/images/raw/master/img/20210830205616_image-20210830205615284.png" alt="image-20210830205615284"></p>
-<p>将上面这串字符填在主题的配置文件<code>_config.butterfly.yml</code>中：</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Baidu Analytics</span></span><br><span class="line"><span class="comment"># https://tongji.baidu.com/web/welcome/login</span></span><br><span class="line"><span class="attr">baidu_analytics:</span>  <span class="comment">#填在这里</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>java垃圾回收算法</title>
-    <url>/posts/bdfc8ea1.html</url>
-    <content><![CDATA[<h1 id="Java垃圾回收算法"><a href="#Java垃圾回收算法" class="headerlink" title="Java垃圾回收算法"></a>Java垃圾回收算法</h1><p><a href="https://zhuanlan.zhihu.com/p/73628158">咱们从头到尾说一次 Java 垃圾回收 - 知乎 (zhihu.com)</a></p>
-<h2 id="什么是垃圾（定义）"><a href="#什么是垃圾（定义）" class="headerlink" title="什么是垃圾（定义）"></a>什么是垃圾（定义）</h2><p>有两种算法来定义</p>
-<h3 id="引用计数算法"><a href="#引用计数算法" class="headerlink" title="引用计数算法"></a>引用计数算法</h3><p>引用计数算法是通过在对象头中分配一个空间来存储该对象被引用的次数，如果该对象被其他对象引用，则它的引用计数+1，删除一个该对象的引用，则其引用计数-1，当其引用计数为0时，该对象就是垃圾，会被回收。</p>
-<blockquote>
-<p><strong>缺点：</strong>循环引用（其计数永远不会为0）</p>
-</blockquote>
-<h3 id="可达性分析算法"><a href="#可达性分析算法" class="headerlink" title="可达性分析算法"></a>可达性分析算法</h3><p>可达性分析算法（Reachability Analysis）：基本思路是，通过一些被称为引用链（GC Roots）的对象作为起点，从这些节点开始向下搜索，搜索走过的路径被称为（Reference Chain)，当一个对象到 GC Roots 没有任何引用链相连时（即从 GC Roots 节点到该节点不可达），则证明该对象是不可用的。</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-04-23 19-06-16_image-20210423190611076.png" alt="image-20210423190611076" style="zoom:50%;" /></p>
-<blockquote>
-<p>可达性算法，解决了引用计数所无法解决的问题-“循环依赖”</p>
-</blockquote>
-<h2 id="怎么回收（算法）"><a href="#怎么回收（算法）" class="headerlink" title="怎么回收（算法）"></a>怎么回收（算法）</h2><h3 id="标记-清除算法"><a href="#标记-清除算法" class="headerlink" title="标记-清除算法"></a>标记-清除算法</h3><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-04-24 22-56-51_image-20210424225646255.png" alt="image-20210424225646255"></p>
-<p>标记清除算法原理就是，把要回收的内存进行标记，再清除掉这些内存中的无用数据；</p>
-<p>缺点：会导致大量碎片化的内存出现，但开辟内存时需要的是整块内存</p>
-<h3 id="复制算法"><a href="#复制算法" class="headerlink" title="复制算法"></a>复制算法</h3><p><strong>回收前：</strong></p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-04-24 23-15-19_image-20210424231518421.png" alt="image-20210424231518421"></p>
-<p><strong>回收后：</strong></p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-04-24 23-18-37_image-20210424231836708.png" alt="image-20210424231836708"></p>
-<p>原理：把整块内存平均分为两部分，分配内存时，只使用其中一部分。而这一部分内存满即将满时，jvm进行垃圾回收：</p>
-<ol>
-<li>首先把存活的对象都复制到另一块空内存上</li>
-<li>再把剩下的可回收的内存一次性进行垃圾回收，得到一块（占总的1/2）内存区域。</li>
-</ol>
-<p>优点：解决了标记-清除算法的问题</p>
-<p>缺点：同一时间只能使用其中一半的内存</p>
-<h3 id="标记-整理算法"><a href="#标记-整理算法" class="headerlink" title="标记-整理算法"></a>标记-整理算法</h3><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-04-24 23-19-46_v2-49f3e16de8d552ef585862062abe3f18_720w.jpg" alt="img"></p>
-<p>标记整理算法（Mark-Compact）标记过程仍然与标记-清除算法一样，但后续步骤不是直接对可回收对象进行清理，而是让所有存活的对象都向一端移动，再清理掉端边界以外的内存区域。</p>
-<p>优点：标记整理算法一方面在标记-清除算法上做了升级，解决了内存碎片的问题，也规避了复制算法只能利用一半内存区域的弊端。</p>
-<p>缺点：标记-整理算法对内存变动频繁，需要整理所有存活对象的引用地址，在效率上比复制算法要差很多。</p>
-<h3 id="分代收集算法"><a href="#分代收集算法" class="headerlink" title="分代收集算法"></a>分代收集算法</h3><p>分代收集算法融合了上述3种基础的算法思想，而产生的针对不同情况所采用不同算法的一套组合拳。</p>
-<p>对象存活周期的不同将内存划分为几块。一般是把 Java 堆分为新生代和老年代，这样就可以根据各个年代的特点采用最适当的收集算法。</p>
-<ol>
-<li>在新生代中，每次垃圾收集时都发现有大批对象死去，只有少量存活，那就选用<u>复制算法</u>，只需要付出少量存活对象的复制成本就可以完成收集。</li>
-<li>老年代中因为对象存活率高、没有额外空间对它进行分配担保，就必须使用<u>标记-清理</u>或者<u>标记-整理算法</u>来进行回收。</li>
-</ol>
-<h2 id="内存模型与回收策略"><a href="#内存模型与回收策略" class="headerlink" title="内存模型与回收策略"></a>内存模型与回收策略</h2><p>内存模型:</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-04-24 23-25-51_v2-2dcba4d81807c67df8309aa181bb00c3_720w.jpg" alt="img"></p>
-<p>可以看到，内存模型分为 :</p>
-<ul>
-<li><p>Eden</p>
-</li>
-<li><p>Survior</p>
-</li>
-<li><p>Old</p>
-<p>这3个区，而Survior又分为 From、to两个区</p>
-</li>
-</ul>
-<h3 id="Eden区"><a href="#Eden区" class="headerlink" title="Eden区"></a>Eden区</h3><p>IBM 公司的专业研究表明，有将近98%的对象是朝生夕死，所以针对这一现状，大多数情况下，对象会在新生代 Eden 区中进行分配，当 Eden 区没有足够空间进行分配时，虚拟机会发起一次 Minor GC，Minor GC 相比 Major GC <strong>更频繁，回收速度也更快</strong>。</p>
-<blockquote>
-<p>通过 Minor GC 之后，Eden 会被清空，Eden 区中绝大部分对象会被回收，而那些无需回收的存活对象，将会进到 Survivor 的 From 区（若 From 区不够，则直接进入 Old 区）。</p>
-</blockquote>
-<h3 id="Survivor区"><a href="#Survivor区" class="headerlink" title="Survivor区"></a>Survivor区</h3><p>Survivor 区相当于是 Eden 区和 Old 区的一个缓冲，类似于我们交通灯中的黄灯。Survivor 又分为2个区，一个是 From 区，一个是 To 区。每次执行 Minor GC，会将 Eden 区和 From 存活的对象放到 Survivor 的 To 区（如果 To 区不够，则直接进入 Old 区）。</p>
-<p>1、为啥需要Survivor区？</p>
-<p>不就是新生代到老年代么，直接 Eden 到 Old 不好了吗，为啥要这么复杂。想想如果没有 Survivor 区，Eden 区每进行一次 Minor GC，存活的对象就会被送到老年代，老年代很快就会被填满。而有很多对象虽然一次 Minor GC 没有消灭，但其实也并不会蹦跶多久，或许第二次，第三次就需要被清除。这时候移入老年区，很明显不是一个明智的决定。</p>
-<blockquote>
-<p>所以，Survivor 的存在意义就是减少被送到老年代的对象，进而减少 Major GC 的发生。Survivor 的预筛选保证，只有经历16次 Minor GC 还能在新生代中存活的对象，才会被送到老年代。</p>
-</blockquote>
-<p>2、为啥需要俩？</p>
-<p>设置两个 Survivor 区最大的好处就是解决内存碎片化。</p>
-<p>我们先假设一下，Survivor 如果只有一个区域会怎样。Minor GC 执行后，Eden 区被清空了，存活的对象放到了 Survivor 区，而之前 Survivor 区中的对象，可能也有一些是需要被清除的。问题来了，这时候我们怎么清除它们？在这种场景下，我们<strong>只能标记清除</strong>，而我们知道标记清除最大的问题就是内存碎片，在新生代这种经常会消亡的区域，采用标记清除必然会让内存产生严重的碎片化。因为 Survivor 有2个区域，所以每次 Minor GC，会将之前 Eden 区和 From 区中的存活对象复制到 To 区域。第二次 Minor GC 时，From 与 To 职责兑换，这时候会将 Eden 区和 To 区中的存活对象再复制到 From 区域，以此反复。</p>
-<p>这种机制最大的好处就是，整个过程中，永远有一个 Survivor space 是空的，另一个非空的 Survivor space 是无碎片的。那么，Survivor 为什么不分更多块呢？比方说分成三个、四个、五个?显然，如果 Survivor 区再细分下去，每一块的空间就会比较小，容易导致 Survivor 区满，两块 Survivor 区可能是经过权衡之后的最佳方案。</p>
-<h3 id="Old-区"><a href="#Old-区" class="headerlink" title="Old 区"></a>Old 区</h3><p>老年代占据着2/3的堆内存空间，只有在 Major GC 的时候才会进行清理，每次 GC 都会触发“Stop-The-World”。内存越大，STW 的时间也越长，所以内存也不仅仅是越大就越好。由于复制算法在对象存活率较高的老年代会进行很多次的复制操作，效率很低，所以老年代这里采用的是标记 —- 整理算法。</p>
-<p>除了上述所说，在内存担保机制下，无法安置的对象会直接进到老年代，以下几种情况也会进入老年代。</p>
-<p>1、大对象</p>
-<p>大对象指需要大量连续内存空间的对象，这部分对象不管是不是“朝生夕死”，都会直接进到老年代。这样做主要是为了避免在 Eden 区及2个 Survivor 区之间发生大量的内存复制。当你的系统有非常多“朝生夕死”的大对象时，得注意了。</p>
-<p>2、长期存活对象</p>
-<p>虚拟机给每个对象定义了一个对象年龄（Age）计数器。正常情况下对象会不断的在 Survivor 的 From 区与 To 区之间移动，对象在 Survivor 区中没经历一次 Minor GC，年龄就增加1岁。当年龄增加到15岁时，这时候就会被转移到老年代。当然，这里的15，JVM 也支持进行特殊设置。</p>
-<p>3、动态对象年龄</p>
-<p>虚拟机并不重视要求对象年龄必须到15岁，才会放入老年区，如果 Survivor 空间中相同年龄所有对象大小的综合大于 Survivor 空间的一般，年龄大于等于该年龄的对象就可以直接进去老年区，无需等你“成年”。</p>
-<p>这其实有点类似于负载均衡，轮询是负载均衡的一种，保证每台机器都分得同样的请求。看似很均衡，但每台机的硬件不通，健康状况不同，我们还可以基于每台机接受的请求数，或每台机的响应时间等，来调整我们的负载均衡算法。</p>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>java底层</category>
-      </categories>
-      <tags>
-        <tag>Java垃圾回收</tag>
       </tags>
   </entry>
   <entry>
@@ -861,6 +779,88 @@
       </categories>
       <tags>
         <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>java垃圾回收算法</title>
+    <url>/posts/bdfc8ea1.html</url>
+    <content><![CDATA[<h1 id="Java垃圾回收算法"><a href="#Java垃圾回收算法" class="headerlink" title="Java垃圾回收算法"></a>Java垃圾回收算法</h1><p><a href="https://zhuanlan.zhihu.com/p/73628158">咱们从头到尾说一次 Java 垃圾回收 - 知乎 (zhihu.com)</a></p>
+<h2 id="什么是垃圾（定义）"><a href="#什么是垃圾（定义）" class="headerlink" title="什么是垃圾（定义）"></a>什么是垃圾（定义）</h2><p>有两种算法来定义</p>
+<h3 id="引用计数算法"><a href="#引用计数算法" class="headerlink" title="引用计数算法"></a>引用计数算法</h3><p>引用计数算法是通过在对象头中分配一个空间来存储该对象被引用的次数，如果该对象被其他对象引用，则它的引用计数+1，删除一个该对象的引用，则其引用计数-1，当其引用计数为0时，该对象就是垃圾，会被回收。</p>
+<blockquote>
+<p><strong>缺点：</strong>循环引用（其计数永远不会为0）</p>
+</blockquote>
+<h3 id="可达性分析算法"><a href="#可达性分析算法" class="headerlink" title="可达性分析算法"></a>可达性分析算法</h3><p>可达性分析算法（Reachability Analysis）：基本思路是，通过一些被称为引用链（GC Roots）的对象作为起点，从这些节点开始向下搜索，搜索走过的路径被称为（Reference Chain)，当一个对象到 GC Roots 没有任何引用链相连时（即从 GC Roots 节点到该节点不可达），则证明该对象是不可用的。</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-04-23 19-06-16_image-20210423190611076.png" alt="image-20210423190611076" style="zoom:50%;" /></p>
+<blockquote>
+<p>可达性算法，解决了引用计数所无法解决的问题-“循环依赖”</p>
+</blockquote>
+<h2 id="怎么回收（算法）"><a href="#怎么回收（算法）" class="headerlink" title="怎么回收（算法）"></a>怎么回收（算法）</h2><h3 id="标记-清除算法"><a href="#标记-清除算法" class="headerlink" title="标记-清除算法"></a>标记-清除算法</h3><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-04-24 22-56-51_image-20210424225646255.png" alt="image-20210424225646255"></p>
+<p>标记清除算法原理就是，把要回收的内存进行标记，再清除掉这些内存中的无用数据；</p>
+<p>缺点：会导致大量碎片化的内存出现，但开辟内存时需要的是整块内存</p>
+<h3 id="复制算法"><a href="#复制算法" class="headerlink" title="复制算法"></a>复制算法</h3><p><strong>回收前：</strong></p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-04-24 23-15-19_image-20210424231518421.png" alt="image-20210424231518421"></p>
+<p><strong>回收后：</strong></p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-04-24 23-18-37_image-20210424231836708.png" alt="image-20210424231836708"></p>
+<p>原理：把整块内存平均分为两部分，分配内存时，只使用其中一部分。而这一部分内存满即将满时，jvm进行垃圾回收：</p>
+<ol>
+<li>首先把存活的对象都复制到另一块空内存上</li>
+<li>再把剩下的可回收的内存一次性进行垃圾回收，得到一块（占总的1/2）内存区域。</li>
+</ol>
+<p>优点：解决了标记-清除算法的问题</p>
+<p>缺点：同一时间只能使用其中一半的内存</p>
+<h3 id="标记-整理算法"><a href="#标记-整理算法" class="headerlink" title="标记-整理算法"></a>标记-整理算法</h3><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-04-24 23-19-46_v2-49f3e16de8d552ef585862062abe3f18_720w.jpg" alt="img"></p>
+<p>标记整理算法（Mark-Compact）标记过程仍然与标记-清除算法一样，但后续步骤不是直接对可回收对象进行清理，而是让所有存活的对象都向一端移动，再清理掉端边界以外的内存区域。</p>
+<p>优点：标记整理算法一方面在标记-清除算法上做了升级，解决了内存碎片的问题，也规避了复制算法只能利用一半内存区域的弊端。</p>
+<p>缺点：标记-整理算法对内存变动频繁，需要整理所有存活对象的引用地址，在效率上比复制算法要差很多。</p>
+<h3 id="分代收集算法"><a href="#分代收集算法" class="headerlink" title="分代收集算法"></a>分代收集算法</h3><p>分代收集算法融合了上述3种基础的算法思想，而产生的针对不同情况所采用不同算法的一套组合拳。</p>
+<p>对象存活周期的不同将内存划分为几块。一般是把 Java 堆分为新生代和老年代，这样就可以根据各个年代的特点采用最适当的收集算法。</p>
+<ol>
+<li>在新生代中，每次垃圾收集时都发现有大批对象死去，只有少量存活，那就选用<u>复制算法</u>，只需要付出少量存活对象的复制成本就可以完成收集。</li>
+<li>老年代中因为对象存活率高、没有额外空间对它进行分配担保，就必须使用<u>标记-清理</u>或者<u>标记-整理算法</u>来进行回收。</li>
+</ol>
+<h2 id="内存模型与回收策略"><a href="#内存模型与回收策略" class="headerlink" title="内存模型与回收策略"></a>内存模型与回收策略</h2><p>内存模型:</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-04-24 23-25-51_v2-2dcba4d81807c67df8309aa181bb00c3_720w.jpg" alt="img"></p>
+<p>可以看到，内存模型分为 :</p>
+<ul>
+<li><p>Eden</p>
+</li>
+<li><p>Survior</p>
+</li>
+<li><p>Old</p>
+<p>这3个区，而Survior又分为 From、to两个区</p>
+</li>
+</ul>
+<h3 id="Eden区"><a href="#Eden区" class="headerlink" title="Eden区"></a>Eden区</h3><p>IBM 公司的专业研究表明，有将近98%的对象是朝生夕死，所以针对这一现状，大多数情况下，对象会在新生代 Eden 区中进行分配，当 Eden 区没有足够空间进行分配时，虚拟机会发起一次 Minor GC，Minor GC 相比 Major GC <strong>更频繁，回收速度也更快</strong>。</p>
+<blockquote>
+<p>通过 Minor GC 之后，Eden 会被清空，Eden 区中绝大部分对象会被回收，而那些无需回收的存活对象，将会进到 Survivor 的 From 区（若 From 区不够，则直接进入 Old 区）。</p>
+</blockquote>
+<h3 id="Survivor区"><a href="#Survivor区" class="headerlink" title="Survivor区"></a>Survivor区</h3><p>Survivor 区相当于是 Eden 区和 Old 区的一个缓冲，类似于我们交通灯中的黄灯。Survivor 又分为2个区，一个是 From 区，一个是 To 区。每次执行 Minor GC，会将 Eden 区和 From 存活的对象放到 Survivor 的 To 区（如果 To 区不够，则直接进入 Old 区）。</p>
+<p>1、为啥需要Survivor区？</p>
+<p>不就是新生代到老年代么，直接 Eden 到 Old 不好了吗，为啥要这么复杂。想想如果没有 Survivor 区，Eden 区每进行一次 Minor GC，存活的对象就会被送到老年代，老年代很快就会被填满。而有很多对象虽然一次 Minor GC 没有消灭，但其实也并不会蹦跶多久，或许第二次，第三次就需要被清除。这时候移入老年区，很明显不是一个明智的决定。</p>
+<blockquote>
+<p>所以，Survivor 的存在意义就是减少被送到老年代的对象，进而减少 Major GC 的发生。Survivor 的预筛选保证，只有经历16次 Minor GC 还能在新生代中存活的对象，才会被送到老年代。</p>
+</blockquote>
+<p>2、为啥需要俩？</p>
+<p>设置两个 Survivor 区最大的好处就是解决内存碎片化。</p>
+<p>我们先假设一下，Survivor 如果只有一个区域会怎样。Minor GC 执行后，Eden 区被清空了，存活的对象放到了 Survivor 区，而之前 Survivor 区中的对象，可能也有一些是需要被清除的。问题来了，这时候我们怎么清除它们？在这种场景下，我们<strong>只能标记清除</strong>，而我们知道标记清除最大的问题就是内存碎片，在新生代这种经常会消亡的区域，采用标记清除必然会让内存产生严重的碎片化。因为 Survivor 有2个区域，所以每次 Minor GC，会将之前 Eden 区和 From 区中的存活对象复制到 To 区域。第二次 Minor GC 时，From 与 To 职责兑换，这时候会将 Eden 区和 To 区中的存活对象再复制到 From 区域，以此反复。</p>
+<p>这种机制最大的好处就是，整个过程中，永远有一个 Survivor space 是空的，另一个非空的 Survivor space 是无碎片的。那么，Survivor 为什么不分更多块呢？比方说分成三个、四个、五个?显然，如果 Survivor 区再细分下去，每一块的空间就会比较小，容易导致 Survivor 区满，两块 Survivor 区可能是经过权衡之后的最佳方案。</p>
+<h3 id="Old-区"><a href="#Old-区" class="headerlink" title="Old 区"></a>Old 区</h3><p>老年代占据着2/3的堆内存空间，只有在 Major GC 的时候才会进行清理，每次 GC 都会触发“Stop-The-World”。内存越大，STW 的时间也越长，所以内存也不仅仅是越大就越好。由于复制算法在对象存活率较高的老年代会进行很多次的复制操作，效率很低，所以老年代这里采用的是标记 —- 整理算法。</p>
+<p>除了上述所说，在内存担保机制下，无法安置的对象会直接进到老年代，以下几种情况也会进入老年代。</p>
+<p>1、大对象</p>
+<p>大对象指需要大量连续内存空间的对象，这部分对象不管是不是“朝生夕死”，都会直接进到老年代。这样做主要是为了避免在 Eden 区及2个 Survivor 区之间发生大量的内存复制。当你的系统有非常多“朝生夕死”的大对象时，得注意了。</p>
+<p>2、长期存活对象</p>
+<p>虚拟机给每个对象定义了一个对象年龄（Age）计数器。正常情况下对象会不断的在 Survivor 的 From 区与 To 区之间移动，对象在 Survivor 区中没经历一次 Minor GC，年龄就增加1岁。当年龄增加到15岁时，这时候就会被转移到老年代。当然，这里的15，JVM 也支持进行特殊设置。</p>
+<p>3、动态对象年龄</p>
+<p>虚拟机并不重视要求对象年龄必须到15岁，才会放入老年区，如果 Survivor 空间中相同年龄所有对象大小的综合大于 Survivor 空间的一般，年龄大于等于该年龄的对象就可以直接进去老年区，无需等你“成年”。</p>
+<p>这其实有点类似于负载均衡，轮询是负载均衡的一种，保证每台机器都分得同样的请求。看似很均衡，但每台机的硬件不通，健康状况不同，我们还可以基于每台机接受的请求数，或每台机的响应时间等，来调整我们的负载均衡算法。</p>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>java底层</category>
+      </categories>
+      <tags>
+        <tag>Java垃圾回收</tag>
       </tags>
   </entry>
   <entry>
@@ -1628,6 +1628,43 @@
       </tags>
   </entry>
   <entry>
+    <title>4-MySQL事务</title>
+    <url>/posts/2a3cf99e.html</url>
+    <content><![CDATA[<h1 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h1><h2 id="什么是事务"><a href="#什么是事务" class="headerlink" title="什么是事务"></a>什么是事务</h2><p>什么是事务：要么都成功，要么都失败</p>
+<blockquote>
+<p>比如：</p>
+<p>a 转账给 b  100元</p>
+<p>b 收到 a 的钱 100元</p>
+<p>这两者应该：要么都成功，要么都失败</p>
+</blockquote>
+<p>事务原则：ACID原则-&gt;【原子性、一致性、隔离性、持久性】</p>
+<ul>
+<li>原子性：要么都成功，要么都失败</li>
+<li>一致性：事务前后（时间上）数据完整性一致</li>
+<li>持久性：事务一旦提交则不可逆</li>
+<li>隔离性：多个用户操作一个数据库，数据库为每一个用户开启的事务，应该相互隔离，相互之间不能干扰</li>
+</ul>
+<blockquote>
+<p>隔离导致的一些问题：</p>
+<ul>
+<li>脏读：一个事务读取另一个事务未提交的数据</li>
+<li>不可重复读：在一个事务内读取表中某一数据，多次读取结果不同</li>
+<li>虚读（幻读）：在一个事务内读取到其他事务插入的数据，导致前后读取不一致</li>
+</ul>
+</blockquote>
+<h2 id="事务执行"><a href="#事务执行" class="headerlink" title="事务执行"></a>事务执行</h2><p>MySQL默认开启事务自动提交</p>
+<p>手动处理事务：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">set autocommit = 0 -- 关闭事务自动提交</span><br><span class="line">start transaction -- 标记一个事务开始，从这句话后的sql都在一个事务内</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 数据操作</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">-- 提交：持久化（成功）</span><br><span class="line">commit</span><br><span class="line"></span><br><span class="line">-- 回滚：回到原来样子（事务失败）</span><br><span class="line">rollback</span><br><span class="line"></span><br><span class="line">-- 事务结束</span><br><span class="line">set autocommit = 1 -- 恢复自动提交</span><br><span class="line"></span><br><span class="line">savepoint 保存点名 ; -- 设置事务保存点</span><br><span class="line">rollback to savepoint 保存点名 ; -- 回到事务保存点</span><br><span class="line">release savepoint 保存点名; -- 撤销保存点</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>MySQL_JDBC</category>
+      </categories>
+      <tags>
+        <tag>MySQL_JDBC</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>5-索引</title>
     <url>/posts/683d1a78.html</url>
     <content><![CDATA[<h1 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h1><p><strong>索引是</strong>帮助MySQL高效获取数据的<strong>数据结构</strong></p>
@@ -1662,43 +1699,6 @@
 <li>hash类型</li>
 <li>B-tree类型（innoDB默认索引类型）</li>
 </ul>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>MySQL_JDBC</category>
-      </categories>
-      <tags>
-        <tag>MySQL_JDBC</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>4-MySQL事务</title>
-    <url>/posts/2a3cf99e.html</url>
-    <content><![CDATA[<h1 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h1><h2 id="什么是事务"><a href="#什么是事务" class="headerlink" title="什么是事务"></a>什么是事务</h2><p>什么是事务：要么都成功，要么都失败</p>
-<blockquote>
-<p>比如：</p>
-<p>a 转账给 b  100元</p>
-<p>b 收到 a 的钱 100元</p>
-<p>这两者应该：要么都成功，要么都失败</p>
-</blockquote>
-<p>事务原则：ACID原则-&gt;【原子性、一致性、隔离性、持久性】</p>
-<ul>
-<li>原子性：要么都成功，要么都失败</li>
-<li>一致性：事务前后（时间上）数据完整性一致</li>
-<li>持久性：事务一旦提交则不可逆</li>
-<li>隔离性：多个用户操作一个数据库，数据库为每一个用户开启的事务，应该相互隔离，相互之间不能干扰</li>
-</ul>
-<blockquote>
-<p>隔离导致的一些问题：</p>
-<ul>
-<li>脏读：一个事务读取另一个事务未提交的数据</li>
-<li>不可重复读：在一个事务内读取表中某一数据，多次读取结果不同</li>
-<li>虚读（幻读）：在一个事务内读取到其他事务插入的数据，导致前后读取不一致</li>
-</ul>
-</blockquote>
-<h2 id="事务执行"><a href="#事务执行" class="headerlink" title="事务执行"></a>事务执行</h2><p>MySQL默认开启事务自动提交</p>
-<p>手动处理事务：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">set autocommit = 0 -- 关闭事务自动提交</span><br><span class="line">start transaction -- 标记一个事务开始，从这句话后的sql都在一个事务内</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 数据操作</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">-- 提交：持久化（成功）</span><br><span class="line">commit</span><br><span class="line"></span><br><span class="line">-- 回滚：回到原来样子（事务失败）</span><br><span class="line">rollback</span><br><span class="line"></span><br><span class="line">-- 事务结束</span><br><span class="line">set autocommit = 1 -- 恢复自动提交</span><br><span class="line"></span><br><span class="line">savepoint 保存点名 ; -- 设置事务保存点</span><br><span class="line">rollback to savepoint 保存点名 ; -- 回到事务保存点</span><br><span class="line">release savepoint 保存点名; -- 撤销保存点</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>java</category>
@@ -2376,30 +2376,6 @@
       </tags>
   </entry>
   <entry>
-    <title>5-Stream数据流</title>
-    <url>/posts/2d7f83ef.html</url>
-    <content><![CDATA[<!--toc-->
-<h1 id="Stream数据流"><a href="#Stream数据流" class="headerlink" title="Stream数据流"></a>Stream数据流</h1><h2 id="1、串口收发数据"><a href="#1、串口收发数据" class="headerlink" title="1、串口收发数据"></a>1、串口收发数据</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 启动串口通讯</span></span><br><span class="line">  Serial.begin(<span class="number">9600</span>); </span><br><span class="line">  Serial.println();</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">  <span class="keyword">if</span> (Serial.available())&#123;                    <span class="comment">// 当串口接收到信息后</span></span><br><span class="line">    String serialData = Serial.readString();  <span class="comment">// 将接收到的信息存储于serialData变量</span></span><br><span class="line">    Serial.print(serialData);                 </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>使用<code>Serial.available</code>来判断ESP8266开发板是否接收到串口数据</p>
-<p>实际上，ESP8266开发板通过串口收发的数据通过Stream进行的</p>
-<blockquote>
-<p>下面的程序将演示：</p>
-<p>当ESP8266找到了find函数所指定的参数“ok”后，随即在后续接收到的数据中查找数字信息。一旦找到数字，则通过串口监视器输出。接下来串口监视器还将输出找到数字后剩余的串口输入信息是什么。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  Serial.begin(<span class="number">9600</span>);</span><br><span class="line">  Serial.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line">  Serial.println(<span class="string">&quot;Please enter input...&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">while</span>(Serial.available())&#123;</span><br><span class="line">    <span class="keyword">if</span>(Serial.find(<span class="string">&quot;ok&quot;</span>))&#123;</span><br><span class="line">      Serial.println(<span class="string">&quot;Found ok in user input.&quot;</span>);</span><br><span class="line"> </span><br><span class="line">      <span class="keyword">int</span> serialParseInt = Serial.parseInt();</span><br><span class="line">      Serial.print(<span class="string">&quot;serialParseInt = &quot;</span>);</span><br><span class="line">      Serial.println(serialParseInt);</span><br><span class="line">      </span><br><span class="line">      String serialInput = Serial.readString();</span><br><span class="line">      Serial.print(<span class="string">&quot;serialInput = &quot;</span>);</span><br><span class="line">      Serial.println(serialInput);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</blockquote>
-<h2 id="2、使用Stream方式来读取服务器响应的信息"><a href="#2、使用Stream方式来读取服务器响应的信息" class="headerlink" title="2、使用Stream方式来读取服务器响应的信息"></a>2、使用Stream方式来读取服务器响应的信息</h2><p>（具体看第4篇文章第2点的代码）</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> (client.connected() || client.available())&#123; </span><br><span class="line">    <span class="keyword">if</span> (client.available())&#123;</span><br><span class="line">        String line = client.readStringUntil(<span class="string">&#x27;\n&#x27;</span>);     <span class="comment">//读取返回的数据</span></span><br><span class="line">        Serial.println(line);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="3、使用Stream方式来读取文件内容"><a href="#3、使用Stream方式来读取文件内容" class="headerlink" title="3、使用Stream方式来读取文件内容"></a>3、使用Stream方式来读取文件内容</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">File f = SPIFFS.open(file_name, <span class="string">&quot;r&quot;</span>);     <span class="comment">// 以“r”模式再次打开闪存文件</span></span><br><span class="line">Serial.println(f.readString());				<span class="comment">// 读取文件内容</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>硬件学习</category>
-        <category>esp8266</category>
-      </categories>
-      <tags>
-        <tag>esp8266</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>4-NodeMCU作为客户端使用</title>
     <url>/posts/d150c3f1.html</url>
     <content><![CDATA[<!--toc-->
@@ -2446,6 +2422,30 @@
 </ol>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">wifiClientRequest</span><span class="params">(String url)</span></span>&#123;</span><br><span class="line">    <span class="comment">// 建立WiFi客户端对象</span></span><br><span class="line">    WiFiClient client;    </span><br><span class="line"></span><br><span class="line">    <span class="comment">// 建立字符串，用于HTTP请求</span></span><br><span class="line">    String httpRequest =  String(<span class="string">&quot;GET /&quot;</span>) + <span class="string">&quot; HTTP/1.1\r\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;url: &quot;</span> + url + <span class="string">&quot;\r\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;Connection: close\r\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;\r\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 连接网络服务器</span></span><br><span class="line">    <span class="keyword">if</span> (client.connect(url, httpPort))&#123; 	<span class="comment">//连接成功connect会返回true</span></span><br><span class="line">        </span><br><span class="line">        client.print(httpRequest);          <span class="comment">// 向服务器发送HTTP请求</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 通过串口输出网络服务器响应信息    </span></span><br><span class="line">        <span class="keyword">while</span> (client.connected() || client.available())&#123; </span><br><span class="line">            <span class="keyword">if</span> (client.available())&#123;</span><br><span class="line">                String line = client.readStringUntil(<span class="string">&#x27;\n&#x27;</span>);  <span class="comment">//一行一行读取</span></span><br><span class="line">                Serial.println(line);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        client.stop();		<span class="comment">// 断开与服务器的连接</span></span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span>&#123;    </span><br><span class="line">        client.stop();		<span class="comment">// 如果连接不成功则断开连接</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 <h2 id=""><a href="#" class="headerlink" title=" "></a> </h2>]]></content>
+      <categories>
+        <category>硬件学习</category>
+        <category>esp8266</category>
+      </categories>
+      <tags>
+        <tag>esp8266</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>5-Stream数据流</title>
+    <url>/posts/2d7f83ef.html</url>
+    <content><![CDATA[<!--toc-->
+<h1 id="Stream数据流"><a href="#Stream数据流" class="headerlink" title="Stream数据流"></a>Stream数据流</h1><h2 id="1、串口收发数据"><a href="#1、串口收发数据" class="headerlink" title="1、串口收发数据"></a>1、串口收发数据</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 启动串口通讯</span></span><br><span class="line">  Serial.begin(<span class="number">9600</span>); </span><br><span class="line">  Serial.println();</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">  <span class="keyword">if</span> (Serial.available())&#123;                    <span class="comment">// 当串口接收到信息后</span></span><br><span class="line">    String serialData = Serial.readString();  <span class="comment">// 将接收到的信息存储于serialData变量</span></span><br><span class="line">    Serial.print(serialData);                 </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用<code>Serial.available</code>来判断ESP8266开发板是否接收到串口数据</p>
+<p>实际上，ESP8266开发板通过串口收发的数据通过Stream进行的</p>
+<blockquote>
+<p>下面的程序将演示：</p>
+<p>当ESP8266找到了find函数所指定的参数“ok”后，随即在后续接收到的数据中查找数字信息。一旦找到数字，则通过串口监视器输出。接下来串口监视器还将输出找到数字后剩余的串口输入信息是什么。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  Serial.begin(<span class="number">9600</span>);</span><br><span class="line">  Serial.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line">  Serial.println(<span class="string">&quot;Please enter input...&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">while</span>(Serial.available())&#123;</span><br><span class="line">    <span class="keyword">if</span>(Serial.find(<span class="string">&quot;ok&quot;</span>))&#123;</span><br><span class="line">      Serial.println(<span class="string">&quot;Found ok in user input.&quot;</span>);</span><br><span class="line"> </span><br><span class="line">      <span class="keyword">int</span> serialParseInt = Serial.parseInt();</span><br><span class="line">      Serial.print(<span class="string">&quot;serialParseInt = &quot;</span>);</span><br><span class="line">      Serial.println(serialParseInt);</span><br><span class="line">      </span><br><span class="line">      String serialInput = Serial.readString();</span><br><span class="line">      Serial.print(<span class="string">&quot;serialInput = &quot;</span>);</span><br><span class="line">      Serial.println(serialInput);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h2 id="2、使用Stream方式来读取服务器响应的信息"><a href="#2、使用Stream方式来读取服务器响应的信息" class="headerlink" title="2、使用Stream方式来读取服务器响应的信息"></a>2、使用Stream方式来读取服务器响应的信息</h2><p>（具体看第4篇文章第2点的代码）</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> (client.connected() || client.available())&#123; </span><br><span class="line">    <span class="keyword">if</span> (client.available())&#123;</span><br><span class="line">        String line = client.readStringUntil(<span class="string">&#x27;\n&#x27;</span>);     <span class="comment">//读取返回的数据</span></span><br><span class="line">        Serial.println(line);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="3、使用Stream方式来读取文件内容"><a href="#3、使用Stream方式来读取文件内容" class="headerlink" title="3、使用Stream方式来读取文件内容"></a>3、使用Stream方式来读取文件内容</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">File f = SPIFFS.open(file_name, <span class="string">&quot;r&quot;</span>);     <span class="comment">// 以“r”模式再次打开闪存文件</span></span><br><span class="line">Serial.println(f.readString());				<span class="comment">// 读取文件内容</span></span><br></pre></td></tr></table></figure>
+]]></content>
       <categories>
         <category>硬件学习</category>
         <category>esp8266</category>
@@ -2533,48 +2533,6 @@
       </categories>
       <tags>
         <tag>esp8266</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>MQTT篇（三）关于MQTT的主题</title>
-    <url>/posts/894e18ee.html</url>
-    <content><![CDATA[<h2 id="主题"><a href="#主题" class="headerlink" title="主题"></a>主题</h2><h3 id="主题基本形式"><a href="#主题基本形式" class="headerlink" title="主题基本形式"></a>主题基本形式</h3><p>​        主题基本形式就是一个字符串，比如：currentTime，carSpeed</p>
-<p>​        注意：主题区分大小写、可以用空格（<u>但尽量不要用</u>）、尽量使用英文字符</p>
-<h3 id="主题分级"><a href="#主题分级" class="headerlink" title="主题分级"></a>主题分级</h3><p>​        MQTT主题各个级别之间可以使用<code>/</code>来分隔。如：<code>Tyler-1/motor/1/speed</code></p>
-<p>​        示例中一共有四级主题，分别是第1级 Tyler-1、第2级motor、第三级1、第4级speed。</p>
-<h3 id="主题通配符"><a href="#主题通配符" class="headerlink" title="主题通配符"></a>主题通配符</h3><p>​        当客户端订阅主题时，可以使用通配符同时订阅多个主题。通配符只能在订阅主题时使用</p>
-<ul>
-<li><p>单级通配符: <code>+</code>        示例：</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">home/sensor/+/temperature</span><br><span class="line"></span><br><span class="line"><span class="comment"># 可以表示：</span></span><br><span class="line"><span class="comment"># home/sensor/aaa/temperature</span></span><br><span class="line"><span class="comment"># home/sensor/bbb/temperature</span></span><br><span class="line"><span class="comment"># ......</span></span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<ul>
-<li><p>多级通配符 :<code>#</code>        示例：</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">home/sensor/<span class="comment">#</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 可以表示：</span></span><br><span class="line"><span class="comment"># home/sensor/aaa</span></span><br><span class="line"><span class="comment"># home/sensor/bbb/ccc</span></span><br><span class="line"><span class="comment"># home/sensor/aaa/ccc</span></span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><ul>
-<li><p>以$开始的主题</p>
-<p>以$开始的主题是MQTT服务端<strong>系统保留的特殊主题</strong>，不能随意订阅或者向其发布信息。如：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash">SYS/broker/clients/connected</span></span><br><span class="line"><span class="meta">$</span><span class="bash">SYS/broker/clients/disconnected</span></span><br><span class="line"><span class="meta">$</span><span class="bash">SYS/broker/clients/total</span></span><br><span class="line"><span class="meta">$</span><span class="bash">SYS/broker/messages/sent</span></span><br><span class="line"><span class="meta">$</span><span class="bash">SYS/broker/uptime</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>避免使用<code>/</code>作为主题的开头</p>
-</li>
-<li><p>主题中尽量<strong>不要使用空格</strong></p>
-</li>
-<li><p>主题中尽量使用<strong>ASCII字符</strong></p>
-</li>
-<li><p>建议在主题中嵌入客户端ID<br>【通过主题中的客户端ID内容，可以很容易的了解该主题信息是由哪一台设备所发布的】</p>
-</li>
-</ul>
-<h2 id="ESP8266订阅主题"><a href="#ESP8266订阅主题" class="headerlink" title="ESP8266订阅主题"></a>ESP8266订阅主题</h2>]]></content>
-      <categories>
-        <category>硬件学习</category>
-        <category>物联网开发</category>
-      </categories>
-      <tags>
-        <tag>esp8266</tag>
-        <tag>物联网</tag>
       </tags>
   </entry>
   <entry>
@@ -2710,6 +2668,103 @@
       </tags>
   </entry>
   <entry>
+    <title>MQTT篇（三）关于MQTT的主题</title>
+    <url>/posts/894e18ee.html</url>
+    <content><![CDATA[<h2 id="主题"><a href="#主题" class="headerlink" title="主题"></a>主题</h2><h3 id="主题基本形式"><a href="#主题基本形式" class="headerlink" title="主题基本形式"></a>主题基本形式</h3><p>​        主题基本形式就是一个字符串，比如：currentTime，carSpeed</p>
+<p>​        注意：主题区分大小写、可以用空格（<u>但尽量不要用</u>）、尽量使用英文字符</p>
+<h3 id="主题分级"><a href="#主题分级" class="headerlink" title="主题分级"></a>主题分级</h3><p>​        MQTT主题各个级别之间可以使用<code>/</code>来分隔。如：<code>Tyler-1/motor/1/speed</code></p>
+<p>​        示例中一共有四级主题，分别是第1级 Tyler-1、第2级motor、第三级1、第4级speed。</p>
+<h3 id="主题通配符"><a href="#主题通配符" class="headerlink" title="主题通配符"></a>主题通配符</h3><p>​        当客户端订阅主题时，可以使用通配符同时订阅多个主题。通配符只能在订阅主题时使用</p>
+<ul>
+<li><p>单级通配符: <code>+</code>        示例：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">home/sensor/+/temperature</span><br><span class="line"></span><br><span class="line"><span class="comment"># 可以表示：</span></span><br><span class="line"><span class="comment"># home/sensor/aaa/temperature</span></span><br><span class="line"><span class="comment"># home/sensor/bbb/temperature</span></span><br><span class="line"><span class="comment"># ......</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><p>多级通配符 :<code>#</code>        示例：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">home/sensor/<span class="comment">#</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 可以表示：</span></span><br><span class="line"><span class="comment"># home/sensor/aaa</span></span><br><span class="line"><span class="comment"># home/sensor/bbb/ccc</span></span><br><span class="line"><span class="comment"># home/sensor/aaa/ccc</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><ul>
+<li><p>以$开始的主题</p>
+<p>以$开始的主题是MQTT服务端<strong>系统保留的特殊主题</strong>，不能随意订阅或者向其发布信息。如：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash">SYS/broker/clients/connected</span></span><br><span class="line"><span class="meta">$</span><span class="bash">SYS/broker/clients/disconnected</span></span><br><span class="line"><span class="meta">$</span><span class="bash">SYS/broker/clients/total</span></span><br><span class="line"><span class="meta">$</span><span class="bash">SYS/broker/messages/sent</span></span><br><span class="line"><span class="meta">$</span><span class="bash">SYS/broker/uptime</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>避免使用<code>/</code>作为主题的开头</p>
+</li>
+<li><p>主题中尽量<strong>不要使用空格</strong></p>
+</li>
+<li><p>主题中尽量使用<strong>ASCII字符</strong></p>
+</li>
+<li><p>建议在主题中嵌入客户端ID<br>【通过主题中的客户端ID内容，可以很容易的了解该主题信息是由哪一台设备所发布的】</p>
+</li>
+</ul>
+<h2 id="ESP8266订阅主题"><a href="#ESP8266订阅主题" class="headerlink" title="ESP8266订阅主题"></a>ESP8266订阅主题</h2>]]></content>
+      <categories>
+        <category>硬件学习</category>
+        <category>物联网开发</category>
+      </categories>
+      <tags>
+        <tag>esp8266</tag>
+        <tag>物联网</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>1-Servlet</title>
+    <url>/posts/345d8e17.html</url>
+    <content><![CDATA[<h1 id="Servlet"><a href="#Servlet" class="headerlink" title="Servlet"></a>Servlet</h1><h2 id="servlet技术"><a href="#servlet技术" class="headerlink" title="servlet技术"></a>servlet技术</h2><ol>
+<li>Servlet是Java EE规范之一，规范即接口</li>
+<li>是JavaWeb三大组件之一，其他2个是：Filter过滤器、Listener监听器</li>
+<li>是运行在服务器上一个Java小程序，可以接收客户端发来的请求，并相应给客户端</li>
+<li>Servlet没有 <code>main()</code>方法，由系统自动调用</li>
+</ol>
+<h2 id="IDEA创建servlet"><a href="#IDEA创建servlet" class="headerlink" title="IDEA创建servlet"></a>IDEA创建servlet</h2><p><img src="https://img-blog.csdnimg.cn/20210502184910567.png" alt="在这里插入图片描述" style="zoom:43%;" /></p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 16-37-34_image-20210502163733514.png" alt="image-20210502163733514" style="zoom: 67%;" /></p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 16-38-39_image-20210502163838549.png" alt="image-20210502163838549" style="zoom:67%;" /></p>
+<h2 id="手动实现Servlet程序"><a href="#手动实现Servlet程序" class="headerlink" title="手动实现Servlet程序"></a>手动实现Servlet程序</h2><ol>
+<li><p>编写类实现Servlet规范，有3种方式：</p>
+<ol>
+<li><p>继承 <code>HttpServlet</code>类</p>
+ <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloServlet</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>实现 <code>Servlet</code>接口</p>
+ <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.servlet01;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.servlet.*;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Servlet01</span> <span class="keyword">implements</span> <span class="title">Servlet</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(ServletConfig servletConfig)</span> <span class="keyword">throws</span> ServletException </span>&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ServletConfig <span class="title">getServletConfig</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(ServletRequest servletRequest, ServletResponse servletResponse)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;实现Servlet接口&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getServletInfo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destroy</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+</ol>
+<ol>
+<li><p>实现 <code>service()</code>方法，处理请求，响应数据</p>
+<p>【快捷键 <kbd>ctrl + o</kbd> 可以重写方法或实现接口】</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloServlet</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(HttpServletRequest req, HttpServletResponse resp)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">        <span class="comment">//控制台打印</span></span><br><span class="line">        System.out.println(<span class="string">&quot;Hello Servlet&quot;</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//通过流输出数据到浏览器</span></span><br><span class="line">        resp.getWriter().write(<span class="string">&quot;hello servlet!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置注解<code>@WebServlet</code>，指定访问路径</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@WebServlet(name=&quot;helloServlet&quot;, value = &quot;/ser01&quot;)</span> <span class="comment">//name可以不设置</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<blockquote>
+<p>在第二步中，也可以不重写 <code>Service()</code>方法，而是更具体些，重写 <code>doGet()</code>、<code>doPost</code>方法；</p>
+<p>根据浏览器请求方式来进行不同处理</p>
+<p>但实际我们不知道浏览器以何种方式请求，故两个方法都需要去写，因此这种方式用的较少</p>
+</blockquote>
+<h2 id="Servlet工作流程"><a href="#Servlet工作流程" class="headerlink" title="Servlet工作流程"></a>Servlet工作流程</h2><p>url<code>http://localhost:8083/servlet01/ser01</code>含义：</p>
+<blockquote>
+<ul>
+<li>服务器：<code>http://localhost:8083</code></li>
+<li>项目：<code>/servlet01</code></li>
+<li>资源：<code>/ser01</code></li>
+</ul>
+</blockquote>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>javaEE</category>
+      </categories>
+      <tags>
+        <tag>javaEE</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>MQTT篇（二）消息的发布、订阅与取消订阅</title>
     <url>/posts/adfcabaa.html</url>
     <content><![CDATA[<h2 id="发布信息"><a href="#发布信息" class="headerlink" title="发布信息"></a>发布信息</h2><ol>
@@ -2790,61 +2845,6 @@
       </tags>
   </entry>
   <entry>
-    <title>1-Servlet</title>
-    <url>/posts/345d8e17.html</url>
-    <content><![CDATA[<h1 id="Servlet"><a href="#Servlet" class="headerlink" title="Servlet"></a>Servlet</h1><h2 id="servlet技术"><a href="#servlet技术" class="headerlink" title="servlet技术"></a>servlet技术</h2><ol>
-<li>Servlet是Java EE规范之一，规范即接口</li>
-<li>是JavaWeb三大组件之一，其他2个是：Filter过滤器、Listener监听器</li>
-<li>是运行在服务器上一个Java小程序，可以接收客户端发来的请求，并相应给客户端</li>
-<li>Servlet没有 <code>main()</code>方法，由系统自动调用</li>
-</ol>
-<h2 id="IDEA创建servlet"><a href="#IDEA创建servlet" class="headerlink" title="IDEA创建servlet"></a>IDEA创建servlet</h2><p><img src="https://img-blog.csdnimg.cn/20210502184910567.png" alt="在这里插入图片描述" style="zoom:43%;" /></p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 16-37-34_image-20210502163733514.png" alt="image-20210502163733514" style="zoom: 67%;" /></p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 16-38-39_image-20210502163838549.png" alt="image-20210502163838549" style="zoom:67%;" /></p>
-<h2 id="手动实现Servlet程序"><a href="#手动实现Servlet程序" class="headerlink" title="手动实现Servlet程序"></a>手动实现Servlet程序</h2><ol>
-<li><p>编写类实现Servlet规范，有3种方式：</p>
-<ol>
-<li><p>继承 <code>HttpServlet</code>类</p>
- <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloServlet</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>实现 <code>Servlet</code>接口</p>
- <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.servlet01;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.servlet.*;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Servlet01</span> <span class="keyword">implements</span> <span class="title">Servlet</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(ServletConfig servletConfig)</span> <span class="keyword">throws</span> ServletException </span>&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ServletConfig <span class="title">getServletConfig</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(ServletRequest servletRequest, ServletResponse servletResponse)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;实现Servlet接口&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getServletInfo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destroy</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-</li>
-</ol>
-<ol>
-<li><p>实现 <code>service()</code>方法，处理请求，响应数据</p>
-<p>【快捷键 <kbd>ctrl + o</kbd> 可以重写方法或实现接口】</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloServlet</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(HttpServletRequest req, HttpServletResponse resp)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">        <span class="comment">//控制台打印</span></span><br><span class="line">        System.out.println(<span class="string">&quot;Hello Servlet&quot;</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//通过流输出数据到浏览器</span></span><br><span class="line">        resp.getWriter().write(<span class="string">&quot;hello servlet!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>设置注解<code>@WebServlet</code>，指定访问路径</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@WebServlet(name=&quot;helloServlet&quot;, value = &quot;/ser01&quot;)</span> <span class="comment">//name可以不设置</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<blockquote>
-<p>在第二步中，也可以不重写 <code>Service()</code>方法，而是更具体些，重写 <code>doGet()</code>、<code>doPost</code>方法；</p>
-<p>根据浏览器请求方式来进行不同处理</p>
-<p>但实际我们不知道浏览器以何种方式请求，故两个方法都需要去写，因此这种方式用的较少</p>
-</blockquote>
-<h2 id="Servlet工作流程"><a href="#Servlet工作流程" class="headerlink" title="Servlet工作流程"></a>Servlet工作流程</h2><p>url<code>http://localhost:8083/servlet01/ser01</code>含义：</p>
-<blockquote>
-<ul>
-<li>服务器：<code>http://localhost:8083</code></li>
-<li>项目：<code>/servlet01</code></li>
-<li>资源：<code>/ser01</code></li>
-</ul>
-</blockquote>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>javaEE</category>
-      </categories>
-      <tags>
-        <tag>javaEE</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>2-Servlet生命周期</title>
     <url>/posts/e7ba7594.html</url>
     <content><![CDATA[<h1 id="Servlet生命周期"><a href="#Servlet生命周期" class="headerlink" title="Servlet生命周期"></a>Servlet生命周期</h1><ol>
@@ -2910,29 +2910,6 @@
       </tags>
   </entry>
   <entry>
-    <title>IDEA配置Tomcat</title>
-    <url>/posts/1a57c6b6.html</url>
-    <content><![CDATA[<p>三个步骤</p>
-<ol>
-<li><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-23-11_image-20210502152308870.png" alt="image-20210502152308870"></p>
-</li>
-<li></li>
-</ol>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-28-04_image-20210502152803463.png" alt="image-20210502152803463"></p>
-<ol>
-<li><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-29-56_image-20210502152955436.png" alt="image-20210502152955436"></p>
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>javaEE</category>
-      </categories>
-      <tags>
-        <tag>javaEE</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>4-请求转发</title>
     <url>/posts/1a9b2152.html</url>
     <content><![CDATA[<h1 id="请求转发"><a href="#请求转发" class="headerlink" title="请求转发"></a>请求转发</h1><ol>
@@ -2965,6 +2942,29 @@
 </li>
 </ol>
 <p>   <img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 21-16-32_image-20210502211627393.png" alt="image-20210502211627393"></p>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>javaEE</category>
+      </categories>
+      <tags>
+        <tag>javaEE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>IDEA配置Tomcat</title>
+    <url>/posts/1a57c6b6.html</url>
+    <content><![CDATA[<p>三个步骤</p>
+<ol>
+<li><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-23-11_image-20210502152308870.png" alt="image-20210502152308870"></p>
+</li>
+<li></li>
+</ol>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-28-04_image-20210502152803463.png" alt="image-20210502152803463"></p>
+<ol>
+<li><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-29-56_image-20210502152955436.png" alt="image-20210502152955436"></p>
+</li>
+</ol>
 ]]></content>
       <categories>
         <category>java</category>
@@ -3181,27 +3181,6 @@
       </tags>
   </entry>
   <entry>
-    <title>11-数字与字符串相互转换</title>
-    <url>/posts/38b36403.html</url>
-    <content><![CDATA[<h1 id="数字⇿字符串"><a href="#数字⇿字符串" class="headerlink" title="数字⇿字符串"></a>数字⇿字符串</h1><h2 id="数字转字符串（2种方法）"><a href="#数字转字符串（2种方法）" class="headerlink" title="数字转字符串（2种方法）"></a>数字转字符串（2种方法）</h2><ul>
-<li>使用String类的静态方法<code>valueOf</code></li>
-<li>先把基本类型装箱为对象，然后调用对象的<code>toString</code></li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line">         </span><br><span class="line"><span class="comment">//方法1</span></span><br><span class="line">String str = String.valueOf(i);</span><br><span class="line">         </span><br><span class="line"><span class="comment">//方法2</span></span><br><span class="line">Integer it = i;</span><br><span class="line">String str2 = it.toString();</span><br></pre></td></tr></table></figure>
-<h2 id="字符串转数字"><a href="#字符串转数字" class="headerlink" title="字符串转数字"></a>字符串转数字</h2><ul>
-<li>调用Integer的静态方法<code>parseInt</code></li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String str = <span class="string">&quot;999&quot;</span>;</span><br><span class="line">         </span><br><span class="line"><span class="keyword">int</span> i= Integer.parseInt(str);</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>javaSE</category>
-      </categories>
-      <tags>
-        <tag>javaSE</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>10-装箱与拆箱</title>
     <url>/posts/3aac01ca.html</url>
     <content><![CDATA[<h1 id="装箱与拆箱"><a href="#装箱与拆箱" class="headerlink" title="装箱与拆箱"></a>装箱与拆箱</h1><h2 id="封装类"><a href="#封装类" class="headerlink" title="封装类"></a>封装类</h2><blockquote>
@@ -3234,6 +3213,27 @@
 </ul>
 <h2 id="int的最大值-最小值"><a href="#int的最大值-最小值" class="headerlink" title="int的最大值/最小值"></a>int的最大值/最小值</h2><p>int的最大值可以通过其对应的封装类<code>Integer.MAX_VALUE</code>获取；</p>
 <p>同理，最小值通过 <code>Integer.MIN_VALUE</code> 获取；</p>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>javaSE</category>
+      </categories>
+      <tags>
+        <tag>javaSE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>11-数字与字符串相互转换</title>
+    <url>/posts/38b36403.html</url>
+    <content><![CDATA[<h1 id="数字⇿字符串"><a href="#数字⇿字符串" class="headerlink" title="数字⇿字符串"></a>数字⇿字符串</h1><h2 id="数字转字符串（2种方法）"><a href="#数字转字符串（2种方法）" class="headerlink" title="数字转字符串（2种方法）"></a>数字转字符串（2种方法）</h2><ul>
+<li>使用String类的静态方法<code>valueOf</code></li>
+<li>先把基本类型装箱为对象，然后调用对象的<code>toString</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line">         </span><br><span class="line"><span class="comment">//方法1</span></span><br><span class="line">String str = String.valueOf(i);</span><br><span class="line">         </span><br><span class="line"><span class="comment">//方法2</span></span><br><span class="line">Integer it = i;</span><br><span class="line">String str2 = it.toString();</span><br></pre></td></tr></table></figure>
+<h2 id="字符串转数字"><a href="#字符串转数字" class="headerlink" title="字符串转数字"></a>字符串转数字</h2><ul>
+<li>调用Integer的静态方法<code>parseInt</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String str = <span class="string">&quot;999&quot;</span>;</span><br><span class="line">         </span><br><span class="line"><span class="keyword">int</span> i= Integer.parseInt(str);</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>java</category>
@@ -4128,54 +4128,6 @@
       </tags>
   </entry>
   <entry>
-    <title>2.2-访问修饰符</title>
-    <url>/posts/51a2ab89.html</url>
-    <content><![CDATA[<h1 id="访问修饰符"><a href="#访问修饰符" class="headerlink" title="访问修饰符"></a>访问修饰符</h1><h2 id="区分："><a href="#区分：" class="headerlink" title="区分："></a>区分：</h2><p>有 <code>public</code>、<code>private</code>、<code>protected</code></p>
-<p>没有修饰符即为默认：<code>package/friendly/default</code></p>
-<ul>
-<li><p>private：只有类自身可以访问；由该类实例的对象不能访问，子类不能继承</p>
-</li>
-<li><p>public：所有类均可以继承、访问：（同包/不同包）子类可继承；（同包/不同包）类可以访问</p>
-</li>
-<li><p>protected：不同包且没有继承关系的类不能访问</p>
-</li>
-<li><p>没有修饰符（package）：只能在自己包使用；不同包不能访问、继承</p>
-</li>
-<li><p>总结(红色字体表示不可行)<img src="https://stepimagewm.how2j.cn/612.png" alt="总结"></p>
-<p>​                </p>
-</li>
-</ul>
-<blockquote>
-<p>下面以Hero为研究对象，弄清楚各个类之间的关系</p>
-<p><strong>自身：</strong>指的是Hero自己<br><strong>同包子类：</strong>ADHero这个类是Hero的子类，并且和Hero处于同一个包下<br><strong>不同包子类：</strong>Support这个类是Hero的子类，但是在另一个包下<br><strong>同包类：</strong> GiantDragon 这个类和Hero是<strong>同一个包</strong>，但是彼此没有继承关系<br><strong>其他类：</strong>Item这个类，<strong>在不同包</strong>，也没有继承关系的类</p>
-<p><img src="https://stepimagewm.how2j.cn/605.png" alt=""></p>
-</blockquote>
-<h2 id="什么情况使用什么修饰符"><a href="#什么情况使用什么修饰符" class="headerlink" title="什么情况使用什么修饰符"></a>什么情况使用什么修饰符</h2><blockquote>
-<ol>
-<li><p>属性通常使用private封装起来</p>
-</li>
-<li><p>方法一般使用public用于被调用</p>
-</li>
-<li><p>会被子类继承的方法，通常使用protected</p>
-</li>
-<li><p>package用的不多，一般新手会用package,因为还不知道有修饰符这个东西</p>
-</li>
-</ol>
-</blockquote>
-<hr>
-<blockquote>
-<p><strong>作用范围最小原则:</strong><br>简单说，能用private就用private，不行就放大一级，用package,再不行就用protected，最后用public。 这样就能把数据尽量的封装起来，没有必要<strong>露出来的</strong>，就不用<strong>露出来</strong>了</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>javaSE</category>
-      </categories>
-      <tags>
-        <tag>javaSE</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>20-反射机制</title>
     <url>/posts/c9f91dab.html</url>
     <content><![CDATA[<h1 id="Java反射机制"><a href="#Java反射机制" class="headerlink" title="Java反射机制"></a>Java反射机制</h1><h2 id="获取类对象"><a href="#获取类对象" class="headerlink" title="获取类对象"></a>获取类对象</h2><h3 id="类对象"><a href="#类对象" class="headerlink" title="类对象"></a>类对象</h3><p><strong>类对象</strong>，用于描述这种类，都有什么属性，什么方法的</p>
@@ -4223,6 +4175,54 @@
 <li>调用指定对象的方法—— <code>invoke</code></li>
 </ol>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line">Hero h = <span class="keyword">new</span> Hero();</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 获取这个名字叫做setName，参数类型是String的方法</span></span><br><span class="line">Method m = h.getClass().getMethod(<span class="string">&quot;setName&quot;</span>, String.class);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对h对象，调用这个方法</span></span><br><span class="line">m.invoke(h, <span class="string">&quot;garent&quot;</span>);</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>javaSE</category>
+      </categories>
+      <tags>
+        <tag>javaSE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>2.2-访问修饰符</title>
+    <url>/posts/51a2ab89.html</url>
+    <content><![CDATA[<h1 id="访问修饰符"><a href="#访问修饰符" class="headerlink" title="访问修饰符"></a>访问修饰符</h1><h2 id="区分："><a href="#区分：" class="headerlink" title="区分："></a>区分：</h2><p>有 <code>public</code>、<code>private</code>、<code>protected</code></p>
+<p>没有修饰符即为默认：<code>package/friendly/default</code></p>
+<ul>
+<li><p>private：只有类自身可以访问；由该类实例的对象不能访问，子类不能继承</p>
+</li>
+<li><p>public：所有类均可以继承、访问：（同包/不同包）子类可继承；（同包/不同包）类可以访问</p>
+</li>
+<li><p>protected：不同包且没有继承关系的类不能访问</p>
+</li>
+<li><p>没有修饰符（package）：只能在自己包使用；不同包不能访问、继承</p>
+</li>
+<li><p>总结(红色字体表示不可行)<img src="https://stepimagewm.how2j.cn/612.png" alt="总结"></p>
+<p>​                </p>
+</li>
+</ul>
+<blockquote>
+<p>下面以Hero为研究对象，弄清楚各个类之间的关系</p>
+<p><strong>自身：</strong>指的是Hero自己<br><strong>同包子类：</strong>ADHero这个类是Hero的子类，并且和Hero处于同一个包下<br><strong>不同包子类：</strong>Support这个类是Hero的子类，但是在另一个包下<br><strong>同包类：</strong> GiantDragon 这个类和Hero是<strong>同一个包</strong>，但是彼此没有继承关系<br><strong>其他类：</strong>Item这个类，<strong>在不同包</strong>，也没有继承关系的类</p>
+<p><img src="https://stepimagewm.how2j.cn/605.png" alt=""></p>
+</blockquote>
+<h2 id="什么情况使用什么修饰符"><a href="#什么情况使用什么修饰符" class="headerlink" title="什么情况使用什么修饰符"></a>什么情况使用什么修饰符</h2><blockquote>
+<ol>
+<li><p>属性通常使用private封装起来</p>
+</li>
+<li><p>方法一般使用public用于被调用</p>
+</li>
+<li><p>会被子类继承的方法，通常使用protected</p>
+</li>
+<li><p>package用的不多，一般新手会用package,因为还不知道有修饰符这个东西</p>
+</li>
+</ol>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>作用范围最小原则:</strong><br>简单说，能用private就用private，不行就放大一级，用package,再不行就用protected，最后用public。 这样就能把数据尽量的封装起来，没有必要<strong>露出来的</strong>，就不用<strong>露出来</strong>了</p>
+</blockquote>
 ]]></content>
       <categories>
         <category>java</category>
@@ -5036,45 +5036,6 @@
       </tags>
   </entry>
   <entry>
-    <title>13-动态代理</title>
-    <url>/posts/26c04051.html</url>
-    <content><![CDATA[<h1 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h1><p><a href="https://codechina.csdn.net/m0_46079750/spring1-proxy/-/tree/master3">项目地址</a></p>
-<p>底层用到<code>反射</code></p>
-<ul>
-<li>动态代理与静态代理角色一样</li>
-<li>动态代理的代理类是动态生成，并非我们直接写好</li>
-<li>分类：基于接口和基于类的<ul>
-<li>基于接口——JDK动态代理</li>
-<li>基于类——cglib</li>
-<li>Java字节码实现——javasist</li>
-</ul>
-</li>
-</ul>
-<p>需要了解2个类：</p>
-<ul>
-<li><p>Proxy：调用<code>newProxyInstance</code> 方法用于生成代理角色</p>
-</li>
-<li><p>InvocationHandler：重写 <code>invoke</code> 方法，指明代理角色要处理的功能，详细<a href="https://codechina.csdn.net/m0_46079750/spring1-proxy/-/tree/master3">查看项目</a></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//这是一个用于创建代理角色的类，不是代理类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProxyInvocationHandler</span> <span class="keyword">implements</span> <span class="title">InvocationHandler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//指向被代理的接口（即真实角色）</span></span><br><span class="line">    <span class="keyword">private</span> Rent r;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setRent</span><span class="params">(Rent r)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.r = r;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//生成代理角色</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">getProxy</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Proxy.newProxyInstance(<span class="keyword">this</span>.getClass().getClassLoader(), r.getClass().getInterfaces(), <span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="comment">//处理代理实例（即被代理者），并返回结果</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        seeHouse();</span><br><span class="line">        fare();</span><br><span class="line">        Object result = method.invoke(r, args);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>动态代理好处：</p>
-<ul>
-<li>可以使真实角色的操作更加纯粹</li>
-<li>公共交给代理角色，实现业务分工</li>
-<li>公共业务扩展时，方便集中管理</li>
-<li>一个动态代理类可以代理多个类（只要实现的是同一个接口即可）</li>
-</ul>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>spring</category>
-      </categories>
-      <tags>
-        <tag>spring</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>14-springAOP</title>
     <url>/posts/a1a1eb5.html</url>
     <content><![CDATA[<h1 id="Spring-Aop"><a href="#Spring-Aop" class="headerlink" title="Spring Aop"></a>Spring Aop</h1><p><a href="https://codechina.csdn.net/m0_46079750/spring1-aop/-/tree/master">项目地址</a></p>
@@ -5134,6 +5095,45 @@
 <p>注意，如果添加了环绕增强，首先执行环绕增强，执行了proceed方法后才会触发 <code>@Before</code> <code>@After</code> 这2个注解的内容，所以输出结果如下：</p>
 <p><img src="https://gitee.com/ajream/images/raw/master/img/2021-08-08 17-37-27_image-20210808173720981.png" alt="image-20210808173720981"></p>
 </blockquote>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>spring</category>
+      </categories>
+      <tags>
+        <tag>spring</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>13-动态代理</title>
+    <url>/posts/26c04051.html</url>
+    <content><![CDATA[<h1 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h1><p><a href="https://codechina.csdn.net/m0_46079750/spring1-proxy/-/tree/master3">项目地址</a></p>
+<p>底层用到<code>反射</code></p>
+<ul>
+<li>动态代理与静态代理角色一样</li>
+<li>动态代理的代理类是动态生成，并非我们直接写好</li>
+<li>分类：基于接口和基于类的<ul>
+<li>基于接口——JDK动态代理</li>
+<li>基于类——cglib</li>
+<li>Java字节码实现——javasist</li>
+</ul>
+</li>
+</ul>
+<p>需要了解2个类：</p>
+<ul>
+<li><p>Proxy：调用<code>newProxyInstance</code> 方法用于生成代理角色</p>
+</li>
+<li><p>InvocationHandler：重写 <code>invoke</code> 方法，指明代理角色要处理的功能，详细<a href="https://codechina.csdn.net/m0_46079750/spring1-proxy/-/tree/master3">查看项目</a></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//这是一个用于创建代理角色的类，不是代理类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProxyInvocationHandler</span> <span class="keyword">implements</span> <span class="title">InvocationHandler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//指向被代理的接口（即真实角色）</span></span><br><span class="line">    <span class="keyword">private</span> Rent r;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setRent</span><span class="params">(Rent r)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.r = r;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//生成代理角色</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">getProxy</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Proxy.newProxyInstance(<span class="keyword">this</span>.getClass().getClassLoader(), r.getClass().getInterfaces(), <span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="comment">//处理代理实例（即被代理者），并返回结果</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        seeHouse();</span><br><span class="line">        fare();</span><br><span class="line">        Object result = method.invoke(r, args);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>动态代理好处：</p>
+<ul>
+<li>可以使真实角色的操作更加纯粹</li>
+<li>公共交给代理角色，实现业务分工</li>
+<li>公共业务扩展时，方便集中管理</li>
+<li>一个动态代理类可以代理多个类（只要实现的是同一个接口即可）</li>
+</ul>
 ]]></content>
       <categories>
         <category>java</category>
@@ -5272,6 +5272,33 @@
       </tags>
   </entry>
   <entry>
+    <title>6-spring配置说明</title>
+    <url>/posts/3fb3b16d.html</url>
+    <content><![CDATA[<h1 id="spring配置"><a href="#spring配置" class="headerlink" title="spring配置"></a>spring配置</h1><h2 id="别名alias"><a href="#别名alias" class="headerlink" title="别名alias"></a>别名alias</h2><p>bean可以拥有别名</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">alias</span> <span class="attr">name</span>=<span class="string">&quot;fromName&quot;</span> <span class="attr">alias</span>=<span class="string">&quot;toName&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;章三&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;age&quot;</span> <span class="attr">value</span>=<span class="string">&quot;20&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">alias</span> <span class="attr">name</span>=<span class="string">&quot;user&quot;</span> <span class="attr">alias</span>=<span class="string">&quot;user2&quot;</span>/&gt;</span>   </span><br></pre></td></tr></table></figure>
+<p>使用别名后就可以通过别名来获取bean</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//User user = context.getBean(&quot;user&quot;, User.class);</span></span><br><span class="line">User user = context.getBean(<span class="string">&quot;user2&quot;</span>, User.class);</span><br></pre></td></tr></table></figure>
+<h2 id="bean的配置"><a href="#bean的配置" class="headerlink" title="bean的配置"></a>bean的配置</h2><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">id: bean的唯一标识符,相当于创建对象`User user = new User()`的对象名user</span></span><br><span class="line"><span class="comment">class：指向的类</span></span><br><span class="line"><span class="comment">name：也是别名，并且可以取多个，中间可以用逗号、分号、空格隔开</span></span><br><span class="line"><span class="comment">--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span> <span class="attr">name</span>=<span class="string">&quot;n1,n2;n3 n4&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;章三&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="import"><a href="#import" class="headerlink" title="import"></a>import</h2><p>如果有多个 <code>beans</code>配置文件，可以用 <code>import</code>将多个文件导入到一个文件中</p>
+<p>例如几个配置文件如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">resources</span><br><span class="line">	|-applicationcontext.xml</span><br><span class="line">	|-beans1.xml</span><br><span class="line">	|-beans2.xml</span><br></pre></td></tr></table></figure>
+<p>在 <code>applicationcontext.xml</code> 中可以使用 <code>import</code> 标签导入 另外2个配置文件：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">import</span> <span class="attr">resource</span>=<span class="string">&quot;beans1.xml&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">import</span> <span class="attr">resource</span>=<span class="string">&quot;beans2.xml&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>适用于团队合作时使用</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>spring</category>
+      </categories>
+      <tags>
+        <tag>spring</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>5-ioc创建对象方式</title>
     <url>/posts/d8642fb9.html</url>
     <content><![CDATA[<h1 id="ioc创建对象方式"><a href="#ioc创建对象方式" class="headerlink" title="ioc创建对象方式"></a>ioc创建对象方式</h1><h2 id="构造函数注入"><a href="#构造函数注入" class="headerlink" title="构造函数注入"></a>构造函数注入</h2><p>User.java</p>
@@ -5296,33 +5323,6 @@
 </ol>
 <h2 id="set注入"><a href="#set注入" class="headerlink" title="set注入"></a>set注入</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.ajream.pojo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span></span>&#123;   <span class="comment">// set注入</span></span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;name: &quot;</span> + name);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;李四&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>spring</category>
-      </categories>
-      <tags>
-        <tag>spring</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>6-spring配置说明</title>
-    <url>/posts/3fb3b16d.html</url>
-    <content><![CDATA[<h1 id="spring配置"><a href="#spring配置" class="headerlink" title="spring配置"></a>spring配置</h1><h2 id="别名alias"><a href="#别名alias" class="headerlink" title="别名alias"></a>别名alias</h2><p>bean可以拥有别名</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">alias</span> <span class="attr">name</span>=<span class="string">&quot;fromName&quot;</span> <span class="attr">alias</span>=<span class="string">&quot;toName&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
-<p>例如：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;章三&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;age&quot;</span> <span class="attr">value</span>=<span class="string">&quot;20&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">alias</span> <span class="attr">name</span>=<span class="string">&quot;user&quot;</span> <span class="attr">alias</span>=<span class="string">&quot;user2&quot;</span>/&gt;</span>   </span><br></pre></td></tr></table></figure>
-<p>使用别名后就可以通过别名来获取bean</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//User user = context.getBean(&quot;user&quot;, User.class);</span></span><br><span class="line">User user = context.getBean(<span class="string">&quot;user2&quot;</span>, User.class);</span><br></pre></td></tr></table></figure>
-<h2 id="bean的配置"><a href="#bean的配置" class="headerlink" title="bean的配置"></a>bean的配置</h2><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">id: bean的唯一标识符,相当于创建对象`User user = new User()`的对象名user</span></span><br><span class="line"><span class="comment">class：指向的类</span></span><br><span class="line"><span class="comment">name：也是别名，并且可以取多个，中间可以用逗号、分号、空格隔开</span></span><br><span class="line"><span class="comment">--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span> <span class="attr">name</span>=<span class="string">&quot;n1,n2;n3 n4&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;章三&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h2 id="import"><a href="#import" class="headerlink" title="import"></a>import</h2><p>如果有多个 <code>beans</code>配置文件，可以用 <code>import</code>将多个文件导入到一个文件中</p>
-<p>例如几个配置文件如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">resources</span><br><span class="line">	|-applicationcontext.xml</span><br><span class="line">	|-beans1.xml</span><br><span class="line">	|-beans2.xml</span><br></pre></td></tr></table></figure>
-<p>在 <code>applicationcontext.xml</code> 中可以使用 <code>import</code> 标签导入 另外2个配置文件：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">import</span> <span class="attr">resource</span>=<span class="string">&quot;beans1.xml&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">import</span> <span class="attr">resource</span>=<span class="string">&quot;beans2.xml&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>适用于团队合作时使用</p>
-</blockquote>
 ]]></content>
       <categories>
         <category>java</category>
