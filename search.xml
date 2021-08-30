@@ -842,6 +842,49 @@
       </tags>
   </entry>
   <entry>
+    <title>1-maven基本概念</title>
+    <url>/posts/52e2375.html</url>
+    <content><![CDATA[<h1 id="Maven基本概念"><a href="#Maven基本概念" class="headerlink" title="Maven基本概念"></a>Maven基本概念</h1><h2 id="Maven学习内容"><a href="#Maven学习内容" class="headerlink" title="Maven学习内容"></a>Maven学习内容</h2><p><img src="https://gitee.com/aJream/images/raw/master/img/2021-05-02 10-08-42_Maven.svg" alt="Maven" style="zoom:100%;" /></p>
+<h2 id="Maven简介"><a href="#Maven简介" class="headerlink" title="Maven简介"></a>Maven简介</h2><p>Maven主要用于项目构建、依赖管理、项目信息管理</p>
+<ol>
+<li>小型项目</li>
+<li>大型企业项目</li>
+<li>传统瀑布式开发</li>
+<li>流行的敏捷开发</li>
+</ol>
+<h2 id="项目构建"><a href="#项目构建" class="headerlink" title="项目构建"></a>项目构建</h2><p>​        总结一下， 我们会发现， 除了编写源代码， 我们每天有相当一部分时间花在了编</p>
+<p>译，运行单元测试， 生成文档， 打包和部署等繁琐且不起眼的工作上， 这就是构建。</p>
+<h2 id="项目构建工具"><a href="#项目构建工具" class="headerlink" title="项目构建工具"></a>项目构建工具</h2><h3 id="Ant"><a href="#Ant" class="headerlink" title="Ant"></a>Ant</h3><p>最早的构建工具， 基于 IDE, 大概是 2000 年有的， 当时是最流行 java 构建工具，不过它的 XML 脚本编写格式让 XML 文件特别大。 对工程构建过程中的过程控制特别好。</p>
+<h3 id="Maven"><a href="#Maven" class="headerlink" title="Maven"></a>Maven</h3><ul>
+<li>项目对象模型， 通过其描述信息来管理项目的构建， 报告和文档的软件项目管理工具。 </li>
+<li>填补了 Ant 缺点， Maven 第一次支持了从网络上下载的功能， 仍然采用 xml 作为配置文件格式。</li>
+<li>Maven 专注的是依赖管理， 使用 Java 编写。</li>
+</ul>
+<h3 id="Gradle"><a href="#Gradle" class="headerlink" title="Gradle"></a>Gradle</h3><ul>
+<li>结合以上两个的优点， 它继承了 Ant 的灵活和 Maven 的生命周期管理， 它最后被 google 作为了 Android 御用管理工具。</li>
+<li>它最大的区别是不用 XML 作为配置文件格式， 采用了 DSL 格式， 使得脚本更加简洁。</li>
+</ul>
+<h2 id="Maven四大特性"><a href="#Maven四大特性" class="headerlink" title="Maven四大特性"></a>Maven四大特性</h2><h3 id="依赖管理系统（jar项目的多模块）"><a href="#依赖管理系统（jar项目的多模块）" class="headerlink" title="依赖管理系统（jar项目的多模块）"></a>依赖管理系统（jar项目的多模块）</h3><ul>
+<li>Maven 为 Java 世界引入了一个新的依赖管理系统 jar 包管理 ，jar 升级时修改配置文件即可。 </li>
+<li>在 Java 世界中， 可以用 <u>groupId</u>、 <u>artifactId</u>、 <u>version</u> 组成的Coordination（ 坐标）唯一标识一个依赖。 </li>
+<li>任何基于 Maven 构建的项目自身也必须定义这三项属性， 生成的包可以是 Jar 包， 也可以是 war 包或者 jar 包。</li>
+</ul>
+<p>一个典型的依赖引用如下所示：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>javax.servlet<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span> //包名/项目名</span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>javax.servlet-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span> //某一模块名</span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>3.1.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span>	//所需要jar的版本</span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="多模块构建"><a href="#多模块构建" class="headerlink" title="多模块构建"></a>多模块构建</h3><p> 项目复查时 dao service controller 层分离将一个项目分解为多个模块已经是很通用的一种方式。在 Maven 中需要定义一个 parent POM 作为一组 module 的聚合 POM。在该 POM 中可以使用 标签来定义一组子模块。 parent POM 不会有什么实际构建产出。 而 parent POM 中的 build 配置以及依赖配置都会自动继承给子 module。</p>
+<h3 id="一致的项目结构（不同的IDE项目结构是一致）"><a href="#一致的项目结构（不同的IDE项目结构是一致）" class="headerlink" title="一致的项目结构（不同的IDE项目结构是一致）"></a>一致的项目结构（不同的IDE项目结构是一致）</h3><p> Ant 时代大家创建 Java 项目目录时比较随意， 然后通过 Ant 配置指定哪些属于source，那些属于 testSource 等。而 Maven 在设计之初的理念就是 Conversion overconfiguration（ 约定大于配置）。 其制定了一套项目目录结构作为标准的 Java 项目结构,解决不同 ide 带来的文件目录不一致问题。</p>
+<h3 id="一致的构建模型和插件机制"><a href="#一致的构建模型和插件机制" class="headerlink" title="一致的构建模型和插件机制"></a>一致的构建模型和插件机制</h3><p>通过 pom 配置 tomcat、 jetty 插件:</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">	<span class="comment">&lt;!--这里是所有添加插件配置的地方--&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mortbay.jetty<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-jetty-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>6.1.25<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">scanIntervalSeconds</span>&gt;</span>10<span class="tag">&lt;/<span class="name">scanIntervalSeconds</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">contextPath</span>&gt;</span>/test<span class="tag">&lt;/<span class="name">contextPath</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>Maven</category>
+      </categories>
+      <tags>
+        <tag>Maven</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>3-maven+IDEA创建webapp</title>
     <url>/posts/79c0e989.html</url>
     <content><![CDATA[<ol>
@@ -883,49 +926,6 @@
 <blockquote>
 <p>下载的插件在repository的org目录下</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">D:\maven\apache-maven-3.8.1\repository\org\apache\tomcat</span><br></pre></td></tr></table></figure></blockquote>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>Maven</category>
-      </categories>
-      <tags>
-        <tag>Maven</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>1-maven基本概念</title>
-    <url>/posts/52e2375.html</url>
-    <content><![CDATA[<h1 id="Maven基本概念"><a href="#Maven基本概念" class="headerlink" title="Maven基本概念"></a>Maven基本概念</h1><h2 id="Maven学习内容"><a href="#Maven学习内容" class="headerlink" title="Maven学习内容"></a>Maven学习内容</h2><p><img src="https://gitee.com/aJream/images/raw/master/img/2021-05-02 10-08-42_Maven.svg" alt="Maven" style="zoom:100%;" /></p>
-<h2 id="Maven简介"><a href="#Maven简介" class="headerlink" title="Maven简介"></a>Maven简介</h2><p>Maven主要用于项目构建、依赖管理、项目信息管理</p>
-<ol>
-<li>小型项目</li>
-<li>大型企业项目</li>
-<li>传统瀑布式开发</li>
-<li>流行的敏捷开发</li>
-</ol>
-<h2 id="项目构建"><a href="#项目构建" class="headerlink" title="项目构建"></a>项目构建</h2><p>​        总结一下， 我们会发现， 除了编写源代码， 我们每天有相当一部分时间花在了编</p>
-<p>译，运行单元测试， 生成文档， 打包和部署等繁琐且不起眼的工作上， 这就是构建。</p>
-<h2 id="项目构建工具"><a href="#项目构建工具" class="headerlink" title="项目构建工具"></a>项目构建工具</h2><h3 id="Ant"><a href="#Ant" class="headerlink" title="Ant"></a>Ant</h3><p>最早的构建工具， 基于 IDE, 大概是 2000 年有的， 当时是最流行 java 构建工具，不过它的 XML 脚本编写格式让 XML 文件特别大。 对工程构建过程中的过程控制特别好。</p>
-<h3 id="Maven"><a href="#Maven" class="headerlink" title="Maven"></a>Maven</h3><ul>
-<li>项目对象模型， 通过其描述信息来管理项目的构建， 报告和文档的软件项目管理工具。 </li>
-<li>填补了 Ant 缺点， Maven 第一次支持了从网络上下载的功能， 仍然采用 xml 作为配置文件格式。</li>
-<li>Maven 专注的是依赖管理， 使用 Java 编写。</li>
-</ul>
-<h3 id="Gradle"><a href="#Gradle" class="headerlink" title="Gradle"></a>Gradle</h3><ul>
-<li>结合以上两个的优点， 它继承了 Ant 的灵活和 Maven 的生命周期管理， 它最后被 google 作为了 Android 御用管理工具。</li>
-<li>它最大的区别是不用 XML 作为配置文件格式， 采用了 DSL 格式， 使得脚本更加简洁。</li>
-</ul>
-<h2 id="Maven四大特性"><a href="#Maven四大特性" class="headerlink" title="Maven四大特性"></a>Maven四大特性</h2><h3 id="依赖管理系统（jar项目的多模块）"><a href="#依赖管理系统（jar项目的多模块）" class="headerlink" title="依赖管理系统（jar项目的多模块）"></a>依赖管理系统（jar项目的多模块）</h3><ul>
-<li>Maven 为 Java 世界引入了一个新的依赖管理系统 jar 包管理 ，jar 升级时修改配置文件即可。 </li>
-<li>在 Java 世界中， 可以用 <u>groupId</u>、 <u>artifactId</u>、 <u>version</u> 组成的Coordination（ 坐标）唯一标识一个依赖。 </li>
-<li>任何基于 Maven 构建的项目自身也必须定义这三项属性， 生成的包可以是 Jar 包， 也可以是 war 包或者 jar 包。</li>
-</ul>
-<p>一个典型的依赖引用如下所示：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>javax.servlet<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span> //包名/项目名</span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>javax.servlet-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span> //某一模块名</span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>3.1.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span>	//所需要jar的版本</span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h3 id="多模块构建"><a href="#多模块构建" class="headerlink" title="多模块构建"></a>多模块构建</h3><p> 项目复查时 dao service controller 层分离将一个项目分解为多个模块已经是很通用的一种方式。在 Maven 中需要定义一个 parent POM 作为一组 module 的聚合 POM。在该 POM 中可以使用 标签来定义一组子模块。 parent POM 不会有什么实际构建产出。 而 parent POM 中的 build 配置以及依赖配置都会自动继承给子 module。</p>
-<h3 id="一致的项目结构（不同的IDE项目结构是一致）"><a href="#一致的项目结构（不同的IDE项目结构是一致）" class="headerlink" title="一致的项目结构（不同的IDE项目结构是一致）"></a>一致的项目结构（不同的IDE项目结构是一致）</h3><p> Ant 时代大家创建 Java 项目目录时比较随意， 然后通过 Ant 配置指定哪些属于source，那些属于 testSource 等。而 Maven 在设计之初的理念就是 Conversion overconfiguration（ 约定大于配置）。 其制定了一套项目目录结构作为标准的 Java 项目结构,解决不同 ide 带来的文件目录不一致问题。</p>
-<h3 id="一致的构建模型和插件机制"><a href="#一致的构建模型和插件机制" class="headerlink" title="一致的构建模型和插件机制"></a>一致的构建模型和插件机制</h3><p>通过 pom 配置 tomcat、 jetty 插件:</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">	<span class="comment">&lt;!--这里是所有添加插件配置的地方--&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mortbay.jetty<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-jetty-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>6.1.25<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">scanIntervalSeconds</span>&gt;</span>10<span class="tag">&lt;/<span class="name">scanIntervalSeconds</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">contextPath</span>&gt;</span>/test<span class="tag">&lt;/<span class="name">contextPath</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>java</category>
@@ -1606,50 +1606,6 @@
       </tags>
   </entry>
   <entry>
-    <title>5-索引</title>
-    <url>/posts/683d1a78.html</url>
-    <content><![CDATA[<h1 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h1><p><strong>索引是</strong>帮助MySQL高效获取数据的<strong>数据结构</strong></p>
-<h2 id="索引分类"><a href="#索引分类" class="headerlink" title="索引分类"></a>索引分类</h2><ul>
-<li><p>主键索引（primary key）</p>
-<ul>
-<li>唯一的标识，主键不可重复，只能有一个列为主键</li>
-</ul>
-</li>
-<li>唯一索引（unique key）<ul>
-<li>避免重复的列出现，唯一索引可以重复，多个列均可以标识为唯一索引</li>
-</ul>
-</li>
-<li>常规索引（key/index）<ul>
-<li>默认的，index、key关键字来设置</li>
-</ul>
-</li>
-<li>全文索引（fulltext）</li>
-</ul>
-<h2 id="索引使用"><a href="#索引使用" class="headerlink" title="索引使用"></a>索引使用</h2><ol>
-<li>在创建表的时候给字段增加索引</li>
-<li>创建完毕后，增加索引</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-- 显示所有索引信息</span><br><span class="line">show index from tableA;</span><br><span class="line"></span><br><span class="line">-- 增加一个全文索引</span><br><span class="line">alter table tableA add fulltext index `studentName`;</span><br><span class="line"></span><br><span class="line">-- 分析sql执行状况 explain</span><br><span class="line">explain select * from tableA;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="索引使用原则"><a href="#索引使用原则" class="headerlink" title="索引使用原则"></a>索引使用原则</h2><ul>
-<li>不是越多越好</li>
-<li>不要对进程变动数据加索引</li>
-<li>小数据量的表不要添加索引</li>
-<li>索引一般加在常用来查询的字段</li>
-</ul>
-<h2 id="索引数据结构"><a href="#索引数据结构" class="headerlink" title="索引数据结构"></a>索引数据结构</h2><ul>
-<li>hash类型</li>
-<li>B-tree类型（innoDB默认索引类型）</li>
-</ul>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>MySQL_JDBC</category>
-      </categories>
-      <tags>
-        <tag>MySQL_JDBC</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>4-MySQL事务</title>
     <url>/posts/2a3cf99e.html</url>
     <content><![CDATA[<h1 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h1><h2 id="什么是事务"><a href="#什么是事务" class="headerlink" title="什么是事务"></a>什么是事务</h2><p>什么是事务：要么都成功，要么都失败</p>
@@ -1687,39 +1643,40 @@
       </tags>
   </entry>
   <entry>
-    <title>7-JDBC</title>
-    <url>/posts/3f4cddeb.html</url>
-    <content><![CDATA[<h1 id="JDBC（重点）"><a href="#JDBC（重点）" class="headerlink" title="JDBC（重点）"></a>JDBC（重点）</h1><h2 id="idea连接MySQL数据库"><a href="#idea连接MySQL数据库" class="headerlink" title="idea连接MySQL数据库"></a>idea连接MySQL数据库</h2><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-08-12 21-51-30_image-20210812215126308.png" alt="image-20210812215126308"></p>
-<p>上面操作完成后只会显示一个数据库mysql，要显示其他数据库，按下面操作：</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-08-12 21-56-25_image-20210812215624487.png" alt="image-20210812215624487"></p>
-<h2 id="数据库驱动"><a href="#数据库驱动" class="headerlink" title="数据库驱动"></a>数据库驱动</h2><p>驱动：声卡、显卡、数据库驱动</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-04-21 19-37-31_image-20210421193728815.png" alt="image-20210421193728815" style="zoom:50%;" /></p>
-<p>程序通过数据库驱动操作数据库</p>
-<h2 id="JDBC"><a href="#JDBC" class="headerlink" title="JDBC"></a>JDBC</h2><p><strong>JDBC</strong> (Java DataBase Connection) 是通过JAVA访问数据库；</p>
-<p>SUN公司为了简化开发人员对数据库统一的操作，提供了Java操作数据库的规范，简称 <code>JDBC</code></p>
-<p>对于开发人员来说，我们只需要掌握 JDBC 接口即可</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-04-21 19-43-12_image-20210421194311030.png" alt="image-20210421194311030" style="zoom:35%;" /></p>
-<p><strong>编写程序步骤：</strong></p>
-<ol>
-<li>加载驱动</li>
-<li>连接数据库（要有连接的服务器地址、用户名、密码） <code>DriverManager</code></li>
-<li>获取SQL对象</li>
-<li>执行SQL语句，获取返回结果</li>
-<li>释放连接</li>
-</ol>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.jdbcTest;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.sql.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FirstJdbcDemo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> ClassNotFoundException,SQLException </span>&#123;</span><br><span class="line">        <span class="comment">// 1.加载驱动</span></span><br><span class="line">        Class.forName(<span class="string">&quot;com.mysql.cj.jdbc.Driver&quot;</span>); <span class="comment">//固定写法，mysql5版本没有【cj】</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2.链接信息url</span></span><br><span class="line">        String url = <span class="string">&quot;jdbc:mysql://localhost:3306/school?useUnicode=true&amp;characterEncoding=utf8&amp;useSSl=true&quot;</span>;</span><br><span class="line">        String username = <span class="string">&quot;root&quot;</span>;</span><br><span class="line">        String password = <span class="string">&quot;admin&quot;</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 3. 连接数据库</span></span><br><span class="line">        Connection connection = DriverManager.getConnection(url, username, password);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 获取SQL对象</span></span><br><span class="line">        Statement statement = connection.createStatement();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 执行SQL语句，获取返回的数据</span></span><br><span class="line">        String sql = <span class="string">&quot;SELECT * FROM `student`&quot;</span>;</span><br><span class="line">        ResultSet resultSet = statement.executeQuery(sql);  <span class="comment">//执行</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span>(resultSet.next())&#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;id: &quot;</span> + resultSet.getObject(<span class="string">&quot;id&quot;</span>));</span><br><span class="line">            System.out.println(<span class="string">&quot;name: &quot;</span> + resultSet.getObject(<span class="string">&quot;name&quot;</span>));</span><br><span class="line">            System.out.println(<span class="string">&quot;email: &quot;</span> + resultSet.getObject(<span class="string">&quot;email&quot;</span>));</span><br><span class="line">            System.out.println(<span class="string">&quot;=============================&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//6. 释放连接</span></span><br><span class="line">        resultSet.close();</span><br><span class="line">        statement.close();</span><br><span class="line">        connection.close();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>url:</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">url = <span class="string">&quot;jdbc:mysql://localhost:3306/school?useUnicode=true&amp;charactorEncoding=utf8&amp;useSSl=true&quot;</span>;</span><br></pre></td></tr></table></figure>
-<p>connection 代表数据库</p>
-<p>Statement  执行SQL语句的对象</p>
-<p>ResultSet  获得查询结果集，有以下方法</p>
+    <title>5-索引</title>
+    <url>/posts/683d1a78.html</url>
+    <content><![CDATA[<h1 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h1><p><strong>索引是</strong>帮助MySQL高效获取数据的<strong>数据结构</strong></p>
+<h2 id="索引分类"><a href="#索引分类" class="headerlink" title="索引分类"></a>索引分类</h2><ul>
+<li><p>主键索引（primary key）</p>
 <ul>
-<li>next():移动到下一个记录</li>
-<li>getObject(): 获取结果（不知道字段类型时）</li>
-<li>getString(): 获取字符串字段（知道字段类型）</li>
+<li>唯一的标识，主键不可重复，只能有一个列为主键</li>
 </ul>
-</blockquote>
+</li>
+<li>唯一索引（unique key）<ul>
+<li>避免重复的列出现，唯一索引可以重复，多个列均可以标识为唯一索引</li>
+</ul>
+</li>
+<li>常规索引（key/index）<ul>
+<li>默认的，index、key关键字来设置</li>
+</ul>
+</li>
+<li>全文索引（fulltext）</li>
+</ul>
+<h2 id="索引使用"><a href="#索引使用" class="headerlink" title="索引使用"></a>索引使用</h2><ol>
+<li>在创建表的时候给字段增加索引</li>
+<li>创建完毕后，增加索引</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-- 显示所有索引信息</span><br><span class="line">show index from tableA;</span><br><span class="line"></span><br><span class="line">-- 增加一个全文索引</span><br><span class="line">alter table tableA add fulltext index `studentName`;</span><br><span class="line"></span><br><span class="line">-- 分析sql执行状况 explain</span><br><span class="line">explain select * from tableA;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="索引使用原则"><a href="#索引使用原则" class="headerlink" title="索引使用原则"></a>索引使用原则</h2><ul>
+<li>不是越多越好</li>
+<li>不要对进程变动数据加索引</li>
+<li>小数据量的表不要添加索引</li>
+<li>索引一般加在常用来查询的字段</li>
+</ul>
+<h2 id="索引数据结构"><a href="#索引数据结构" class="headerlink" title="索引数据结构"></a>索引数据结构</h2><ul>
+<li>hash类型</li>
+<li>B-tree类型（innoDB默认索引类型）</li>
+</ul>
 ]]></content>
       <categories>
         <category>java</category>
@@ -1818,6 +1775,49 @@
 </ul>
 <h2 id="SQL注入问题"><a href="#SQL注入问题" class="headerlink" title="SQL注入问题"></a>SQL注入问题</h2><p>sql存在漏洞，会被攻击，导致数据泄露</p>
 <h2 id="PrepareStatement对象"><a href="#PrepareStatement对象" class="headerlink" title="PrepareStatement对象"></a>PrepareStatement对象</h2><p>防止SQL注入</p>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>MySQL_JDBC</category>
+      </categories>
+      <tags>
+        <tag>MySQL_JDBC</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>7-JDBC</title>
+    <url>/posts/3f4cddeb.html</url>
+    <content><![CDATA[<h1 id="JDBC（重点）"><a href="#JDBC（重点）" class="headerlink" title="JDBC（重点）"></a>JDBC（重点）</h1><h2 id="idea连接MySQL数据库"><a href="#idea连接MySQL数据库" class="headerlink" title="idea连接MySQL数据库"></a>idea连接MySQL数据库</h2><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-08-12 21-51-30_image-20210812215126308.png" alt="image-20210812215126308"></p>
+<p>上面操作完成后只会显示一个数据库mysql，要显示其他数据库，按下面操作：</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-08-12 21-56-25_image-20210812215624487.png" alt="image-20210812215624487"></p>
+<h2 id="数据库驱动"><a href="#数据库驱动" class="headerlink" title="数据库驱动"></a>数据库驱动</h2><p>驱动：声卡、显卡、数据库驱动</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-04-21 19-37-31_image-20210421193728815.png" alt="image-20210421193728815" style="zoom:50%;" /></p>
+<p>程序通过数据库驱动操作数据库</p>
+<h2 id="JDBC"><a href="#JDBC" class="headerlink" title="JDBC"></a>JDBC</h2><p><strong>JDBC</strong> (Java DataBase Connection) 是通过JAVA访问数据库；</p>
+<p>SUN公司为了简化开发人员对数据库统一的操作，提供了Java操作数据库的规范，简称 <code>JDBC</code></p>
+<p>对于开发人员来说，我们只需要掌握 JDBC 接口即可</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-04-21 19-43-12_image-20210421194311030.png" alt="image-20210421194311030" style="zoom:35%;" /></p>
+<p><strong>编写程序步骤：</strong></p>
+<ol>
+<li>加载驱动</li>
+<li>连接数据库（要有连接的服务器地址、用户名、密码） <code>DriverManager</code></li>
+<li>获取SQL对象</li>
+<li>执行SQL语句，获取返回结果</li>
+<li>释放连接</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.jdbcTest;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.sql.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FirstJdbcDemo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> ClassNotFoundException,SQLException </span>&#123;</span><br><span class="line">        <span class="comment">// 1.加载驱动</span></span><br><span class="line">        Class.forName(<span class="string">&quot;com.mysql.cj.jdbc.Driver&quot;</span>); <span class="comment">//固定写法，mysql5版本没有【cj】</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2.链接信息url</span></span><br><span class="line">        String url = <span class="string">&quot;jdbc:mysql://localhost:3306/school?useUnicode=true&amp;characterEncoding=utf8&amp;useSSl=true&quot;</span>;</span><br><span class="line">        String username = <span class="string">&quot;root&quot;</span>;</span><br><span class="line">        String password = <span class="string">&quot;admin&quot;</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 3. 连接数据库</span></span><br><span class="line">        Connection connection = DriverManager.getConnection(url, username, password);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 获取SQL对象</span></span><br><span class="line">        Statement statement = connection.createStatement();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 执行SQL语句，获取返回的数据</span></span><br><span class="line">        String sql = <span class="string">&quot;SELECT * FROM `student`&quot;</span>;</span><br><span class="line">        ResultSet resultSet = statement.executeQuery(sql);  <span class="comment">//执行</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span>(resultSet.next())&#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;id: &quot;</span> + resultSet.getObject(<span class="string">&quot;id&quot;</span>));</span><br><span class="line">            System.out.println(<span class="string">&quot;name: &quot;</span> + resultSet.getObject(<span class="string">&quot;name&quot;</span>));</span><br><span class="line">            System.out.println(<span class="string">&quot;email: &quot;</span> + resultSet.getObject(<span class="string">&quot;email&quot;</span>));</span><br><span class="line">            System.out.println(<span class="string">&quot;=============================&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//6. 释放连接</span></span><br><span class="line">        resultSet.close();</span><br><span class="line">        statement.close();</span><br><span class="line">        connection.close();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>url:</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">url = <span class="string">&quot;jdbc:mysql://localhost:3306/school?useUnicode=true&amp;charactorEncoding=utf8&amp;useSSl=true&quot;</span>;</span><br></pre></td></tr></table></figure>
+<p>connection 代表数据库</p>
+<p>Statement  执行SQL语句的对象</p>
+<p>ResultSet  获得查询结果集，有以下方法</p>
+<ul>
+<li>next():移动到下一个记录</li>
+<li>getObject(): 获取结果（不知道字段类型时）</li>
+<li>getString(): 获取字符串字段（知道字段类型）</li>
+</ul>
+</blockquote>
 ]]></content>
       <categories>
         <category>java</category>
@@ -1968,6 +1968,49 @@
       </tags>
   </entry>
   <entry>
+    <title>mybatis的Mapper详解(三)</title>
+    <url>/posts/f218ca42.html</url>
+    <content><![CDATA[<h2 id="mapper-xml"><a href="#mapper-xml" class="headerlink" title="mapper.xml"></a>mapper.xml</h2><p>在jdbc中，增(insert)、删(delete)、查(select)、改(update)统称为statement</p>
+<p>因此，在mapper中，statement包含这4种标签，在相应的标签内可以使用相应的SQL语句操作数据</p>
+<h3 id="parameterType-参数数据类型"><a href="#parameterType-参数数据类型" class="headerlink" title="parameterType: 参数数据类型"></a>parameterType: 参数数据类型</h3><ul>
+<li><p>基本数据类型，int, long, …</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">delete</span> <span class="attr">id</span>=<span class="string">&quot;deleteById&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;int&quot;</span>&gt;</span></span><br><span class="line">    delete from t_acount where id = #&#123;id&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">delete</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><p>String类型: <code>java.lang.String</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;select id=&quot;findByName&quot; resultType=&quot;com.ajream.entity.Account&quot; parameterType=&quot;java.lang.String&quot;&gt;</span><br><span class="line">    select * from t_acount where username=#&#123;username&#125;</span><br><span class="line">&lt;/select&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>包装类，如：<code>java.lang.Integer</code>， <code>java.lang.Long</code>…</p>
+</li>
+<li><p>自定义类类型</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">insert</span> <span class="attr">id</span>=<span class="string">&quot;save&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;com.ajream.entity.Account&quot;</span>&gt;</span></span><br><span class="line">	insert into t_acount(id, username, passwd, age) values(#&#123;id&#125;,#&#123;username&#125;, #&#123;passwd&#125;, #&#123;age&#125;)</span><br><span class="line"><span class="tag">&lt;/<span class="name">insert</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>方法中有多个参数，不用写 parameterType，获取参数时不能用参数名，要用下标 <code>param1</code>, <code>param2</code> …或者 <code>arg0</code>, <code>arg1</code> … 【不同mybatis版本写可能不同，要注意param下标是从1开始的】</p>
+<p>例如：</p>
+<p>这是方法：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Account <span class="title">findByNameAndAge</span><span class="params">(name, age)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>则mapper如下</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;findByNameAndAge&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;com.ajream.entity.Account&quot;</span>&gt;</span></span><br><span class="line">    select * from t_acount where username=#&#123;param1&#125; and age=#&#123;param2&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="resultType：返回类型"><a href="#resultType：返回类型" class="headerlink" title="resultType：返回类型"></a>resultType：返回类型</h3><p>用法与parameterType相同</p>
+<p>【增删改默认返回int类型，表示影响的行数，不需要指定返回类型是<code>int</code>】</p>
+<ul>
+<li>基本数据类型</li>
+<li>包装类</li>
+<li>String类型</li>
+<li>自定义类类型</li>
+</ul>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>Mybatis</category>
+      </categories>
+      <tags>
+        <tag>Mybatis</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>mybatis介绍与使用（一）</title>
     <url>/posts/78903d87.html</url>
     <content><![CDATA[<h2 id="1、简介"><a href="#1、简介" class="headerlink" title="1、简介"></a>1、简介</h2><h3 id="什么是-MyBatis"><a href="#什么是-MyBatis" class="headerlink" title="什么是 MyBatis"></a>什么是 MyBatis</h3><p>​    MyBatis 是一款优秀的持久层框架，它支持自定义 SQL、存储过程以及高级映射。MyBatis 免除了几乎所有的 JDBC 代码以及设置参数和获取结果集的工作。MyBatis 可以通过简单的 XML 或注解来配置和映射原始类型、接口和 Java POJO（Plain Old Java Objects，普通老式 Java 对象）为数据库中的记录。</p>
@@ -2009,49 +2052,6 @@
 <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">resources</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">resource</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">directory</span>&gt;</span>src/main/resources<span class="tag">&lt;/<span class="name">directory</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">includes</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">include</span>&gt;</span>**/*.properties<span class="tag">&lt;/<span class="name">include</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">include</span>&gt;</span>**/*.xml<span class="tag">&lt;/<span class="name">include</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">includes</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">filtering</span>&gt;</span>true<span class="tag">&lt;/<span class="name">filtering</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">resource</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">resource</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">directory</span>&gt;</span>src/main/java<span class="tag">&lt;/<span class="name">directory</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">includes</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">include</span>&gt;</span>**/*.properties<span class="tag">&lt;/<span class="name">include</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">include</span>&gt;</span>**/*.xml<span class="tag">&lt;/<span class="name">include</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">includes</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">filtering</span>&gt;</span>true<span class="tag">&lt;/<span class="name">filtering</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">resource</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">resources</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>运行结果：</p>
 <p><img src="https://gitee.com/ajream/images/raw/master/img/2021-08-13 00-18-01_image-20210813001800000.png" alt="image-20210813001800000"></p>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>Mybatis</category>
-      </categories>
-      <tags>
-        <tag>Mybatis</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>mybatis的Mapper详解(三)</title>
-    <url>/posts/f218ca42.html</url>
-    <content><![CDATA[<h2 id="mapper-xml"><a href="#mapper-xml" class="headerlink" title="mapper.xml"></a>mapper.xml</h2><p>在jdbc中，增(insert)、删(delete)、查(select)、改(update)统称为statement</p>
-<p>因此，在mapper中，statement包含这4种标签，在相应的标签内可以使用相应的SQL语句操作数据</p>
-<h3 id="parameterType-参数数据类型"><a href="#parameterType-参数数据类型" class="headerlink" title="parameterType: 参数数据类型"></a>parameterType: 参数数据类型</h3><ul>
-<li><p>基本数据类型，int, long, …</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">delete</span> <span class="attr">id</span>=<span class="string">&quot;deleteById&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;int&quot;</span>&gt;</span></span><br><span class="line">    delete from t_acount where id = #&#123;id&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">delete</span>&gt;</span></span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<ul>
-<li><p>String类型: <code>java.lang.String</code></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;select id=&quot;findByName&quot; resultType=&quot;com.ajream.entity.Account&quot; parameterType=&quot;java.lang.String&quot;&gt;</span><br><span class="line">    select * from t_acount where username=#&#123;username&#125;</span><br><span class="line">&lt;/select&gt;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>包装类，如：<code>java.lang.Integer</code>， <code>java.lang.Long</code>…</p>
-</li>
-<li><p>自定义类类型</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">insert</span> <span class="attr">id</span>=<span class="string">&quot;save&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;com.ajream.entity.Account&quot;</span>&gt;</span></span><br><span class="line">	insert into t_acount(id, username, passwd, age) values(#&#123;id&#125;,#&#123;username&#125;, #&#123;passwd&#125;, #&#123;age&#125;)</span><br><span class="line"><span class="tag">&lt;/<span class="name">insert</span>&gt;</span></span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>方法中有多个参数，不用写 parameterType，获取参数时不能用参数名，要用下标 <code>param1</code>, <code>param2</code> …或者 <code>arg0</code>, <code>arg1</code> … 【不同mybatis版本写可能不同，要注意param下标是从1开始的】</p>
-<p>例如：</p>
-<p>这是方法：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Account <span class="title">findByNameAndAge</span><span class="params">(name, age)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>则mapper如下</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;findByNameAndAge&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;com.ajream.entity.Account&quot;</span>&gt;</span></span><br><span class="line">    select * from t_acount where username=#&#123;param1&#125; and age=#&#123;param2&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h3 id="resultType：返回类型"><a href="#resultType：返回类型" class="headerlink" title="resultType：返回类型"></a>resultType：返回类型</h3><p>用法与parameterType相同</p>
-<p>【增删改默认返回int类型，表示影响的行数，不需要指定返回类型是<code>int</code>】</p>
-<ul>
-<li>基本数据类型</li>
-<li>包装类</li>
-<li>String类型</li>
-<li>自定义类类型</li>
-</ul>
 ]]></content>
       <categories>
         <category>java</category>
@@ -2358,30 +2358,6 @@
       </tags>
   </entry>
   <entry>
-    <title>5-Stream数据流</title>
-    <url>/posts/2d7f83ef.html</url>
-    <content><![CDATA[<!--toc-->
-<h1 id="Stream数据流"><a href="#Stream数据流" class="headerlink" title="Stream数据流"></a>Stream数据流</h1><h2 id="1、串口收发数据"><a href="#1、串口收发数据" class="headerlink" title="1、串口收发数据"></a>1、串口收发数据</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 启动串口通讯</span></span><br><span class="line">  Serial.begin(<span class="number">9600</span>); </span><br><span class="line">  Serial.println();</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">  <span class="keyword">if</span> (Serial.available())&#123;                    <span class="comment">// 当串口接收到信息后</span></span><br><span class="line">    String serialData = Serial.readString();  <span class="comment">// 将接收到的信息存储于serialData变量</span></span><br><span class="line">    Serial.print(serialData);                 </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>使用<code>Serial.available</code>来判断ESP8266开发板是否接收到串口数据</p>
-<p>实际上，ESP8266开发板通过串口收发的数据通过Stream进行的</p>
-<blockquote>
-<p>下面的程序将演示：</p>
-<p>当ESP8266找到了find函数所指定的参数“ok”后，随即在后续接收到的数据中查找数字信息。一旦找到数字，则通过串口监视器输出。接下来串口监视器还将输出找到数字后剩余的串口输入信息是什么。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  Serial.begin(<span class="number">9600</span>);</span><br><span class="line">  Serial.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line">  Serial.println(<span class="string">&quot;Please enter input...&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">while</span>(Serial.available())&#123;</span><br><span class="line">    <span class="keyword">if</span>(Serial.find(<span class="string">&quot;ok&quot;</span>))&#123;</span><br><span class="line">      Serial.println(<span class="string">&quot;Found ok in user input.&quot;</span>);</span><br><span class="line"> </span><br><span class="line">      <span class="keyword">int</span> serialParseInt = Serial.parseInt();</span><br><span class="line">      Serial.print(<span class="string">&quot;serialParseInt = &quot;</span>);</span><br><span class="line">      Serial.println(serialParseInt);</span><br><span class="line">      </span><br><span class="line">      String serialInput = Serial.readString();</span><br><span class="line">      Serial.print(<span class="string">&quot;serialInput = &quot;</span>);</span><br><span class="line">      Serial.println(serialInput);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</blockquote>
-<h2 id="2、使用Stream方式来读取服务器响应的信息"><a href="#2、使用Stream方式来读取服务器响应的信息" class="headerlink" title="2、使用Stream方式来读取服务器响应的信息"></a>2、使用Stream方式来读取服务器响应的信息</h2><p>（具体看第4篇文章第2点的代码）</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> (client.connected() || client.available())&#123; </span><br><span class="line">    <span class="keyword">if</span> (client.available())&#123;</span><br><span class="line">        String line = client.readStringUntil(<span class="string">&#x27;\n&#x27;</span>);     <span class="comment">//读取返回的数据</span></span><br><span class="line">        Serial.println(line);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="3、使用Stream方式来读取文件内容"><a href="#3、使用Stream方式来读取文件内容" class="headerlink" title="3、使用Stream方式来读取文件内容"></a>3、使用Stream方式来读取文件内容</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">File f = SPIFFS.open(file_name, <span class="string">&quot;r&quot;</span>);     <span class="comment">// 以“r”模式再次打开闪存文件</span></span><br><span class="line">Serial.println(f.readString());				<span class="comment">// 读取文件内容</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>硬件学习</category>
-        <category>esp8266</category>
-      </categories>
-      <tags>
-        <tag>esp8266</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>4-NodeMCU作为客户端使用</title>
     <url>/posts/d150c3f1.html</url>
     <content><![CDATA[<!--toc-->
@@ -2428,6 +2404,30 @@
 </ol>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">wifiClientRequest</span><span class="params">(String url)</span></span>&#123;</span><br><span class="line">    <span class="comment">// 建立WiFi客户端对象</span></span><br><span class="line">    WiFiClient client;    </span><br><span class="line"></span><br><span class="line">    <span class="comment">// 建立字符串，用于HTTP请求</span></span><br><span class="line">    String httpRequest =  String(<span class="string">&quot;GET /&quot;</span>) + <span class="string">&quot; HTTP/1.1\r\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;url: &quot;</span> + url + <span class="string">&quot;\r\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;Connection: close\r\n&quot;</span> +</span><br><span class="line">        <span class="string">&quot;\r\n&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 连接网络服务器</span></span><br><span class="line">    <span class="keyword">if</span> (client.connect(url, httpPort))&#123; 	<span class="comment">//连接成功connect会返回true</span></span><br><span class="line">        </span><br><span class="line">        client.print(httpRequest);          <span class="comment">// 向服务器发送HTTP请求</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 通过串口输出网络服务器响应信息    </span></span><br><span class="line">        <span class="keyword">while</span> (client.connected() || client.available())&#123; </span><br><span class="line">            <span class="keyword">if</span> (client.available())&#123;</span><br><span class="line">                String line = client.readStringUntil(<span class="string">&#x27;\n&#x27;</span>);  <span class="comment">//一行一行读取</span></span><br><span class="line">                Serial.println(line);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        client.stop();		<span class="comment">// 断开与服务器的连接</span></span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span>&#123;    </span><br><span class="line">        client.stop();		<span class="comment">// 如果连接不成功则断开连接</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 <h2 id=""><a href="#" class="headerlink" title=" "></a> </h2>]]></content>
+      <categories>
+        <category>硬件学习</category>
+        <category>esp8266</category>
+      </categories>
+      <tags>
+        <tag>esp8266</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>5-Stream数据流</title>
+    <url>/posts/2d7f83ef.html</url>
+    <content><![CDATA[<!--toc-->
+<h1 id="Stream数据流"><a href="#Stream数据流" class="headerlink" title="Stream数据流"></a>Stream数据流</h1><h2 id="1、串口收发数据"><a href="#1、串口收发数据" class="headerlink" title="1、串口收发数据"></a>1、串口收发数据</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 启动串口通讯</span></span><br><span class="line">  Serial.begin(<span class="number">9600</span>); </span><br><span class="line">  Serial.println();</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">  <span class="keyword">if</span> (Serial.available())&#123;                    <span class="comment">// 当串口接收到信息后</span></span><br><span class="line">    String serialData = Serial.readString();  <span class="comment">// 将接收到的信息存储于serialData变量</span></span><br><span class="line">    Serial.print(serialData);                 </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用<code>Serial.available</code>来判断ESP8266开发板是否接收到串口数据</p>
+<p>实际上，ESP8266开发板通过串口收发的数据通过Stream进行的</p>
+<blockquote>
+<p>下面的程序将演示：</p>
+<p>当ESP8266找到了find函数所指定的参数“ok”后，随即在后续接收到的数据中查找数字信息。一旦找到数字，则通过串口监视器输出。接下来串口监视器还将输出找到数字后剩余的串口输入信息是什么。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  Serial.begin(<span class="number">9600</span>);</span><br><span class="line">  Serial.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line">  Serial.println(<span class="string">&quot;Please enter input...&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">while</span>(Serial.available())&#123;</span><br><span class="line">    <span class="keyword">if</span>(Serial.find(<span class="string">&quot;ok&quot;</span>))&#123;</span><br><span class="line">      Serial.println(<span class="string">&quot;Found ok in user input.&quot;</span>);</span><br><span class="line"> </span><br><span class="line">      <span class="keyword">int</span> serialParseInt = Serial.parseInt();</span><br><span class="line">      Serial.print(<span class="string">&quot;serialParseInt = &quot;</span>);</span><br><span class="line">      Serial.println(serialParseInt);</span><br><span class="line">      </span><br><span class="line">      String serialInput = Serial.readString();</span><br><span class="line">      Serial.print(<span class="string">&quot;serialInput = &quot;</span>);</span><br><span class="line">      Serial.println(serialInput);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h2 id="2、使用Stream方式来读取服务器响应的信息"><a href="#2、使用Stream方式来读取服务器响应的信息" class="headerlink" title="2、使用Stream方式来读取服务器响应的信息"></a>2、使用Stream方式来读取服务器响应的信息</h2><p>（具体看第4篇文章第2点的代码）</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> (client.connected() || client.available())&#123; </span><br><span class="line">    <span class="keyword">if</span> (client.available())&#123;</span><br><span class="line">        String line = client.readStringUntil(<span class="string">&#x27;\n&#x27;</span>);     <span class="comment">//读取返回的数据</span></span><br><span class="line">        Serial.println(line);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="3、使用Stream方式来读取文件内容"><a href="#3、使用Stream方式来读取文件内容" class="headerlink" title="3、使用Stream方式来读取文件内容"></a>3、使用Stream方式来读取文件内容</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">File f = SPIFFS.open(file_name, <span class="string">&quot;r&quot;</span>);     <span class="comment">// 以“r”模式再次打开闪存文件</span></span><br><span class="line">Serial.println(f.readString());				<span class="comment">// 读取文件内容</span></span><br></pre></td></tr></table></figure>
+]]></content>
       <categories>
         <category>硬件学习</category>
         <category>esp8266</category>
@@ -3051,48 +3051,6 @@
       </tags>
   </entry>
   <entry>
-    <title>10-装箱与拆箱</title>
-    <url>/posts/3aac01ca.html</url>
-    <content><![CDATA[<h1 id="装箱与拆箱"><a href="#装箱与拆箱" class="headerlink" title="装箱与拆箱"></a>装箱与拆箱</h1><h2 id="封装类"><a href="#封装类" class="headerlink" title="封装类"></a>封装类</h2><blockquote>
-<p>所有的<strong>基本类型</strong>，都有对应的<strong>类类型</strong><br>比如int对应的类是Integer<br>这种类就叫做封装类</p>
-</blockquote>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line">         </span><br><span class="line"><span class="comment">//把一个基本类型的变量,转换为Integer对象</span></span><br><span class="line">Integer it = <span class="keyword">new</span> Integer(i);</span><br><span class="line"></span><br><span class="line"><span class="comment">//把一个Integer对象，转换为一个基本类型的int</span></span><br><span class="line"><span class="keyword">int</span> i2 = it.intValue();</span><br></pre></td></tr></table></figure>
-<h2 id="10-2-Number类"><a href="#10-2-Number类" class="headerlink" title="10.2 Number类"></a>10.2 Number类</h2><blockquote>
-<p>数字封装类有</p>
-<ul>
-<li>Byte     Short    Integer    Long</li>
-<li>Float    Double</li>
-</ul>
-<p>这些类都是抽象类<code>Number</code>的子类</p>
-</blockquote>
-<h2 id="基本类型-lt-gt-封装类型"><a href="#基本类型-lt-gt-封装类型" class="headerlink" title="基本类型&lt;-&gt;封装类型"></a>基本类型&lt;-&gt;封装类型</h2><ul>
-<li>基本类型转换成封装类型</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line"> </span><br><span class="line">Integer it = <span class="keyword">new</span> Integer(i);   <span class="comment">//i转换成封装类型it</span></span><br><span class="line">         </span><br></pre></td></tr></table></figure>
-<ul>
-<li>封装类型转换成基本类型</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line">Integer it = <span class="keyword">new</span> Integer(i);   <span class="comment">//i转换成封装类型it</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> i2 = it.intValue(); <span class="comment">//封装类型转it换成基本类型i2，i2与i是一样的</span></span><br></pre></td></tr></table></figure>
-<h2 id="自动装箱与拆箱"><a href="#自动装箱与拆箱" class="headerlink" title="自动装箱与拆箱"></a>自动装箱与拆箱</h2><ul>
-<li><p>自动装箱：通过<code>=</code>符号自动把 基本类型 —&gt; 类类型</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line">Integer it = i;   <span class="comment">//自动装箱</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>自动拆箱：与自动装箱相反，通过<code>=</code>符号自动把 类类型 —&gt; 基本类型</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line">Integer it = i;   <span class="comment">//自动装箱</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> i1 = it;		<span class="comment">//自动拆箱</span></span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h2 id="int的最大值-最小值"><a href="#int的最大值-最小值" class="headerlink" title="int的最大值/最小值"></a>int的最大值/最小值</h2><p>int的最大值可以通过其对应的封装类<code>Integer.MAX_VALUE</code>获取；</p>
-<p>同理，最小值通过 <code>Integer.MIN_VALUE</code> 获取；</p>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>javaSE</category>
-      </categories>
-      <tags>
-        <tag>javaSE</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>1-类与对象</title>
     <url>/posts/52b44ec7.html</url>
     <content><![CDATA[<h1 id="类与对象"><a href="#类与对象" class="headerlink" title="类与对象"></a>类与对象</h1><p>类可以看成是具有很多相似性质、功能的事物的集合，如鸟可以看作一个类，鸟都具有各自的名称，各色的羽毛、飞等相似特点；</p>
@@ -3216,6 +3174,48 @@
 <li>调用Integer的静态方法<code>parseInt</code></li>
 </ul>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String str = <span class="string">&quot;999&quot;</span>;</span><br><span class="line">         </span><br><span class="line"><span class="keyword">int</span> i= Integer.parseInt(str);</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>javaSE</category>
+      </categories>
+      <tags>
+        <tag>javaSE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>10-装箱与拆箱</title>
+    <url>/posts/3aac01ca.html</url>
+    <content><![CDATA[<h1 id="装箱与拆箱"><a href="#装箱与拆箱" class="headerlink" title="装箱与拆箱"></a>装箱与拆箱</h1><h2 id="封装类"><a href="#封装类" class="headerlink" title="封装类"></a>封装类</h2><blockquote>
+<p>所有的<strong>基本类型</strong>，都有对应的<strong>类类型</strong><br>比如int对应的类是Integer<br>这种类就叫做封装类</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line">         </span><br><span class="line"><span class="comment">//把一个基本类型的变量,转换为Integer对象</span></span><br><span class="line">Integer it = <span class="keyword">new</span> Integer(i);</span><br><span class="line"></span><br><span class="line"><span class="comment">//把一个Integer对象，转换为一个基本类型的int</span></span><br><span class="line"><span class="keyword">int</span> i2 = it.intValue();</span><br></pre></td></tr></table></figure>
+<h2 id="10-2-Number类"><a href="#10-2-Number类" class="headerlink" title="10.2 Number类"></a>10.2 Number类</h2><blockquote>
+<p>数字封装类有</p>
+<ul>
+<li>Byte     Short    Integer    Long</li>
+<li>Float    Double</li>
+</ul>
+<p>这些类都是抽象类<code>Number</code>的子类</p>
+</blockquote>
+<h2 id="基本类型-lt-gt-封装类型"><a href="#基本类型-lt-gt-封装类型" class="headerlink" title="基本类型&lt;-&gt;封装类型"></a>基本类型&lt;-&gt;封装类型</h2><ul>
+<li>基本类型转换成封装类型</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line"> </span><br><span class="line">Integer it = <span class="keyword">new</span> Integer(i);   <span class="comment">//i转换成封装类型it</span></span><br><span class="line">         </span><br></pre></td></tr></table></figure>
+<ul>
+<li>封装类型转换成基本类型</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line">Integer it = <span class="keyword">new</span> Integer(i);   <span class="comment">//i转换成封装类型it</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> i2 = it.intValue(); <span class="comment">//封装类型转it换成基本类型i2，i2与i是一样的</span></span><br></pre></td></tr></table></figure>
+<h2 id="自动装箱与拆箱"><a href="#自动装箱与拆箱" class="headerlink" title="自动装箱与拆箱"></a>自动装箱与拆箱</h2><ul>
+<li><p>自动装箱：通过<code>=</code>符号自动把 基本类型 —&gt; 类类型</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line">Integer it = i;   <span class="comment">//自动装箱</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>自动拆箱：与自动装箱相反，通过<code>=</code>符号自动把 类类型 —&gt; 基本类型</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">5</span>;</span><br><span class="line">Integer it = i;   <span class="comment">//自动装箱</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> i1 = it;		<span class="comment">//自动拆箱</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="int的最大值-最小值"><a href="#int的最大值-最小值" class="headerlink" title="int的最大值/最小值"></a>int的最大值/最小值</h2><p>int的最大值可以通过其对应的封装类<code>Integer.MAX_VALUE</code>获取；</p>
+<p>同理，最小值通过 <code>Integer.MIN_VALUE</code> 获取；</p>
 ]]></content>
       <categories>
         <category>java</category>
@@ -3992,34 +3992,6 @@
       </tags>
   </entry>
   <entry>
-    <title>2.1-类和对象的属性初始化</title>
-    <url>/posts/4515cdfc.html</url>
-    <content><![CDATA[<h1 id="属性初始化"><a href="#属性初始化" class="headerlink" title="属性初始化"></a>属性初始化</h1><h2 id="对象属性初始化"><a href="#对象属性初始化" class="headerlink" title="对象属性初始化"></a>对象属性初始化</h2><ul>
-<li>声明的同时初始化</li>
-<li>块初始化（声明后初始化）</li>
-<li>通过构造方法初始化</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> charactor;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hero</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> String name = <span class="string">&quot;some hero&quot;</span>; <span class="comment">//声明该属性的时候初始化</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">float</span> hp;</span><br><span class="line">    <span class="keyword">float</span> maxHP;</span><br><span class="line">     </span><br><span class="line">    &#123;</span><br><span class="line">        maxHP = <span class="number">200</span>; <span class="comment">//块初始化</span></span><br><span class="line">    &#125;  </span><br><span class="line">     </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Hero</span><span class="params">()</span></span>&#123;</span><br><span class="line">        hp = <span class="number">100</span>; <span class="comment">//构造方法中初始化</span></span><br><span class="line">         </span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>注意：最后进行的是通过<strong>构造方法进行的初始化</strong>，需要在创建对象的时候才开始初始化</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> ChuShiHua;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hero</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> String name = <span class="string">&quot;some hero&quot;</span>;</span><br><span class="line">    &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;声明时初始化：&quot;</span>+name);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Hero</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        name = <span class="string">&quot;one hero&quot;</span>;</span><br><span class="line">        System.out.println(<span class="string">&quot;构造方法中初始化：&quot;</span> + name);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line">        name = <span class="string">&quot;the hero&quot;</span>;</span><br><span class="line">        System.out.println(<span class="string">&quot;块初始化：&quot;</span> + name);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>创建对象，查看输出：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> ChuShiHua;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        Hero hero = <span class="keyword">new</span> Hero();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**输出：</span></span><br><span class="line"><span class="comment">声明时初始化：some hero</span></span><br><span class="line"><span class="comment">块初始化：the hero</span></span><br><span class="line"><span class="comment">构造方法中初始化：one hero</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
-<p>因此初始化顺序为：声明时初始化-&gt;块初始化-&gt;构造方法中初始化</p>
-<h2 id="类属性初始化"><a href="#类属性初始化" class="headerlink" title="类属性初始化"></a>类属性初始化</h2><ul>
-<li>声明的同时初始化</li>
-<li><strong>静态</strong>块初始化</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> charactor;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hero</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> itemCapacity=<span class="number">8</span>; <span class="comment">//声明的时候 初始化</span></span><br><span class="line">     </span><br><span class="line">    <span class="keyword">static</span>&#123;   <span class="comment">//静态初始化块 </span></span><br><span class="line">        itemCapacity = <span class="number">6</span>;</span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Hero</span><span class="params">()</span></span>&#123;</span><br><span class="line">         </span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(Hero.itemCapacity);</span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>javaSE</category>
-      </categories>
-      <tags>
-        <tag>javaSE</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>19-多线程系列</title>
     <url>/posts/c5d59ae.html</url>
     <content><![CDATA[<h1 id="多线程系列"><a href="#多线程系列" class="headerlink" title="多线程系列"></a>多线程系列</h1><h2 id="线程状态"><a href="#线程状态" class="headerlink" title="线程状态"></a>线程状态</h2><p>一个线程对象在它的生命周期内，需要经历5个状态。</p>
@@ -4110,53 +4082,24 @@
       </tags>
   </entry>
   <entry>
-    <title>20-反射机制</title>
-    <url>/posts/c9f91dab.html</url>
-    <content><![CDATA[<h1 id="Java反射机制"><a href="#Java反射机制" class="headerlink" title="Java反射机制"></a>Java反射机制</h1><h2 id="获取类对象"><a href="#获取类对象" class="headerlink" title="获取类对象"></a>获取类对象</h2><h3 id="类对象"><a href="#类对象" class="headerlink" title="类对象"></a>类对象</h3><p><strong>类对象</strong>，用于描述这种类，都有什么属性，什么方法的</p>
-<h3 id="获取类对象-1"><a href="#获取类对象-1" class="headerlink" title="获取类对象"></a>获取类对象</h3><ul>
-<li><p>Class.forName();</p>
-</li>
-<li><p>Hero.class</p>
-<p>（注：Hero是自定义类的类名）</p>
-</li>
-<li><p>new Hero().getClass()</p>
-</li>
+    <title>2.1-类和对象的属性初始化</title>
+    <url>/posts/4515cdfc.html</url>
+    <content><![CDATA[<h1 id="属性初始化"><a href="#属性初始化" class="headerlink" title="属性初始化"></a>属性初始化</h1><h2 id="对象属性初始化"><a href="#对象属性初始化" class="headerlink" title="对象属性初始化"></a>对象属性初始化</h2><ul>
+<li>声明的同时初始化</li>
+<li>块初始化（声明后初始化）</li>
+<li>通过构造方法初始化</li>
 </ul>
-<p>在一个JVM中，一种类，只会有一个类对象存在。所以以上三种方式取出来的类对象，都是一样的。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String className = <span class="string">&quot;charactor.Hero&quot;</span>;</span><br><span class="line"></span><br><span class="line">Class pClass1 = Class.forName(className);</span><br><span class="line">Class pClass2 = Hero.class;</span><br><span class="line">Class pClass3 = <span class="keyword">new</span> Hero().getClass();</span><br><span class="line"></span><br><span class="line">System.out.println(pClass1 == pClass2);<span class="comment">//true</span></span><br><span class="line">System.out.println(pClass1 == pClass3);<span class="comment">//true</span></span><br></pre></td></tr></table></figure>
-<h3 id="获取类对象，会导致类属性的初始化"><a href="#获取类对象，会导致类属性的初始化" class="headerlink" title="获取类对象，会导致类属性的初始化"></a>获取类对象，会导致类属性的初始化</h3><p>无论什么途径获取类对象，都会导致静态属性被初始化，而且只会执行一次。</p>
-<p>（除了直接使用 Class c = Hero.class 这种方式，这种方式不会导致静态属性被初始化）</p>
-<h2 id="创建类对象"><a href="#创建类对象" class="headerlink" title="创建类对象"></a>创建类对象</h2><p>使用反射机制创建类对象，3个步骤</p>
-<ol>
-<li>获取类对象</li>
-<li>获取构造器</li>
-<li>通过构造器实例化</li>
-</ol>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//使用反射的方式创建对象</span></span><br><span class="line">String className = <span class="string">&quot;charactor.Hero&quot;</span>;</span><br><span class="line"><span class="comment">//类对象</span></span><br><span class="line">Class pClass = Class.forName(className);</span><br><span class="line"></span><br><span class="line"><span class="comment">//构造器</span></span><br><span class="line">Constructor c = pClass.getConstructor();</span><br><span class="line"></span><br><span class="line"><span class="comment">//通过构造器实例化</span></span><br><span class="line">Hero h2 = (Hero) c.newInstance();</span><br></pre></td></tr></table></figure>
-<h2 id="属性访问"><a href="#属性访问" class="headerlink" title="属性访问"></a>属性访问</h2><h3 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h3><p>使用反射机制获取并修改类对象属性（也叫字段<code>Field</code>），4个步骤</p>
-<ol>
-<li>导包</li>
-<li>获取类对象</li>
-<li>获取属性（<u><strong>字段</strong></u>）—— <code>getDeclaredField</code></li>
-<li>修改指定对象的属性值—— <code>set</code></li>
-</ol>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"></span><br><span class="line">Hero h = <span class="keyword">new</span> Hero();</span><br><span class="line"></span><br><span class="line">Class c = h.getClass();</span><br><span class="line"></span><br><span class="line">Field f = c.getDeclaredField(<span class="string">&quot;name&quot;</span>);</span><br><span class="line"></span><br><span class="line">f1.set(h, <span class="string">&quot;teemo&quot;</span>);<span class="comment">//修改这个字段的值</span></span><br></pre></td></tr></table></figure>
-<h3 id="区分-getField-与-getDeclaredField"><a href="#区分-getField-与-getDeclaredField" class="headerlink" title="区分 getField 与 getDeclaredField"></a>区分 getField 与 getDeclaredField</h3><ul>
-<li><p>这两个方法都是用于获取字段</p>
-</li>
-<li><p><code>getField</code> <strong>只能获取</strong>public的，包括<strong>从父类继承</strong>来的字段。</p>
-</li>
-<li><p><code>getDeclaredField</code> 可以获取本类所有的字段，<strong>包括private</strong>的，但是<strong>不能获取继承</strong>来的字段。</p>
-<p><strong>注</strong>： 这里只能获取到private的<strong>字段</strong>，但并不能访问该private字段的<strong>值</strong>,除非加上<strong>setAccessible(true)</strong></p>
-</li>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> charactor;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hero</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> String name = <span class="string">&quot;some hero&quot;</span>; <span class="comment">//声明该属性的时候初始化</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">float</span> hp;</span><br><span class="line">    <span class="keyword">float</span> maxHP;</span><br><span class="line">     </span><br><span class="line">    &#123;</span><br><span class="line">        maxHP = <span class="number">200</span>; <span class="comment">//块初始化</span></span><br><span class="line">    &#125;  </span><br><span class="line">     </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Hero</span><span class="params">()</span></span>&#123;</span><br><span class="line">        hp = <span class="number">100</span>; <span class="comment">//构造方法中初始化</span></span><br><span class="line">         </span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意：最后进行的是通过<strong>构造方法进行的初始化</strong>，需要在创建对象的时候才开始初始化</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> ChuShiHua;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hero</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> String name = <span class="string">&quot;some hero&quot;</span>;</span><br><span class="line">    &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;声明时初始化：&quot;</span>+name);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Hero</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        name = <span class="string">&quot;one hero&quot;</span>;</span><br><span class="line">        System.out.println(<span class="string">&quot;构造方法中初始化：&quot;</span> + name);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line">        name = <span class="string">&quot;the hero&quot;</span>;</span><br><span class="line">        System.out.println(<span class="string">&quot;块初始化：&quot;</span> + name);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>创建对象，查看输出：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> ChuShiHua;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        Hero hero = <span class="keyword">new</span> Hero();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**输出：</span></span><br><span class="line"><span class="comment">声明时初始化：some hero</span></span><br><span class="line"><span class="comment">块初始化：the hero</span></span><br><span class="line"><span class="comment">构造方法中初始化：one hero</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+<p>因此初始化顺序为：声明时初始化-&gt;块初始化-&gt;构造方法中初始化</p>
+<h2 id="类属性初始化"><a href="#类属性初始化" class="headerlink" title="类属性初始化"></a>类属性初始化</h2><ul>
+<li>声明的同时初始化</li>
+<li><strong>静态</strong>块初始化</li>
 </ul>
-<h2 id="方法获取"><a href="#方法获取" class="headerlink" title="方法获取"></a>方法获取</h2><ol>
-<li>导包</li>
-<li>获取类对象</li>
-<li>获取到方法—— <code>getMethod</code></li>
-<li>调用指定对象的方法—— <code>invoke</code></li>
-</ol>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line">Hero h = <span class="keyword">new</span> Hero();</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 获取这个名字叫做setName，参数类型是String的方法</span></span><br><span class="line">Method m = h.getClass().getMethod(<span class="string">&quot;setName&quot;</span>, String.class);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对h对象，调用这个方法</span></span><br><span class="line">m.invoke(h, <span class="string">&quot;garent&quot;</span>);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> charactor;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hero</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> itemCapacity=<span class="number">8</span>; <span class="comment">//声明的时候 初始化</span></span><br><span class="line">     </span><br><span class="line">    <span class="keyword">static</span>&#123;   <span class="comment">//静态初始化块 </span></span><br><span class="line">        itemCapacity = <span class="number">6</span>;</span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Hero</span><span class="params">()</span></span>&#123;</span><br><span class="line">         </span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(Hero.itemCapacity);</span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>java</category>
@@ -4205,6 +4148,63 @@
 <blockquote>
 <p><strong>作用范围最小原则:</strong><br>简单说，能用private就用private，不行就放大一级，用package,再不行就用protected，最后用public。 这样就能把数据尽量的封装起来，没有必要<strong>露出来的</strong>，就不用<strong>露出来</strong>了</p>
 </blockquote>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>javaSE</category>
+      </categories>
+      <tags>
+        <tag>javaSE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>20-反射机制</title>
+    <url>/posts/c9f91dab.html</url>
+    <content><![CDATA[<h1 id="Java反射机制"><a href="#Java反射机制" class="headerlink" title="Java反射机制"></a>Java反射机制</h1><h2 id="获取类对象"><a href="#获取类对象" class="headerlink" title="获取类对象"></a>获取类对象</h2><h3 id="类对象"><a href="#类对象" class="headerlink" title="类对象"></a>类对象</h3><p><strong>类对象</strong>，用于描述这种类，都有什么属性，什么方法的</p>
+<h3 id="获取类对象-1"><a href="#获取类对象-1" class="headerlink" title="获取类对象"></a>获取类对象</h3><ul>
+<li><p>Class.forName();</p>
+</li>
+<li><p>Hero.class</p>
+<p>（注：Hero是自定义类的类名）</p>
+</li>
+<li><p>new Hero().getClass()</p>
+</li>
+</ul>
+<p>在一个JVM中，一种类，只会有一个类对象存在。所以以上三种方式取出来的类对象，都是一样的。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String className = <span class="string">&quot;charactor.Hero&quot;</span>;</span><br><span class="line"></span><br><span class="line">Class pClass1 = Class.forName(className);</span><br><span class="line">Class pClass2 = Hero.class;</span><br><span class="line">Class pClass3 = <span class="keyword">new</span> Hero().getClass();</span><br><span class="line"></span><br><span class="line">System.out.println(pClass1 == pClass2);<span class="comment">//true</span></span><br><span class="line">System.out.println(pClass1 == pClass3);<span class="comment">//true</span></span><br></pre></td></tr></table></figure>
+<h3 id="获取类对象，会导致类属性的初始化"><a href="#获取类对象，会导致类属性的初始化" class="headerlink" title="获取类对象，会导致类属性的初始化"></a>获取类对象，会导致类属性的初始化</h3><p>无论什么途径获取类对象，都会导致静态属性被初始化，而且只会执行一次。</p>
+<p>（除了直接使用 Class c = Hero.class 这种方式，这种方式不会导致静态属性被初始化）</p>
+<h2 id="创建类对象"><a href="#创建类对象" class="headerlink" title="创建类对象"></a>创建类对象</h2><p>使用反射机制创建类对象，3个步骤</p>
+<ol>
+<li>获取类对象</li>
+<li>获取构造器</li>
+<li>通过构造器实例化</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//使用反射的方式创建对象</span></span><br><span class="line">String className = <span class="string">&quot;charactor.Hero&quot;</span>;</span><br><span class="line"><span class="comment">//类对象</span></span><br><span class="line">Class pClass = Class.forName(className);</span><br><span class="line"></span><br><span class="line"><span class="comment">//构造器</span></span><br><span class="line">Constructor c = pClass.getConstructor();</span><br><span class="line"></span><br><span class="line"><span class="comment">//通过构造器实例化</span></span><br><span class="line">Hero h2 = (Hero) c.newInstance();</span><br></pre></td></tr></table></figure>
+<h2 id="属性访问"><a href="#属性访问" class="headerlink" title="属性访问"></a>属性访问</h2><h3 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h3><p>使用反射机制获取并修改类对象属性（也叫字段<code>Field</code>），4个步骤</p>
+<ol>
+<li>导包</li>
+<li>获取类对象</li>
+<li>获取属性（<u><strong>字段</strong></u>）—— <code>getDeclaredField</code></li>
+<li>修改指定对象的属性值—— <code>set</code></li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"></span><br><span class="line">Hero h = <span class="keyword">new</span> Hero();</span><br><span class="line"></span><br><span class="line">Class c = h.getClass();</span><br><span class="line"></span><br><span class="line">Field f = c.getDeclaredField(<span class="string">&quot;name&quot;</span>);</span><br><span class="line"></span><br><span class="line">f1.set(h, <span class="string">&quot;teemo&quot;</span>);<span class="comment">//修改这个字段的值</span></span><br></pre></td></tr></table></figure>
+<h3 id="区分-getField-与-getDeclaredField"><a href="#区分-getField-与-getDeclaredField" class="headerlink" title="区分 getField 与 getDeclaredField"></a>区分 getField 与 getDeclaredField</h3><ul>
+<li><p>这两个方法都是用于获取字段</p>
+</li>
+<li><p><code>getField</code> <strong>只能获取</strong>public的，包括<strong>从父类继承</strong>来的字段。</p>
+</li>
+<li><p><code>getDeclaredField</code> 可以获取本类所有的字段，<strong>包括private</strong>的，但是<strong>不能获取继承</strong>来的字段。</p>
+<p><strong>注</strong>： 这里只能获取到private的<strong>字段</strong>，但并不能访问该private字段的<strong>值</strong>,除非加上<strong>setAccessible(true)</strong></p>
+</li>
+</ul>
+<h2 id="方法获取"><a href="#方法获取" class="headerlink" title="方法获取"></a>方法获取</h2><ol>
+<li>导包</li>
+<li>获取类对象</li>
+<li>获取到方法—— <code>getMethod</code></li>
+<li>调用指定对象的方法—— <code>invoke</code></li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line">Hero h = <span class="keyword">new</span> Hero();</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 获取这个名字叫做setName，参数类型是String的方法</span></span><br><span class="line">Method m = h.getClass().getMethod(<span class="string">&quot;setName&quot;</span>, String.class);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对h对象，调用这个方法</span></span><br><span class="line">m.invoke(h, <span class="string">&quot;garent&quot;</span>);</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>java</category>
@@ -4678,6 +4678,30 @@
       </tags>
   </entry>
   <entry>
+    <title>7-条件语句</title>
+    <url>/posts/b54f36d8.html</url>
+    <content><![CDATA[<h1 id="条件语句"><a href="#条件语句" class="headerlink" title="条件语句"></a>条件语句</h1><h2 id="if语句"><a href="#if语句" class="headerlink" title="if语句"></a>if语句</h2><ul>
+<li><p>3种基本用法</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">----------<span class="number">1</span>------------</span><br><span class="line"><span class="keyword">if</span>()&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">----------<span class="number">2</span>------------</span><br><span class="line"><span class="keyword">if</span>()&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line">----------<span class="number">3</span>------------</span><br><span class="line">    </span><br><span class="line"><span class="keyword">if</span>()&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span>()&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span>()&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line">-----------------------</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="switch语句"><a href="#switch语句" class="headerlink" title="switch语句"></a>switch语句</h2><ul>
+<li>switch可以使用<code>byte,short,int,char,String,enum</code></li>
+<li>每个表达式结束，都应该有一个break</li>
+<li>String在Java1.7之前是不支持的, Java从1.7开始支持switch用String的，编译后是把String转化为hash值，其实还是整数</li>
+<li>enum是枚举类型</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">         </span><br><span class="line">        <span class="keyword">int</span> day = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">switch</span>(day)&#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">                System.out.println(<span class="string">&quot;星期一&quot;</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">                System.out.println(<span class="string">&quot;星期二&quot;</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">                System.out.println(<span class="string">&quot;星期三&quot;</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">4</span>:</span><br><span class="line">                System.out.println(<span class="string">&quot;星期四&quot;</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">5</span>:</span><br><span class="line">                System.out.println(<span class="string">&quot;星期五&quot;</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">6</span>:</span><br><span class="line">                System.out.println(<span class="string">&quot;星期六&quot;</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">7</span>:</span><br><span class="line">                System.out.println(<span class="string">&quot;星期天&quot;</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                System.out.println(<span class="string">&quot;这个是什么鬼？&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">         </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>javaSE</category>
+      </categories>
+      <tags>
+        <tag>javaSE</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>8-循环语句</title>
     <url>/posts/753dfa3e.html</url>
     <content><![CDATA[<h1 id="循环语句"><a href="#循环语句" class="headerlink" title="循环语句"></a>循环语句</h1><h2 id="while与-do-while"><a href="#while与-do-while" class="headerlink" title="while与 do while"></a>while与 do while</h2><div class="table-container">
@@ -4716,57 +4740,6 @@
 <h2 id="break语句"><a href="#break语句" class="headerlink" title="break语句"></a>break语句</h2><p>满足条件时终止<strong>距离最近</strong>的一层循环；</p>
 <h2 id="使用标签结束外部循环"><a href="#使用标签结束外部循环" class="headerlink" title="使用标签结束外部循环"></a>使用标签结束外部循环</h2><p>注意标签放的位置：需要终止的循环外部</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">          </span><br><span class="line">        <span class="comment">//打印单数    </span></span><br><span class="line">        outloop: <span class="comment">//outloop这个标签可以自定义，比如a,b,c,outloop1...,放在需要终止的循环外部</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">             </span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; <span class="number">10</span>; j++) &#123;</span><br><span class="line">                System.out.println(i+<span class="string">&quot;:&quot;</span>+j);</span><br><span class="line">                <span class="keyword">if</span>(<span class="number">0</span>==j%<span class="number">2</span>) </span><br><span class="line">                    <span class="keyword">break</span> outloop; <span class="comment">//如果是双数，结束外部循环</span></span><br><span class="line">            &#125;</span><br><span class="line">             </span><br><span class="line">        &#125;</span><br><span class="line">         </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>javaSE</category>
-      </categories>
-      <tags>
-        <tag>javaSE</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>7-条件语句</title>
-    <url>/posts/b54f36d8.html</url>
-    <content><![CDATA[<h1 id="条件语句"><a href="#条件语句" class="headerlink" title="条件语句"></a>条件语句</h1><h2 id="if语句"><a href="#if语句" class="headerlink" title="if语句"></a>if语句</h2><ul>
-<li><p>3种基本用法</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">----------<span class="number">1</span>------------</span><br><span class="line"><span class="keyword">if</span>()&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">----------<span class="number">2</span>------------</span><br><span class="line"><span class="keyword">if</span>()&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line">----------<span class="number">3</span>------------</span><br><span class="line">    </span><br><span class="line"><span class="keyword">if</span>()&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span>()&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span>()&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line">-----------------------</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h2 id="switch语句"><a href="#switch语句" class="headerlink" title="switch语句"></a>switch语句</h2><ul>
-<li>switch可以使用<code>byte,short,int,char,String,enum</code></li>
-<li>每个表达式结束，都应该有一个break</li>
-<li>String在Java1.7之前是不支持的, Java从1.7开始支持switch用String的，编译后是把String转化为hash值，其实还是整数</li>
-<li>enum是枚举类型</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">         </span><br><span class="line">        <span class="keyword">int</span> day = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">switch</span>(day)&#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">                System.out.println(<span class="string">&quot;星期一&quot;</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">                System.out.println(<span class="string">&quot;星期二&quot;</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">                System.out.println(<span class="string">&quot;星期三&quot;</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">4</span>:</span><br><span class="line">                System.out.println(<span class="string">&quot;星期四&quot;</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">5</span>:</span><br><span class="line">                System.out.println(<span class="string">&quot;星期五&quot;</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">6</span>:</span><br><span class="line">                System.out.println(<span class="string">&quot;星期六&quot;</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">7</span>:</span><br><span class="line">                System.out.println(<span class="string">&quot;星期天&quot;</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                System.out.println(<span class="string">&quot;这个是什么鬼？&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">         </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>javaSE</category>
-      </categories>
-      <tags>
-        <tag>javaSE</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>9-package包</title>
-    <url>/posts/94566522.html</url>
-    <content><![CDATA[<h1 id="包package"><a href="#包package" class="headerlink" title="包package"></a>包package</h1><ul>
-<li><p>通常会把比较接近的类，规划在同一个包下；</p>
-</li>
-<li><p>在最开始的地方声明该类所处于的包名；</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> charactor; <span class="comment">//在最开始的地方声明该类所处于的包名</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hero</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    String name; <span class="comment">//姓名</span></span><br><span class="line">    <span class="keyword">float</span> hp; <span class="comment">//血量</span></span><br><span class="line">    <span class="keyword">int</span> moveSpeed; <span class="comment">//移动速度</span></span><br><span class="line">     </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<ul>
-<li><p>使用同一个包下的其他类，直接使用即可</p>
-</li>
-<li><p>使用其他包下的类，必须<code>import</code></p>
-</li>
-</ul>
-<p><img src="https://stepimagewm.how2j.cn/600.png" alt="把比较接近的类，规划在同一个包下"></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> charactor;</span><br><span class="line"> </span><br><span class="line"><span class="comment">//Weapon类在其他包里，使用必须进行import</span></span><br><span class="line"><span class="keyword">import</span> property.Weapon;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hero</span> </span>&#123;</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>java</category>
@@ -4840,6 +4813,33 @@
       </categories>
       <tags>
         <tag>java_spring</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>9-package包</title>
+    <url>/posts/94566522.html</url>
+    <content><![CDATA[<h1 id="包package"><a href="#包package" class="headerlink" title="包package"></a>包package</h1><ul>
+<li><p>通常会把比较接近的类，规划在同一个包下；</p>
+</li>
+<li><p>在最开始的地方声明该类所处于的包名；</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> charactor; <span class="comment">//在最开始的地方声明该类所处于的包名</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hero</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    String name; <span class="comment">//姓名</span></span><br><span class="line">    <span class="keyword">float</span> hp; <span class="comment">//血量</span></span><br><span class="line">    <span class="keyword">int</span> moveSpeed; <span class="comment">//移动速度</span></span><br><span class="line">     </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><p>使用同一个包下的其他类，直接使用即可</p>
+</li>
+<li><p>使用其他包下的类，必须<code>import</code></p>
+</li>
+</ul>
+<p><img src="https://stepimagewm.how2j.cn/600.png" alt="把比较接近的类，规划在同一个包下"></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> charactor;</span><br><span class="line"> </span><br><span class="line"><span class="comment">//Weapon类在其他包里，使用必须进行import</span></span><br><span class="line"><span class="keyword">import</span> property.Weapon;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hero</span> </span>&#123;</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>javaSE</category>
+      </categories>
+      <tags>
+        <tag>javaSE</tag>
       </tags>
   </entry>
   <entry>
@@ -5126,6 +5126,28 @@
       </tags>
   </entry>
   <entry>
+    <title>2-SpringIOC</title>
+    <url>/posts/752d4bdb.html</url>
+    <content><![CDATA[<h1 id="SpringIOC"><a href="#SpringIOC" class="headerlink" title="SpringIOC"></a>SpringIOC</h1><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-30 21-11-35_Spring+IOC.svg" alt="Spring+IOC"></p>
+<h2 id="IOC理论推导"><a href="#IOC理论推导" class="headerlink" title="IOC理论推导"></a>IOC理论推导</h2><ol>
+<li><p>userDao接口</p>
+<p>userDaoImpl实现类(Mysql, Oracle, …)</p>
+</li>
+<li><p>userService业务接口</p>
+<p>userServiceImpl 业务实现</p>
+</li>
+</ol>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-28 21-17-37_ioc.svg" alt="ioc"></p>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>java_spring</category>
+      </categories>
+      <tags>
+        <tag>java_spring</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>3-ioc控制反转</title>
     <url>/posts/d959138b.html</url>
     <content><![CDATA[<h1 id="IOC控制反转思想举例"><a href="#IOC控制反转思想举例" class="headerlink" title="IOC控制反转思想举例"></a>IOC控制反转思想举例</h1><h2 id="创建工程"><a href="#创建工程" class="headerlink" title="创建工程"></a>创建工程</h2><p>利用Maven创建一个空白工程spring1，其目录结构如下：</p>
@@ -5179,28 +5201,6 @@
 <p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-28 22-17-57_image-20210728221756345.png" alt="image-20210728221756345"></p>
 <h2 id="一张图表示三者之间关系"><a href="#一张图表示三者之间关系" class="headerlink" title="一张图表示三者之间关系"></a>一张图表示三者之间关系</h2><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-28 21-17-37_ioc.svg" alt="ioc"></p>
 <p>用户希望通过调用业务层来实现各个具体的业务如 <code>Mysql</code>、<code>Oracle</code>，…</p>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>java_spring</category>
-      </categories>
-      <tags>
-        <tag>java_spring</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>2-SpringIOC</title>
-    <url>/posts/752d4bdb.html</url>
-    <content><![CDATA[<h1 id="SpringIOC"><a href="#SpringIOC" class="headerlink" title="SpringIOC"></a>SpringIOC</h1><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-30 21-11-35_Spring+IOC.svg" alt="Spring+IOC"></p>
-<h2 id="IOC理论推导"><a href="#IOC理论推导" class="headerlink" title="IOC理论推导"></a>IOC理论推导</h2><ol>
-<li><p>userDao接口</p>
-<p>userDaoImpl实现类(Mysql, Oracle, …)</p>
-</li>
-<li><p>userService业务接口</p>
-<p>userServiceImpl 业务实现</p>
-</li>
-</ol>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-28 21-17-37_ioc.svg" alt="ioc"></p>
 ]]></content>
       <categories>
         <category>java</category>
