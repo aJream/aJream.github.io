@@ -461,6 +461,94 @@
       </tags>
   </entry>
   <entry>
+    <title>51单片机学习笔记(四)</title>
+    <url>/posts/c27dd6ec.html</url>
+    <content><![CDATA[<p>目前常用的微机与外设之间进行数据传输的串行总线主要有UART、1-wire、I2C和SPI总线</p>
+<ul>
+<li><p>UART:是以异步方式进行通信（一条数据输入线，一条数据输出线）。</p>
+</li>
+<li><p>1-wire：即单线总线，又叫单总线(只有一条线)。</p>
+</li>
+<li><p>I2C：同步串行2线方式进行通信（一条时钟线，一条数据线）。</p>
+</li>
+<li><p>SPI：同步串行3线方式进行通信（一条时钟线，一条数据输入线，一条数据输出线）。</p>
+</li>
+</ul>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>IIC串行总线，只有两根<u>双向</u>信号线。一根是数据线SDA，另一根是时钟线SCL</p>
+<p>如下图所示，IIC总线上可以挂多个器件，而每个器件都有唯一的地址，这样可以标识通信目标。数据的通信的方式采用主从方式，<u>主机负责主动联系从机，而从机则被动回应数据</u></p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210822161128_image-20210822161125324.png" alt="image-20210822161125324"></p>
+<p>在多主机系统中，可能同时有几个主机企图启动总线传送数据。为了避免混乱，I2C总线要通过总线仲裁，以决定由哪一台主机控制总线。</p>
+<p>在80C51单片机应用系统的串行总线扩展中，我们经常遇到的是以80C51单片机为主机，其它接口器件为从机的单主机情况</p>
+<p>总线“线与关系”：I2C总线通过上拉电阻接正电源。当总线空闲时，两根线均为高电平。连到总线上的任一器件输出的低电平，都将使总线的信号变低，</p>
+<p>即<code>SDA = SDA1 &amp; SDA2 &amp; SDA3 &amp; ...</code>,     <code>SCL=SCL1 &amp; SCL2 &amp; SCL3 &amp; ...</code></p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210822161726_image-20210822161725608.png" alt="image-20210822161725608"></p>
+<h3 id="起始信号和终止信号"><a href="#起始信号和终止信号" class="headerlink" title="起始信号和终止信号"></a>起始信号和终止信号</h3><p>SCL线为<u>高电平期间</u>，SDA线由<u>高电平向低电平</u>的变化表示起始信号；</p>
+<p>SCL线为<u>高电平期间</u>，SDA线由<u>低电平向高电平</u>的变化表示终止信号。</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210822162306_image-20210822162305371.png" alt="image-20210822162305371"></p>
+<h3 id="数据位有效性"><a href="#数据位有效性" class="headerlink" title="数据位有效性"></a>数据位有效性</h3><p>SCL为高电平期间，数据线上的数据必须保持稳定</p>
+<p>只有SCL信号为低电平期间，SDA状态才允许变化。</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210822162523_image-20210822162522027.png" alt="image-20210822162522027"></p>
+<h3 id="IIC总线的传送与应答"><a href="#IIC总线的传送与应答" class="headerlink" title="IIC总线的传送与应答"></a>IIC总线的传送与应答</h3><p>每一个字节必须保证是8位长度。数据传送时，先传送最高位（MSB），每一个被传送的字节<strong>最后面</strong>都必须跟随一位应答位（即一帧共有9位）</p>
+<p>主机通过从机发出的<strong>应答位</strong>来判断从机是否成功接收数据:</p>
+<ul>
+<li>从机正忙于其他事情，发出应答1，表示没有收到</li>
+<li>当从机空闲可以接收该字节数据时，从机会发出应答0</li>
+</ul>
+<p>当主机接收数据时，它收到最后一个数据字节后，必须向从机发出一个结束传送的信号。这个信号是由对从机的“非应答”来实现的。然后，从机释放SDA线，以允许主机产生终止信号。</p>
+<h3 id="数据帧格式"><a href="#数据帧格式" class="headerlink" title="数据帧格式"></a>数据帧格式</h3><p>在起始信号后必须传送一个从机的地址（7位），第8位是数据的传送方向位（R/T），用”0”表示主机发送数据（T），”1”表示主机接收数据（R）。</p>
+<p>每次数据传送总是由主机产生的终止信号结束。但是，若主机希望继续占用总线进行新的数据传送，则可以不产生终止信号，马上再次发出起始信号对另一从机进行寻址。</p>
+<h3 id="软件模拟IIC总线传送数据"><a href="#软件模拟IIC总线传送数据" class="headerlink" title="软件模拟IIC总线传送数据"></a>软件模拟IIC总线传送数据</h3><p>主机可以采用不带IIC总线接口的单片机，如80C51、STC89C52等单片机，利用软件实现IIC总线的数据传送，即软件与硬件结合的信号模拟。</p>
+<p>为保证数据的可靠性，I2C总线的数据传送有严格的时序要求。I2C总线的起始信号、终止信号、发送“0”及发送“1”的模拟时序 ：</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210822163925_image-20210822163923932.png" alt="image-20210822163923932"></p>
+<p>模拟的代码如下：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//起始信号</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">I2cStart</span><span class="params">()</span></span>&#123;</span><br><span class="line">	SCL = <span class="number">1</span>;</span><br><span class="line">	SDA = <span class="number">1</span>;</span><br><span class="line">	delay5us();  <span class="comment">//SDA在拉低低之前，应该先保持高电平时间&gt;4us,这里用5us</span></span><br><span class="line">	SDA = <span class="number">0</span>;</span><br><span class="line">	delay5us();	  <span class="comment">//SDA保持低电平时间&gt;4us,这里用5us</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//终止信号</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">I2cStop</span><span class="params">()</span></span>&#123;</span><br><span class="line">	SCL = <span class="number">0</span>;</span><br><span class="line">	SDA = <span class="number">0</span>;</span><br><span class="line">	SCL = <span class="number">1</span>;</span><br><span class="line">	delay5us();</span><br><span class="line">	SDA = <span class="number">1</span>;</span><br><span class="line">	delay5us();</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>第3、4个图表示先将SCL拉高5us，然后读取并返回SDA的值，读取后将SCL拉低，代码如下</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//主机读取从机的应答</span></span><br><span class="line"><span class="function">bit <span class="title">ReadACK</span><span class="params">()</span></span>&#123;</span><br><span class="line">	SCL = <span class="number">1</span>;</span><br><span class="line">	delay5us();</span><br><span class="line">	<span class="keyword">if</span>(SDA)&#123;</span><br><span class="line">		SCL = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">return</span>(<span class="number">1</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span>&#123;</span><br><span class="line">		SCL = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">return</span>(<span class="number">0</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>发送数据i，在SCL为低时，将SDA拉高或拉低（根据发送的数据确定，如果发送1，则拉高，反之拉低）；然后将SCL拉高，保持5us，再将SCL拉低，这样就发送了一位（bit）数据，最后释放总线</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//主机发送应答</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">SendACK</span><span class="params">(bit i)</span></span>&#123;</span><br><span class="line">	SCL = <span class="number">0</span>;</span><br><span class="line">    </span><br><span class="line">	<span class="keyword">if</span>(i) SDA = <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">else</span> SDA = <span class="number">0</span>;</span><br><span class="line">    </span><br><span class="line">	SCL = <span class="number">1</span>;</span><br><span class="line">	delay5us();</span><br><span class="line">	SCL = <span class="number">0</span>;  	 <span class="comment">//拉低时钟总线</span></span><br><span class="line">	SDA = <span class="number">1</span>;	 <span class="comment">//释放数据总线</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="串行EEPROM的扩展"><a href="#串行EEPROM的扩展" class="headerlink" title="串行EEPROM的扩展"></a>串行EEPROM的扩展</h2><p>Ateml公司的AT24C系列：</p>
+<ul>
+<li><p>AT24C01：128字节（128×8位）</p>
+</li>
+<li><p>AT24C02：256字节（256×8位）</p>
+</li>
+<li>AT24C04：512字节（512×8位）AT24C08：1K字节（1K×8位）</li>
+<li>AT24C16：2K字节（2K×8位）</li>
+</ul>
+<h3 id="写入过程"><a href="#写入过程" class="headerlink" title="写入过程"></a>写入过程</h3><p><strong>获取地址码：</strong>AT24C系列E2PROM芯片地址的固定部分为1010，而当A2、A1、A0引脚接高、低电平后就得到确定的3位编码。形成的7位编码即为该器件的地址码。例如在开发板中A2, A1, A0都接地，则这7位码为 <code>1010000</code></p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210824140829_image-20210824140820582.png" alt="image-20210824140820582"></p>
+<p><strong>写操作：</strong>单片机进行写操作时，首先发送该器件的7位地址码和写方向位“0”（共8位，即一个字节），发送完后释放SDA线并在SCL线上产生第9个时钟信号。被选中的存储器器件在确认是自己的地址后，在SDA线上产生一个应答信号作为相应，单片机收到应答后就可以传送数据了。</p>
+<p><strong>传送数据：</strong></p>
+<ul>
+<li><p>这个过程单片机首先发送一个字节被写入器件的存储区首地址，收到存储器器件的应答后，单片机就逐个发送各数据字节，但每发送一个字节后都要等待应答。</p>
+</li>
+<li><p>AT24C系列器件片内地址在接收到每一个数据字节地址后自动加1（表示相对之前写入的位置往后移一位）</p>
+</li>
+<li><p>当要写入的数据传送完后，单片机应发出终止信号以结束写入操作。写入n个字节的数据格式如下：</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210822171714_image-20210822171711924.png" alt="image-20210822171711924"></p>
+<blockquote>
+<p>说明：S为起始信号，然后是7位地址码+ <code>0</code>（0表示写操作），然后写入第一个数据存放位置的首地址，后面的写入的数据自动往后移动一位，写入1Byte数据后，器件发送应答A确认已写入，最后如果写入完成后发送终止信号P。</p>
+</blockquote>
+</li>
+<li><p>注意：在芯片的“一次装载字节数”（不同芯片字节数不同）限度内，只需输入首地址。装载字节数超过芯片的“一次装载字节数”时，数据地址将“上卷”，前面的数据将被覆盖。</p>
+</li>
+</ul>
+<h3 id="读出过程"><a href="#读出过程" class="headerlink" title="读出过程"></a>读出过程</h3><p>单片机先发送该器件的7位地址码和写方向位“0”（<u>“伪写”</u>），发送完后释放SDA线并在SCL线上产生第9个时钟信号。被选中的存储器器件在确认是自己的地址后，在SDA线上产生一个应答信号作为回应。 </p>
+<p>然后，再发一个字节的要读出器件的存储区的首地址，收到应答后，单片机要重复一次起始信号并发出器件地址和读方向位（“1”），收到器件应答后就可以读出数据字节，每读出一个字节，单片机都要回复应答信号。</p>
+<p>当最后一个字节数据读完后，单片机应返回以“非应答”（高电平），并发出终止信号以结束读出操作。 </p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/20210822171926_image-20210822171925336.png" alt="image-20210822171925336"></p>
+<p>完整代码：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*********************************************************************************</span></span><br><span class="line"><span class="comment">* 【实验平台】：	清翔 QX-MCS51 单片机开发板</span></span><br><span class="line"><span class="comment">* 【外部晶振】： 	11.0592mhz	</span></span><br><span class="line"><span class="comment">* 【主控芯片】： 	STC89C52</span></span><br><span class="line"><span class="comment">* 【编译环境】： 	Keil μVisio4	</span></span><br><span class="line"><span class="comment">* 【程序功能】： 	IIC通信，AT24C02读写数据，数码管显示数据。		   			</span></span><br><span class="line"><span class="comment">**********************************************************************************/</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;reg52.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;intrins.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> uint unsigned int</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> uchar unsigned char</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> At24c02ADDR 0XA0   <span class="comment">//AT24C02硬件地址</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>	I2cRead 1		   <span class="comment">//I2C读方向位</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>	I2cWrite 0		   <span class="comment">//I2C写方向位</span></span></span><br><span class="line"></span><br><span class="line">sbit DU = P2^<span class="number">6</span>;<span class="comment">//数码管段选</span></span><br><span class="line">sbit WE = P2^<span class="number">7</span>;<span class="comment">//数码管段选</span></span><br><span class="line">sbit SCL = P2^<span class="number">1</span>;<span class="comment">//I2C时钟总线</span></span><br><span class="line">sbit SDA = P2^<span class="number">0</span>;<span class="comment">//I2C数据总线</span></span><br><span class="line">uchar num;<span class="comment">//数码管显示的值</span></span><br><span class="line">bit AckFlag;<span class="comment">//应答标志位</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//共阴数码管段选表0-9</span></span><br><span class="line">uchar code SMGduan[]= &#123;<span class="number">0x3F</span>, <span class="number">0x06</span>, <span class="number">0x5B</span>, <span class="number">0x4F</span>, <span class="number">0x66</span>, <span class="number">0x6D</span>, <span class="number">0x7D</span>, <span class="number">0x07</span>, <span class="number">0x7F</span>, <span class="number">0x6F</span>,&#125;;</span><br><span class="line"><span class="comment">//数码管位选码</span></span><br><span class="line">uchar code SMGwei[] = &#123;<span class="number">0xfe</span>, <span class="number">0xfd</span>, <span class="number">0xfb</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*====================================</span></span><br><span class="line"><span class="comment">函数	： delay(uint z)</span></span><br><span class="line"><span class="comment">参数	：z 延时毫秒设定，取值范围0-65535</span></span><br><span class="line"><span class="comment">返回值	：无</span></span><br><span class="line"><span class="comment">描述	：12T/Fosc11.0592M毫秒级延时</span></span><br><span class="line"><span class="comment">====================================*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">delay</span><span class="params">(uint z)</span></span>&#123;</span><br><span class="line">	uint x,y;</span><br><span class="line">	<span class="keyword">for</span>(x = z; x &gt; <span class="number">0</span>; x--)</span><br><span class="line">		<span class="keyword">for</span>(y = <span class="number">114</span>; y &gt; <span class="number">0</span> ; y--); 		</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="comment">/*====================================</span></span><br><span class="line"><span class="comment">函数	：display(uchar i)</span></span><br><span class="line"><span class="comment">参数	：i 显示数值，取值范围0-255</span></span><br><span class="line"><span class="comment">返回值	：无</span></span><br><span class="line"><span class="comment">描述	：三位共阴数码管动态显示</span></span><br><span class="line"><span class="comment">====================================*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">display</span><span class="params">(uchar i)</span></span>&#123;</span><br><span class="line">	<span class="keyword">static</span> uchar wei; 		</span><br><span class="line">	P0 = <span class="number">0XFF</span>;<span class="comment">//清除断码</span></span><br><span class="line">	WE = <span class="number">1</span>;<span class="comment">//打开位选锁存器</span></span><br><span class="line">	P0 = SMGwei[wei];</span><br><span class="line">	WE = <span class="number">0</span>;<span class="comment">//锁存位选数据</span></span><br><span class="line">	<span class="keyword">switch</span>(wei)&#123;</span><br><span class="line">		<span class="keyword">case</span> <span class="number">0</span>: DU = <span class="number">1</span>; P0 = SMGduan[i / <span class="number">100</span>]; DU = <span class="number">0</span>; <span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> <span class="number">1</span>: DU = <span class="number">1</span>; P0 = SMGduan[i % <span class="number">100</span> / <span class="number">10</span>]; DU = <span class="number">0</span>; <span class="keyword">break</span>;	</span><br><span class="line">		<span class="keyword">case</span> <span class="number">2</span>: DU = <span class="number">1</span>; P0 = SMGduan[i % <span class="number">10</span>]; DU = <span class="number">0</span>; <span class="keyword">break</span>;		</span><br><span class="line">	&#125;</span><br><span class="line">	wei++;</span><br><span class="line">	<span class="keyword">if</span>(wei == <span class="number">3</span>)</span><br><span class="line">		wei = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//定时器0初始化</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">timer0Init</span><span class="params">()</span></span>&#123;</span><br><span class="line">	EA = <span class="number">1</span>;	<span class="comment">//打开总中断</span></span><br><span class="line">	ET0 = <span class="number">1</span>;<span class="comment">//打开定时器0中断</span></span><br><span class="line">	TR0 = <span class="number">1</span>;	 <span class="comment">//启动定时器0</span></span><br><span class="line">	TMOD |= <span class="number">0X01</span>; <span class="comment">//定时器工作模式1，16位定时模式</span></span><br><span class="line">	TH0 = <span class="number">0xED</span>;</span><br><span class="line">	TL0 = <span class="number">0xFF</span>; <span class="comment">//定时5ms</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/****************************************************</span></span><br><span class="line"><span class="comment">IIC通信代码</span></span><br><span class="line"><span class="comment">****************************************************/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*====================================</span></span><br><span class="line"><span class="comment">函数	：delay5us()</span></span><br><span class="line"><span class="comment">参数	：无</span></span><br><span class="line"><span class="comment">返回值	：无</span></span><br><span class="line"><span class="comment">描述	：5us延时函数</span></span><br><span class="line"><span class="comment">====================================*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">delay5us</span><span class="params">()</span></span>&#123;</span><br><span class="line">	_nop_();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*====================================</span></span><br><span class="line"><span class="comment">函数	：I2cStart()</span></span><br><span class="line"><span class="comment">参数	：无</span></span><br><span class="line"><span class="comment">返回值	：无</span></span><br><span class="line"><span class="comment">描述	：I2C总线起始信号</span></span><br><span class="line"><span class="comment">====================================*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">I2cStart</span><span class="params">()</span></span>&#123;</span><br><span class="line"><span class="comment">//时钟总线为高电平期间数据总线又高变低产生起始型号</span></span><br><span class="line">	SCL = <span class="number">1</span>; </span><br><span class="line">	SDA = <span class="number">1</span>;</span><br><span class="line">	delay5us();<span class="comment">//状态保持5us</span></span><br><span class="line">	SDA = <span class="number">0</span>;</span><br><span class="line">	delay5us();<span class="comment">//状态保持5us </span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*====================================</span></span><br><span class="line"><span class="comment">函数	：I2cStop()</span></span><br><span class="line"><span class="comment">参数	：无</span></span><br><span class="line"><span class="comment">返回值	：无</span></span><br><span class="line"><span class="comment">描述	：I2C总线停止信号</span></span><br><span class="line"><span class="comment">====================================*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">I2cStop</span><span class="params">()</span></span>&#123;</span><br><span class="line"><span class="comment">//时钟总线为高电平期间，数据总线从高变低产生终止信号</span></span><br><span class="line">	SCL = <span class="number">0</span>;</span><br><span class="line">	SDA = <span class="number">0</span>;</span><br><span class="line">	SCL = <span class="number">1</span>;</span><br><span class="line">	delay5us();<span class="comment">//状态保持5us</span></span><br><span class="line">	SDA = <span class="number">1</span>;</span><br><span class="line">	delay5us();<span class="comment">//状态保持5us	</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*====================================</span></span><br><span class="line"><span class="comment">函数	：ReadACK()</span></span><br><span class="line"><span class="comment">参数	：无</span></span><br><span class="line"><span class="comment">返回值	：1非应答，0应答</span></span><br><span class="line"><span class="comment">描述	：I2C总线读从机应答信号</span></span><br><span class="line"><span class="comment">====================================*/</span></span><br><span class="line"><span class="function">bit <span class="title">ReadACK</span><span class="params">()</span></span>&#123;</span><br><span class="line">	SCL = <span class="number">0</span>;			<span class="comment">//拉低时钟总线，允许从机控制SDA</span></span><br><span class="line">	SCL = <span class="number">1</span>;			<span class="comment">//拉高，读SDA</span></span><br><span class="line">	delay5us();</span><br><span class="line">	<span class="keyword">if</span>(SDA)&#123;			<span class="comment">//NOACK</span></span><br><span class="line">		SCL = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">return</span>(<span class="number">1</span>);		<span class="comment">//返回1</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span>&#123;				<span class="comment">//ACK</span></span><br><span class="line">		SCL = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">return</span>(<span class="number">0</span>);		<span class="comment">//返回0</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*====================================</span></span><br><span class="line"><span class="comment">函数	：SendACK(bit i)</span></span><br><span class="line"><span class="comment">参数	：1主机发送非应答，0发送应答</span></span><br><span class="line"><span class="comment">返回值	：无</span></span><br><span class="line"><span class="comment">描述	：主机发送应答信号</span></span><br><span class="line"><span class="comment">====================================*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">SendACK</span><span class="params">(bit i)</span></span>&#123;</span><br><span class="line">	SCL = <span class="number">0</span>;<span class="comment">//拉低时钟总线，允许主机控制SDA</span></span><br><span class="line">	<span class="keyword">if</span>(i)	<span class="comment">//发非应答</span></span><br><span class="line">		SDA = <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">else</span>	<span class="comment">//发应答</span></span><br><span class="line">		SDA = <span class="number">0</span>;</span><br><span class="line">	SCL = <span class="number">1</span>;  <span class="comment">//拉高总线，让从机读SDA</span></span><br><span class="line">	delay5us();<span class="comment">//保持5us</span></span><br><span class="line">	SCL = <span class="number">0</span>; <span class="comment">//拉低时钟总线，允许SDA释放</span></span><br><span class="line">	SDA = <span class="number">1</span>;<span class="comment">//释放数据总线</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*====================================</span></span><br><span class="line"><span class="comment">函数	：I2cSendByte(uchar DAT)</span></span><br><span class="line"><span class="comment">参数	：DAT需要发送的数据</span></span><br><span class="line"><span class="comment">返回值	：无</span></span><br><span class="line"><span class="comment">描述	：I2C发送一个字节数据</span></span><br><span class="line"><span class="comment">====================================*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">I2cSendByte</span><span class="params">(uchar DAT)</span></span>&#123;</span><br><span class="line">	uchar i; </span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>; i&lt;<span class="number">8</span>; i++)&#123; <span class="comment">//分别写8次，每次写1位</span></span><br><span class="line">		SCL = <span class="number">0</span>;<span class="comment">//拉低时钟总线，允许SDA变化</span></span><br><span class="line">		<span class="keyword">if</span>(DAT &amp; <span class="number">0x80</span>)<span class="comment">//先写数据最高位</span></span><br><span class="line">			SDA = <span class="number">1</span>;  <span class="comment">//写1</span></span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">			SDA = <span class="number">0</span>;  <span class="comment">//写0</span></span><br><span class="line">		SCL = <span class="number">1</span>;	  <span class="comment">//拉高时钟，让从机读SDA</span></span><br><span class="line">		DAT &lt;&lt;= <span class="number">1</span>;	  <span class="comment">//为发送下一位左移1位</span></span><br><span class="line">	&#125;</span><br><span class="line">	SCL = <span class="number">0</span>; <span class="comment">//拉低时钟总线，允许SDA释放</span></span><br><span class="line">	SDA = <span class="number">1</span>;<span class="comment">//释放数据总线</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*====================================</span></span><br><span class="line"><span class="comment">函数	：At24c02Write(uchar ADDR, DAT)</span></span><br><span class="line"><span class="comment">参数	：ADDR 单元地址0-255，DAT 需要输入的数据0-255</span></span><br><span class="line"><span class="comment">返回值	：无</span></span><br><span class="line"><span class="comment">描述	：At24c02指定单元写入一个字节数据</span></span><br><span class="line"><span class="comment">====================================*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">At24c02Write</span><span class="params">(uchar ADDR, DAT)</span></span>&#123;</span><br><span class="line">	I2cStart();<span class="comment">//I2C起始信号</span></span><br><span class="line">	I2cSendByte(At24c02ADDR + I2cWrite);<span class="comment">//发送器件地址加读写方向位</span></span><br><span class="line">	<span class="keyword">if</span>(ReadACK()) <span class="comment">//读从机应答</span></span><br><span class="line">		AckFlag = <span class="number">1</span>;	<span class="comment">//NOACK</span></span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		AckFlag = <span class="number">0</span>;	<span class="comment">//ACK</span></span><br><span class="line">	I2cSendByte(ADDR);<span class="comment">//发送储存单元地址字节</span></span><br><span class="line">	<span class="keyword">if</span>(ReadACK())<span class="comment">//读从机应答</span></span><br><span class="line">		AckFlag = <span class="number">1</span>;	<span class="comment">//NOACK</span></span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		AckFlag = <span class="number">0</span>;	<span class="comment">//ACK</span></span><br><span class="line">	I2cSendByte(DAT);<span class="comment">//发送一字节数据</span></span><br><span class="line">	<span class="keyword">if</span>(ReadACK())<span class="comment">//读从机应答</span></span><br><span class="line">		AckFlag = <span class="number">1</span>;	<span class="comment">//NOACK</span></span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		AckFlag = <span class="number">0</span>;	<span class="comment">//ACK</span></span><br><span class="line">	I2cStop();	<span class="comment">//I2C停止信号</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*====================================</span></span><br><span class="line"><span class="comment">函数	：I2cReadByte()</span></span><br><span class="line"><span class="comment">参数	：无</span></span><br><span class="line"><span class="comment">返回值	：返回读出的一字节数据</span></span><br><span class="line"><span class="comment">描述	：I2C总线读一字节数据</span></span><br><span class="line"><span class="comment">====================================*/</span></span><br><span class="line"><span class="function">uchar <span class="title">I2cReadByte</span><span class="params">()</span></span>&#123;</span><br><span class="line">	uchar i, DAT;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>; i&lt;<span class="number">8</span>; i++)&#123; 	<span class="comment">//分别读8次，每次读一位</span></span><br><span class="line">	</span><br><span class="line">		DAT &lt;&lt;= <span class="number">1</span>; 			<span class="comment">//数据左移1位，准备接收一位</span></span><br><span class="line">		SCL = <span class="number">0</span>;   			<span class="comment">//拉低时钟总线，允许从机控制SDA变化</span></span><br><span class="line">		SCL = <span class="number">1</span>;   			<span class="comment">//拉高时钟总线，读取SDA上的数据</span></span><br><span class="line">		<span class="keyword">if</span>(SDA)</span><br><span class="line">			DAT |= <span class="number">0X01</span>;	<span class="comment">//为1则写1，否则不行执行写1，通过左移补0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span>(DAT); 			<span class="comment">//返回读出的数据</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*====================================</span></span><br><span class="line"><span class="comment">函数	：At24c02Read(uchar ADDR)</span></span><br><span class="line"><span class="comment">参数	：ADDR 单元地址	0-255</span></span><br><span class="line"><span class="comment">返回值	：返回指定单元的数据</span></span><br><span class="line"><span class="comment">描述	：读AT24C02指定单元内数据</span></span><br><span class="line"><span class="comment">====================================*/</span></span><br><span class="line"><span class="function">uchar <span class="title">At24c02Read</span><span class="params">(uchar ADDR)</span></span>&#123;</span><br><span class="line">	uchar DAT;</span><br><span class="line">	I2cStart();<span class="comment">//I2C起始信号</span></span><br><span class="line">	I2cSendByte(At24c02ADDR + I2cWrite);<span class="comment">//发送器件地址加读写方向位</span></span><br><span class="line">	<span class="keyword">if</span>(ReadACK())<span class="comment">//读从机应答</span></span><br><span class="line">		AckFlag = <span class="number">1</span>;	<span class="comment">//NOACK</span></span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		AckFlag = <span class="number">0</span>;	<span class="comment">//ACK</span></span><br><span class="line">	I2cSendByte(ADDR);<span class="comment">//I2C发送一个字节</span></span><br><span class="line">	ReadACK();<span class="comment">//读从机应答</span></span><br><span class="line">	I2cStart();<span class="comment">//再次产生I2C起始信号</span></span><br><span class="line">	I2cSendByte(At24c02ADDR + I2cRead);<span class="comment">//发送器件地址加读写方向位 读</span></span><br><span class="line">	<span class="keyword">if</span>(ReadACK())<span class="comment">//读从机应答</span></span><br><span class="line">		AckFlag = <span class="number">1</span>;	<span class="comment">//NOACK</span></span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		AckFlag = <span class="number">0</span>;	<span class="comment">//ACK</span></span><br><span class="line">	DAT = I2cReadByte();<span class="comment">//读一字节</span></span><br><span class="line">	SendACK(<span class="number">1</span>);<span class="comment">//主机发送非应答</span></span><br><span class="line">	I2cStop(); <span class="comment">//I2C停止信号</span></span><br><span class="line">	<span class="keyword">return</span>(DAT);<span class="comment">//返回读出数据</span></span><br><span class="line">			</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span><span class="comment">//main函数自身会循环&#123;	</span></span></span><br><span class="line"><span class="function">	<span class="title">timer0Init</span><span class="params">()</span></span>;<span class="comment">//定时器0初始化</span></span><br><span class="line">	EA = <span class="number">0</span>;<span class="comment">//屏蔽中断</span></span><br><span class="line">	At24c02Write(<span class="number">3</span>, <span class="number">188</span>);<span class="comment">//给第3单元写入数据“188”</span></span><br><span class="line">	delay(<span class="number">1</span>);<span class="comment">//延时等待AT24C02处理</span></span><br><span class="line">	num = At24c02Read(<span class="number">3</span>);<span class="comment">//读出第3单元内数据送给显示变量</span></span><br><span class="line">	<span class="keyword">if</span>(AckFlag)<span class="comment">//当从机非应答</span></span><br><span class="line">		P1 = <span class="number">0</span>;<span class="comment">//亮P1所有灯</span></span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		P1 = <span class="number">0XFF</span>;<span class="comment">//灭P1所有灯</span></span><br><span class="line">	EA = <span class="number">1</span>;<span class="comment">//开中断</span></span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>);</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="comment">//定时器0中断函数</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">timer0</span><span class="params">()</span> interrupt 1 </span>&#123;</span><br><span class="line">	TH0 = <span class="number">0xED</span>;</span><br><span class="line">	TL0 = <span class="number">0xFF</span>; <span class="comment">//定时5ms</span></span><br><span class="line">	display(num); <span class="comment">//数码管显示函数	</span></span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>硬件学习</category>
+        <category>51单片机</category>
+      </categories>
+      <tags>
+        <tag>51单片机</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>51单片机学习笔记(六)</title>
     <url>/posts/5dd9c9e3.html</url>
     <content><![CDATA[<h2 id="DS18B20介绍"><a href="#DS18B20介绍" class="headerlink" title="DS18B20介绍"></a>DS18B20介绍</h2><p>DS18B20数字温度传感器是DALLAS公司生产的<u>单总线器件</u>，用它来组成一个测温系统具有线路简单，体积小，在一根通信线上可以挂很多这样的数字温度传感器，十分方便。</p>
@@ -551,94 +639,6 @@
       </categories>
       <tags>
         <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>51单片机学习笔记(四)</title>
-    <url>/posts/c27dd6ec.html</url>
-    <content><![CDATA[<p>目前常用的微机与外设之间进行数据传输的串行总线主要有UART、1-wire、I2C和SPI总线</p>
-<ul>
-<li><p>UART:是以异步方式进行通信（一条数据输入线，一条数据输出线）。</p>
-</li>
-<li><p>1-wire：即单线总线，又叫单总线(只有一条线)。</p>
-</li>
-<li><p>I2C：同步串行2线方式进行通信（一条时钟线，一条数据线）。</p>
-</li>
-<li><p>SPI：同步串行3线方式进行通信（一条时钟线，一条数据输入线，一条数据输出线）。</p>
-</li>
-</ul>
-<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>IIC串行总线，只有两根<u>双向</u>信号线。一根是数据线SDA，另一根是时钟线SCL</p>
-<p>如下图所示，IIC总线上可以挂多个器件，而每个器件都有唯一的地址，这样可以标识通信目标。数据的通信的方式采用主从方式，<u>主机负责主动联系从机，而从机则被动回应数据</u></p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/20210822161128_image-20210822161125324.png" alt="image-20210822161125324"></p>
-<p>在多主机系统中，可能同时有几个主机企图启动总线传送数据。为了避免混乱，I2C总线要通过总线仲裁，以决定由哪一台主机控制总线。</p>
-<p>在80C51单片机应用系统的串行总线扩展中，我们经常遇到的是以80C51单片机为主机，其它接口器件为从机的单主机情况</p>
-<p>总线“线与关系”：I2C总线通过上拉电阻接正电源。当总线空闲时，两根线均为高电平。连到总线上的任一器件输出的低电平，都将使总线的信号变低，</p>
-<p>即<code>SDA = SDA1 &amp; SDA2 &amp; SDA3 &amp; ...</code>,     <code>SCL=SCL1 &amp; SCL2 &amp; SCL3 &amp; ...</code></p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/20210822161726_image-20210822161725608.png" alt="image-20210822161725608"></p>
-<h3 id="起始信号和终止信号"><a href="#起始信号和终止信号" class="headerlink" title="起始信号和终止信号"></a>起始信号和终止信号</h3><p>SCL线为<u>高电平期间</u>，SDA线由<u>高电平向低电平</u>的变化表示起始信号；</p>
-<p>SCL线为<u>高电平期间</u>，SDA线由<u>低电平向高电平</u>的变化表示终止信号。</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/20210822162306_image-20210822162305371.png" alt="image-20210822162305371"></p>
-<h3 id="数据位有效性"><a href="#数据位有效性" class="headerlink" title="数据位有效性"></a>数据位有效性</h3><p>SCL为高电平期间，数据线上的数据必须保持稳定</p>
-<p>只有SCL信号为低电平期间，SDA状态才允许变化。</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/20210822162523_image-20210822162522027.png" alt="image-20210822162522027"></p>
-<h3 id="IIC总线的传送与应答"><a href="#IIC总线的传送与应答" class="headerlink" title="IIC总线的传送与应答"></a>IIC总线的传送与应答</h3><p>每一个字节必须保证是8位长度。数据传送时，先传送最高位（MSB），每一个被传送的字节<strong>最后面</strong>都必须跟随一位应答位（即一帧共有9位）</p>
-<p>主机通过从机发出的<strong>应答位</strong>来判断从机是否成功接收数据:</p>
-<ul>
-<li>从机正忙于其他事情，发出应答1，表示没有收到</li>
-<li>当从机空闲可以接收该字节数据时，从机会发出应答0</li>
-</ul>
-<p>当主机接收数据时，它收到最后一个数据字节后，必须向从机发出一个结束传送的信号。这个信号是由对从机的“非应答”来实现的。然后，从机释放SDA线，以允许主机产生终止信号。</p>
-<h3 id="数据帧格式"><a href="#数据帧格式" class="headerlink" title="数据帧格式"></a>数据帧格式</h3><p>在起始信号后必须传送一个从机的地址（7位），第8位是数据的传送方向位（R/T），用”0”表示主机发送数据（T），”1”表示主机接收数据（R）。</p>
-<p>每次数据传送总是由主机产生的终止信号结束。但是，若主机希望继续占用总线进行新的数据传送，则可以不产生终止信号，马上再次发出起始信号对另一从机进行寻址。</p>
-<h3 id="软件模拟IIC总线传送数据"><a href="#软件模拟IIC总线传送数据" class="headerlink" title="软件模拟IIC总线传送数据"></a>软件模拟IIC总线传送数据</h3><p>主机可以采用不带IIC总线接口的单片机，如80C51、STC89C52等单片机，利用软件实现IIC总线的数据传送，即软件与硬件结合的信号模拟。</p>
-<p>为保证数据的可靠性，I2C总线的数据传送有严格的时序要求。I2C总线的起始信号、终止信号、发送“0”及发送“1”的模拟时序 ：</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/20210822163925_image-20210822163923932.png" alt="image-20210822163923932"></p>
-<p>模拟的代码如下：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//起始信号</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">I2cStart</span><span class="params">()</span></span>&#123;</span><br><span class="line">	SCL = <span class="number">1</span>;</span><br><span class="line">	SDA = <span class="number">1</span>;</span><br><span class="line">	delay5us();  <span class="comment">//SDA在拉低低之前，应该先保持高电平时间&gt;4us,这里用5us</span></span><br><span class="line">	SDA = <span class="number">0</span>;</span><br><span class="line">	delay5us();	  <span class="comment">//SDA保持低电平时间&gt;4us,这里用5us</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//终止信号</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">I2cStop</span><span class="params">()</span></span>&#123;</span><br><span class="line">	SCL = <span class="number">0</span>;</span><br><span class="line">	SDA = <span class="number">0</span>;</span><br><span class="line">	SCL = <span class="number">1</span>;</span><br><span class="line">	delay5us();</span><br><span class="line">	SDA = <span class="number">1</span>;</span><br><span class="line">	delay5us();</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>第3、4个图表示先将SCL拉高5us，然后读取并返回SDA的值，读取后将SCL拉低，代码如下</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//主机读取从机的应答</span></span><br><span class="line"><span class="function">bit <span class="title">ReadACK</span><span class="params">()</span></span>&#123;</span><br><span class="line">	SCL = <span class="number">1</span>;</span><br><span class="line">	delay5us();</span><br><span class="line">	<span class="keyword">if</span>(SDA)&#123;</span><br><span class="line">		SCL = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">return</span>(<span class="number">1</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span>&#123;</span><br><span class="line">		SCL = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">return</span>(<span class="number">0</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>发送数据i，在SCL为低时，将SDA拉高或拉低（根据发送的数据确定，如果发送1，则拉高，反之拉低）；然后将SCL拉高，保持5us，再将SCL拉低，这样就发送了一位（bit）数据，最后释放总线</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//主机发送应答</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">SendACK</span><span class="params">(bit i)</span></span>&#123;</span><br><span class="line">	SCL = <span class="number">0</span>;</span><br><span class="line">    </span><br><span class="line">	<span class="keyword">if</span>(i) SDA = <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">else</span> SDA = <span class="number">0</span>;</span><br><span class="line">    </span><br><span class="line">	SCL = <span class="number">1</span>;</span><br><span class="line">	delay5us();</span><br><span class="line">	SCL = <span class="number">0</span>;  	 <span class="comment">//拉低时钟总线</span></span><br><span class="line">	SDA = <span class="number">1</span>;	 <span class="comment">//释放数据总线</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="串行EEPROM的扩展"><a href="#串行EEPROM的扩展" class="headerlink" title="串行EEPROM的扩展"></a>串行EEPROM的扩展</h2><p>Ateml公司的AT24C系列：</p>
-<ul>
-<li><p>AT24C01：128字节（128×8位）</p>
-</li>
-<li><p>AT24C02：256字节（256×8位）</p>
-</li>
-<li>AT24C04：512字节（512×8位）AT24C08：1K字节（1K×8位）</li>
-<li>AT24C16：2K字节（2K×8位）</li>
-</ul>
-<h3 id="写入过程"><a href="#写入过程" class="headerlink" title="写入过程"></a>写入过程</h3><p><strong>获取地址码：</strong>AT24C系列E2PROM芯片地址的固定部分为1010，而当A2、A1、A0引脚接高、低电平后就得到确定的3位编码。形成的7位编码即为该器件的地址码。例如在开发板中A2, A1, A0都接地，则这7位码为 <code>1010000</code></p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/20210824140829_image-20210824140820582.png" alt="image-20210824140820582"></p>
-<p><strong>写操作：</strong>单片机进行写操作时，首先发送该器件的7位地址码和写方向位“0”（共8位，即一个字节），发送完后释放SDA线并在SCL线上产生第9个时钟信号。被选中的存储器器件在确认是自己的地址后，在SDA线上产生一个应答信号作为相应，单片机收到应答后就可以传送数据了。</p>
-<p><strong>传送数据：</strong></p>
-<ul>
-<li><p>这个过程单片机首先发送一个字节被写入器件的存储区首地址，收到存储器器件的应答后，单片机就逐个发送各数据字节，但每发送一个字节后都要等待应答。</p>
-</li>
-<li><p>AT24C系列器件片内地址在接收到每一个数据字节地址后自动加1（表示相对之前写入的位置往后移一位）</p>
-</li>
-<li><p>当要写入的数据传送完后，单片机应发出终止信号以结束写入操作。写入n个字节的数据格式如下：</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/20210822171714_image-20210822171711924.png" alt="image-20210822171711924"></p>
-<blockquote>
-<p>说明：S为起始信号，然后是7位地址码+ <code>0</code>（0表示写操作），然后写入第一个数据存放位置的首地址，后面的写入的数据自动往后移动一位，写入1Byte数据后，器件发送应答A确认已写入，最后如果写入完成后发送终止信号P。</p>
-</blockquote>
-</li>
-<li><p>注意：在芯片的“一次装载字节数”（不同芯片字节数不同）限度内，只需输入首地址。装载字节数超过芯片的“一次装载字节数”时，数据地址将“上卷”，前面的数据将被覆盖。</p>
-</li>
-</ul>
-<h3 id="读出过程"><a href="#读出过程" class="headerlink" title="读出过程"></a>读出过程</h3><p>单片机先发送该器件的7位地址码和写方向位“0”（<u>“伪写”</u>），发送完后释放SDA线并在SCL线上产生第9个时钟信号。被选中的存储器器件在确认是自己的地址后，在SDA线上产生一个应答信号作为回应。 </p>
-<p>然后，再发一个字节的要读出器件的存储区的首地址，收到应答后，单片机要重复一次起始信号并发出器件地址和读方向位（“1”），收到器件应答后就可以读出数据字节，每读出一个字节，单片机都要回复应答信号。</p>
-<p>当最后一个字节数据读完后，单片机应返回以“非应答”（高电平），并发出终止信号以结束读出操作。 </p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/20210822171926_image-20210822171925336.png" alt="image-20210822171925336"></p>
-<p>完整代码：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*********************************************************************************</span></span><br><span class="line"><span class="comment">* 【实验平台】：	清翔 QX-MCS51 单片机开发板</span></span><br><span class="line"><span class="comment">* 【外部晶振】： 	11.0592mhz	</span></span><br><span class="line"><span class="comment">* 【主控芯片】： 	STC89C52</span></span><br><span class="line"><span class="comment">* 【编译环境】： 	Keil μVisio4	</span></span><br><span class="line"><span class="comment">* 【程序功能】： 	IIC通信，AT24C02读写数据，数码管显示数据。		   			</span></span><br><span class="line"><span class="comment">**********************************************************************************/</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;reg52.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;intrins.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> uint unsigned int</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> uchar unsigned char</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> At24c02ADDR 0XA0   <span class="comment">//AT24C02硬件地址</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>	I2cRead 1		   <span class="comment">//I2C读方向位</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>	I2cWrite 0		   <span class="comment">//I2C写方向位</span></span></span><br><span class="line"></span><br><span class="line">sbit DU = P2^<span class="number">6</span>;<span class="comment">//数码管段选</span></span><br><span class="line">sbit WE = P2^<span class="number">7</span>;<span class="comment">//数码管段选</span></span><br><span class="line">sbit SCL = P2^<span class="number">1</span>;<span class="comment">//I2C时钟总线</span></span><br><span class="line">sbit SDA = P2^<span class="number">0</span>;<span class="comment">//I2C数据总线</span></span><br><span class="line">uchar num;<span class="comment">//数码管显示的值</span></span><br><span class="line">bit AckFlag;<span class="comment">//应答标志位</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//共阴数码管段选表0-9</span></span><br><span class="line">uchar code SMGduan[]= &#123;<span class="number">0x3F</span>, <span class="number">0x06</span>, <span class="number">0x5B</span>, <span class="number">0x4F</span>, <span class="number">0x66</span>, <span class="number">0x6D</span>, <span class="number">0x7D</span>, <span class="number">0x07</span>, <span class="number">0x7F</span>, <span class="number">0x6F</span>,&#125;;</span><br><span class="line"><span class="comment">//数码管位选码</span></span><br><span class="line">uchar code SMGwei[] = &#123;<span class="number">0xfe</span>, <span class="number">0xfd</span>, <span class="number">0xfb</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*====================================</span></span><br><span class="line"><span class="comment">函数	： delay(uint z)</span></span><br><span class="line"><span class="comment">参数	：z 延时毫秒设定，取值范围0-65535</span></span><br><span class="line"><span class="comment">返回值	：无</span></span><br><span class="line"><span class="comment">描述	：12T/Fosc11.0592M毫秒级延时</span></span><br><span class="line"><span class="comment">====================================*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">delay</span><span class="params">(uint z)</span></span>&#123;</span><br><span class="line">	uint x,y;</span><br><span class="line">	<span class="keyword">for</span>(x = z; x &gt; <span class="number">0</span>; x--)</span><br><span class="line">		<span class="keyword">for</span>(y = <span class="number">114</span>; y &gt; <span class="number">0</span> ; y--); 		</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="comment">/*====================================</span></span><br><span class="line"><span class="comment">函数	：display(uchar i)</span></span><br><span class="line"><span class="comment">参数	：i 显示数值，取值范围0-255</span></span><br><span class="line"><span class="comment">返回值	：无</span></span><br><span class="line"><span class="comment">描述	：三位共阴数码管动态显示</span></span><br><span class="line"><span class="comment">====================================*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">display</span><span class="params">(uchar i)</span></span>&#123;</span><br><span class="line">	<span class="keyword">static</span> uchar wei; 		</span><br><span class="line">	P0 = <span class="number">0XFF</span>;<span class="comment">//清除断码</span></span><br><span class="line">	WE = <span class="number">1</span>;<span class="comment">//打开位选锁存器</span></span><br><span class="line">	P0 = SMGwei[wei];</span><br><span class="line">	WE = <span class="number">0</span>;<span class="comment">//锁存位选数据</span></span><br><span class="line">	<span class="keyword">switch</span>(wei)&#123;</span><br><span class="line">		<span class="keyword">case</span> <span class="number">0</span>: DU = <span class="number">1</span>; P0 = SMGduan[i / <span class="number">100</span>]; DU = <span class="number">0</span>; <span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> <span class="number">1</span>: DU = <span class="number">1</span>; P0 = SMGduan[i % <span class="number">100</span> / <span class="number">10</span>]; DU = <span class="number">0</span>; <span class="keyword">break</span>;	</span><br><span class="line">		<span class="keyword">case</span> <span class="number">2</span>: DU = <span class="number">1</span>; P0 = SMGduan[i % <span class="number">10</span>]; DU = <span class="number">0</span>; <span class="keyword">break</span>;		</span><br><span class="line">	&#125;</span><br><span class="line">	wei++;</span><br><span class="line">	<span class="keyword">if</span>(wei == <span class="number">3</span>)</span><br><span class="line">		wei = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//定时器0初始化</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">timer0Init</span><span class="params">()</span></span>&#123;</span><br><span class="line">	EA = <span class="number">1</span>;	<span class="comment">//打开总中断</span></span><br><span class="line">	ET0 = <span class="number">1</span>;<span class="comment">//打开定时器0中断</span></span><br><span class="line">	TR0 = <span class="number">1</span>;	 <span class="comment">//启动定时器0</span></span><br><span class="line">	TMOD |= <span class="number">0X01</span>; <span class="comment">//定时器工作模式1，16位定时模式</span></span><br><span class="line">	TH0 = <span class="number">0xED</span>;</span><br><span class="line">	TL0 = <span class="number">0xFF</span>; <span class="comment">//定时5ms</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/****************************************************</span></span><br><span class="line"><span class="comment">IIC通信代码</span></span><br><span class="line"><span class="comment">****************************************************/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*====================================</span></span><br><span class="line"><span class="comment">函数	：delay5us()</span></span><br><span class="line"><span class="comment">参数	：无</span></span><br><span class="line"><span class="comment">返回值	：无</span></span><br><span class="line"><span class="comment">描述	：5us延时函数</span></span><br><span class="line"><span class="comment">====================================*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">delay5us</span><span class="params">()</span></span>&#123;</span><br><span class="line">	_nop_();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*====================================</span></span><br><span class="line"><span class="comment">函数	：I2cStart()</span></span><br><span class="line"><span class="comment">参数	：无</span></span><br><span class="line"><span class="comment">返回值	：无</span></span><br><span class="line"><span class="comment">描述	：I2C总线起始信号</span></span><br><span class="line"><span class="comment">====================================*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">I2cStart</span><span class="params">()</span></span>&#123;</span><br><span class="line"><span class="comment">//时钟总线为高电平期间数据总线又高变低产生起始型号</span></span><br><span class="line">	SCL = <span class="number">1</span>; </span><br><span class="line">	SDA = <span class="number">1</span>;</span><br><span class="line">	delay5us();<span class="comment">//状态保持5us</span></span><br><span class="line">	SDA = <span class="number">0</span>;</span><br><span class="line">	delay5us();<span class="comment">//状态保持5us </span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*====================================</span></span><br><span class="line"><span class="comment">函数	：I2cStop()</span></span><br><span class="line"><span class="comment">参数	：无</span></span><br><span class="line"><span class="comment">返回值	：无</span></span><br><span class="line"><span class="comment">描述	：I2C总线停止信号</span></span><br><span class="line"><span class="comment">====================================*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">I2cStop</span><span class="params">()</span></span>&#123;</span><br><span class="line"><span class="comment">//时钟总线为高电平期间，数据总线从高变低产生终止信号</span></span><br><span class="line">	SCL = <span class="number">0</span>;</span><br><span class="line">	SDA = <span class="number">0</span>;</span><br><span class="line">	SCL = <span class="number">1</span>;</span><br><span class="line">	delay5us();<span class="comment">//状态保持5us</span></span><br><span class="line">	SDA = <span class="number">1</span>;</span><br><span class="line">	delay5us();<span class="comment">//状态保持5us	</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*====================================</span></span><br><span class="line"><span class="comment">函数	：ReadACK()</span></span><br><span class="line"><span class="comment">参数	：无</span></span><br><span class="line"><span class="comment">返回值	：1非应答，0应答</span></span><br><span class="line"><span class="comment">描述	：I2C总线读从机应答信号</span></span><br><span class="line"><span class="comment">====================================*/</span></span><br><span class="line"><span class="function">bit <span class="title">ReadACK</span><span class="params">()</span></span>&#123;</span><br><span class="line">	SCL = <span class="number">0</span>;			<span class="comment">//拉低时钟总线，允许从机控制SDA</span></span><br><span class="line">	SCL = <span class="number">1</span>;			<span class="comment">//拉高，读SDA</span></span><br><span class="line">	delay5us();</span><br><span class="line">	<span class="keyword">if</span>(SDA)&#123;			<span class="comment">//NOACK</span></span><br><span class="line">		SCL = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">return</span>(<span class="number">1</span>);		<span class="comment">//返回1</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span>&#123;				<span class="comment">//ACK</span></span><br><span class="line">		SCL = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">return</span>(<span class="number">0</span>);		<span class="comment">//返回0</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*====================================</span></span><br><span class="line"><span class="comment">函数	：SendACK(bit i)</span></span><br><span class="line"><span class="comment">参数	：1主机发送非应答，0发送应答</span></span><br><span class="line"><span class="comment">返回值	：无</span></span><br><span class="line"><span class="comment">描述	：主机发送应答信号</span></span><br><span class="line"><span class="comment">====================================*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">SendACK</span><span class="params">(bit i)</span></span>&#123;</span><br><span class="line">	SCL = <span class="number">0</span>;<span class="comment">//拉低时钟总线，允许主机控制SDA</span></span><br><span class="line">	<span class="keyword">if</span>(i)	<span class="comment">//发非应答</span></span><br><span class="line">		SDA = <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">else</span>	<span class="comment">//发应答</span></span><br><span class="line">		SDA = <span class="number">0</span>;</span><br><span class="line">	SCL = <span class="number">1</span>;  <span class="comment">//拉高总线，让从机读SDA</span></span><br><span class="line">	delay5us();<span class="comment">//保持5us</span></span><br><span class="line">	SCL = <span class="number">0</span>; <span class="comment">//拉低时钟总线，允许SDA释放</span></span><br><span class="line">	SDA = <span class="number">1</span>;<span class="comment">//释放数据总线</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*====================================</span></span><br><span class="line"><span class="comment">函数	：I2cSendByte(uchar DAT)</span></span><br><span class="line"><span class="comment">参数	：DAT需要发送的数据</span></span><br><span class="line"><span class="comment">返回值	：无</span></span><br><span class="line"><span class="comment">描述	：I2C发送一个字节数据</span></span><br><span class="line"><span class="comment">====================================*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">I2cSendByte</span><span class="params">(uchar DAT)</span></span>&#123;</span><br><span class="line">	uchar i; </span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>; i&lt;<span class="number">8</span>; i++)&#123; <span class="comment">//分别写8次，每次写1位</span></span><br><span class="line">		SCL = <span class="number">0</span>;<span class="comment">//拉低时钟总线，允许SDA变化</span></span><br><span class="line">		<span class="keyword">if</span>(DAT &amp; <span class="number">0x80</span>)<span class="comment">//先写数据最高位</span></span><br><span class="line">			SDA = <span class="number">1</span>;  <span class="comment">//写1</span></span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">			SDA = <span class="number">0</span>;  <span class="comment">//写0</span></span><br><span class="line">		SCL = <span class="number">1</span>;	  <span class="comment">//拉高时钟，让从机读SDA</span></span><br><span class="line">		DAT &lt;&lt;= <span class="number">1</span>;	  <span class="comment">//为发送下一位左移1位</span></span><br><span class="line">	&#125;</span><br><span class="line">	SCL = <span class="number">0</span>; <span class="comment">//拉低时钟总线，允许SDA释放</span></span><br><span class="line">	SDA = <span class="number">1</span>;<span class="comment">//释放数据总线</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*====================================</span></span><br><span class="line"><span class="comment">函数	：At24c02Write(uchar ADDR, DAT)</span></span><br><span class="line"><span class="comment">参数	：ADDR 单元地址0-255，DAT 需要输入的数据0-255</span></span><br><span class="line"><span class="comment">返回值	：无</span></span><br><span class="line"><span class="comment">描述	：At24c02指定单元写入一个字节数据</span></span><br><span class="line"><span class="comment">====================================*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">At24c02Write</span><span class="params">(uchar ADDR, DAT)</span></span>&#123;</span><br><span class="line">	I2cStart();<span class="comment">//I2C起始信号</span></span><br><span class="line">	I2cSendByte(At24c02ADDR + I2cWrite);<span class="comment">//发送器件地址加读写方向位</span></span><br><span class="line">	<span class="keyword">if</span>(ReadACK()) <span class="comment">//读从机应答</span></span><br><span class="line">		AckFlag = <span class="number">1</span>;	<span class="comment">//NOACK</span></span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		AckFlag = <span class="number">0</span>;	<span class="comment">//ACK</span></span><br><span class="line">	I2cSendByte(ADDR);<span class="comment">//发送储存单元地址字节</span></span><br><span class="line">	<span class="keyword">if</span>(ReadACK())<span class="comment">//读从机应答</span></span><br><span class="line">		AckFlag = <span class="number">1</span>;	<span class="comment">//NOACK</span></span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		AckFlag = <span class="number">0</span>;	<span class="comment">//ACK</span></span><br><span class="line">	I2cSendByte(DAT);<span class="comment">//发送一字节数据</span></span><br><span class="line">	<span class="keyword">if</span>(ReadACK())<span class="comment">//读从机应答</span></span><br><span class="line">		AckFlag = <span class="number">1</span>;	<span class="comment">//NOACK</span></span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		AckFlag = <span class="number">0</span>;	<span class="comment">//ACK</span></span><br><span class="line">	I2cStop();	<span class="comment">//I2C停止信号</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*====================================</span></span><br><span class="line"><span class="comment">函数	：I2cReadByte()</span></span><br><span class="line"><span class="comment">参数	：无</span></span><br><span class="line"><span class="comment">返回值	：返回读出的一字节数据</span></span><br><span class="line"><span class="comment">描述	：I2C总线读一字节数据</span></span><br><span class="line"><span class="comment">====================================*/</span></span><br><span class="line"><span class="function">uchar <span class="title">I2cReadByte</span><span class="params">()</span></span>&#123;</span><br><span class="line">	uchar i, DAT;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>; i&lt;<span class="number">8</span>; i++)&#123; 	<span class="comment">//分别读8次，每次读一位</span></span><br><span class="line">	</span><br><span class="line">		DAT &lt;&lt;= <span class="number">1</span>; 			<span class="comment">//数据左移1位，准备接收一位</span></span><br><span class="line">		SCL = <span class="number">0</span>;   			<span class="comment">//拉低时钟总线，允许从机控制SDA变化</span></span><br><span class="line">		SCL = <span class="number">1</span>;   			<span class="comment">//拉高时钟总线，读取SDA上的数据</span></span><br><span class="line">		<span class="keyword">if</span>(SDA)</span><br><span class="line">			DAT |= <span class="number">0X01</span>;	<span class="comment">//为1则写1，否则不行执行写1，通过左移补0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span>(DAT); 			<span class="comment">//返回读出的数据</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*====================================</span></span><br><span class="line"><span class="comment">函数	：At24c02Read(uchar ADDR)</span></span><br><span class="line"><span class="comment">参数	：ADDR 单元地址	0-255</span></span><br><span class="line"><span class="comment">返回值	：返回指定单元的数据</span></span><br><span class="line"><span class="comment">描述	：读AT24C02指定单元内数据</span></span><br><span class="line"><span class="comment">====================================*/</span></span><br><span class="line"><span class="function">uchar <span class="title">At24c02Read</span><span class="params">(uchar ADDR)</span></span>&#123;</span><br><span class="line">	uchar DAT;</span><br><span class="line">	I2cStart();<span class="comment">//I2C起始信号</span></span><br><span class="line">	I2cSendByte(At24c02ADDR + I2cWrite);<span class="comment">//发送器件地址加读写方向位</span></span><br><span class="line">	<span class="keyword">if</span>(ReadACK())<span class="comment">//读从机应答</span></span><br><span class="line">		AckFlag = <span class="number">1</span>;	<span class="comment">//NOACK</span></span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		AckFlag = <span class="number">0</span>;	<span class="comment">//ACK</span></span><br><span class="line">	I2cSendByte(ADDR);<span class="comment">//I2C发送一个字节</span></span><br><span class="line">	ReadACK();<span class="comment">//读从机应答</span></span><br><span class="line">	I2cStart();<span class="comment">//再次产生I2C起始信号</span></span><br><span class="line">	I2cSendByte(At24c02ADDR + I2cRead);<span class="comment">//发送器件地址加读写方向位 读</span></span><br><span class="line">	<span class="keyword">if</span>(ReadACK())<span class="comment">//读从机应答</span></span><br><span class="line">		AckFlag = <span class="number">1</span>;	<span class="comment">//NOACK</span></span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		AckFlag = <span class="number">0</span>;	<span class="comment">//ACK</span></span><br><span class="line">	DAT = I2cReadByte();<span class="comment">//读一字节</span></span><br><span class="line">	SendACK(<span class="number">1</span>);<span class="comment">//主机发送非应答</span></span><br><span class="line">	I2cStop(); <span class="comment">//I2C停止信号</span></span><br><span class="line">	<span class="keyword">return</span>(DAT);<span class="comment">//返回读出数据</span></span><br><span class="line">			</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span><span class="comment">//main函数自身会循环&#123;	</span></span></span><br><span class="line"><span class="function">	<span class="title">timer0Init</span><span class="params">()</span></span>;<span class="comment">//定时器0初始化</span></span><br><span class="line">	EA = <span class="number">0</span>;<span class="comment">//屏蔽中断</span></span><br><span class="line">	At24c02Write(<span class="number">3</span>, <span class="number">188</span>);<span class="comment">//给第3单元写入数据“188”</span></span><br><span class="line">	delay(<span class="number">1</span>);<span class="comment">//延时等待AT24C02处理</span></span><br><span class="line">	num = At24c02Read(<span class="number">3</span>);<span class="comment">//读出第3单元内数据送给显示变量</span></span><br><span class="line">	<span class="keyword">if</span>(AckFlag)<span class="comment">//当从机非应答</span></span><br><span class="line">		P1 = <span class="number">0</span>;<span class="comment">//亮P1所有灯</span></span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		P1 = <span class="number">0XFF</span>;<span class="comment">//灭P1所有灯</span></span><br><span class="line">	EA = <span class="number">1</span>;<span class="comment">//开中断</span></span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>);</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="comment">//定时器0中断函数</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">timer0</span><span class="params">()</span> interrupt 1 </span>&#123;</span><br><span class="line">	TH0 = <span class="number">0xED</span>;</span><br><span class="line">	TL0 = <span class="number">0xFF</span>; <span class="comment">//定时5ms</span></span><br><span class="line">	display(num); <span class="comment">//数码管显示函数	</span></span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>硬件学习</category>
-        <category>51单片机</category>
-      </categories>
-      <tags>
-        <tag>51单片机</tag>
       </tags>
   </entry>
   <entry>
@@ -861,100 +861,6 @@
       </categories>
       <tags>
         <tag>Java垃圾回收</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>1-maven基本概念</title>
-    <url>/posts/52e2375.html</url>
-    <content><![CDATA[<h1 id="Maven基本概念"><a href="#Maven基本概念" class="headerlink" title="Maven基本概念"></a>Maven基本概念</h1><h2 id="Maven学习内容"><a href="#Maven学习内容" class="headerlink" title="Maven学习内容"></a>Maven学习内容</h2><p><img src="https://gitee.com/aJream/images/raw/master/img/2021-05-02 10-08-42_Maven.svg" alt="Maven" style="zoom:100%;" /></p>
-<h2 id="Maven简介"><a href="#Maven简介" class="headerlink" title="Maven简介"></a>Maven简介</h2><p>Maven主要用于项目构建、依赖管理、项目信息管理</p>
-<ol>
-<li>小型项目</li>
-<li>大型企业项目</li>
-<li>传统瀑布式开发</li>
-<li>流行的敏捷开发</li>
-</ol>
-<h2 id="项目构建"><a href="#项目构建" class="headerlink" title="项目构建"></a>项目构建</h2><p>​        总结一下， 我们会发现， 除了编写源代码， 我们每天有相当一部分时间花在了编</p>
-<p>译，运行单元测试， 生成文档， 打包和部署等繁琐且不起眼的工作上， 这就是构建。</p>
-<h2 id="项目构建工具"><a href="#项目构建工具" class="headerlink" title="项目构建工具"></a>项目构建工具</h2><h3 id="Ant"><a href="#Ant" class="headerlink" title="Ant"></a>Ant</h3><p>最早的构建工具， 基于 IDE, 大概是 2000 年有的， 当时是最流行 java 构建工具，不过它的 XML 脚本编写格式让 XML 文件特别大。 对工程构建过程中的过程控制特别好。</p>
-<h3 id="Maven"><a href="#Maven" class="headerlink" title="Maven"></a>Maven</h3><ul>
-<li>项目对象模型， 通过其描述信息来管理项目的构建， 报告和文档的软件项目管理工具。 </li>
-<li>填补了 Ant 缺点， Maven 第一次支持了从网络上下载的功能， 仍然采用 xml 作为配置文件格式。</li>
-<li>Maven 专注的是依赖管理， 使用 Java 编写。</li>
-</ul>
-<h3 id="Gradle"><a href="#Gradle" class="headerlink" title="Gradle"></a>Gradle</h3><ul>
-<li>结合以上两个的优点， 它继承了 Ant 的灵活和 Maven 的生命周期管理， 它最后被 google 作为了 Android 御用管理工具。</li>
-<li>它最大的区别是不用 XML 作为配置文件格式， 采用了 DSL 格式， 使得脚本更加简洁。</li>
-</ul>
-<h2 id="Maven四大特性"><a href="#Maven四大特性" class="headerlink" title="Maven四大特性"></a>Maven四大特性</h2><h3 id="依赖管理系统（jar项目的多模块）"><a href="#依赖管理系统（jar项目的多模块）" class="headerlink" title="依赖管理系统（jar项目的多模块）"></a>依赖管理系统（jar项目的多模块）</h3><ul>
-<li>Maven 为 Java 世界引入了一个新的依赖管理系统 jar 包管理 ，jar 升级时修改配置文件即可。 </li>
-<li>在 Java 世界中， 可以用 <u>groupId</u>、 <u>artifactId</u>、 <u>version</u> 组成的Coordination（ 坐标）唯一标识一个依赖。 </li>
-<li>任何基于 Maven 构建的项目自身也必须定义这三项属性， 生成的包可以是 Jar 包， 也可以是 war 包或者 jar 包。</li>
-</ul>
-<p>一个典型的依赖引用如下所示：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>javax.servlet<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span> //包名/项目名</span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>javax.servlet-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span> //某一模块名</span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>3.1.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span>	//所需要jar的版本</span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h3 id="多模块构建"><a href="#多模块构建" class="headerlink" title="多模块构建"></a>多模块构建</h3><p> 项目复查时 dao service controller 层分离将一个项目分解为多个模块已经是很通用的一种方式。在 Maven 中需要定义一个 parent POM 作为一组 module 的聚合 POM。在该 POM 中可以使用 标签来定义一组子模块。 parent POM 不会有什么实际构建产出。 而 parent POM 中的 build 配置以及依赖配置都会自动继承给子 module。</p>
-<h3 id="一致的项目结构（不同的IDE项目结构是一致）"><a href="#一致的项目结构（不同的IDE项目结构是一致）" class="headerlink" title="一致的项目结构（不同的IDE项目结构是一致）"></a>一致的项目结构（不同的IDE项目结构是一致）</h3><p> Ant 时代大家创建 Java 项目目录时比较随意， 然后通过 Ant 配置指定哪些属于source，那些属于 testSource 等。而 Maven 在设计之初的理念就是 Conversion overconfiguration（ 约定大于配置）。 其制定了一套项目目录结构作为标准的 Java 项目结构,解决不同 ide 带来的文件目录不一致问题。</p>
-<h3 id="一致的构建模型和插件机制"><a href="#一致的构建模型和插件机制" class="headerlink" title="一致的构建模型和插件机制"></a>一致的构建模型和插件机制</h3><p>通过 pom 配置 tomcat、 jetty 插件:</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">	<span class="comment">&lt;!--这里是所有添加插件配置的地方--&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mortbay.jetty<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-jetty-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>6.1.25<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">scanIntervalSeconds</span>&gt;</span>10<span class="tag">&lt;/<span class="name">scanIntervalSeconds</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">contextPath</span>&gt;</span>/test<span class="tag">&lt;/<span class="name">contextPath</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>Maven</category>
-      </categories>
-      <tags>
-        <tag>Maven</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>3-maven+IDEA创建webapp</title>
-    <url>/posts/79c0e989.html</url>
-    <content><![CDATA[<ol>
-<li><p>创建project</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 14-35-33_image-20210502143531044.png" alt="image-20210502143531044"></p>
-<p><img src="https://gitee.com/aJream/images/raw/master/img/2021-05-02 14-38-23_image-20210502143822062.png" alt="image-20210502143822062"></p>
-<p><img src="https://gitee.com/aJream/images/raw/master/img/2021-05-02 14-41-29_image-20210502144127624.png" alt="image-20210502144127624"></p>
-<p>接着等待下载一些文件</p>
-</li>
-<li><p>进入工程下文件 <code>pom.xml</code>，做以下配置：</p>
-<ol>
-<li><p>修改Java编译器版本为<code>1.8</code>（根据自己情况）</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">project.build.sourceEncoding</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">project.build.sourceEncoding</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">maven.compiler.source</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">maven.compiler.source</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">maven.compiler.target</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">maven.compiler.target</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-</li>
-</ol>
-<ol>
-<li><p>删除下面两个标签及标签中的内容</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">pluginManagement</span>&gt;</span></span><br><span class="line">    ...</span><br><span class="line"><span class="tag">&lt;/<span class="name">pluginManagement</span>&gt;</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>如果使用tomcat服务器，在刚才删除的地方添加下面内容</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.tomcat.maven<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>tomcat7-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span>  <span class="comment">&lt;!--tomcat版本--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">port</span>&gt;</span>8088<span class="tag">&lt;/<span class="name">port</span>&gt;</span> <span class="comment">&lt;!--端口--&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">path</span>&gt;</span>/test<span class="tag">&lt;/<span class="name">path</span>&gt;</span> <span class="comment">&lt;!--项目站点名--&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">uriEncoding</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">uriEncoding</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">server</span>&gt;</span>tomcat7<span class="tag">&lt;/<span class="name">server</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>然后：</p>
-<p><img src="https://gitee.com/aJream/images/raw/master/img/2021-05-02 14-54-53_image-20210502145452277.png" alt="image-20210502145452277"></p>
-</li>
-<li><p>等待下载完成后</p>
-<p><img src="https://gitee.com/aJream/images/raw/master/img/2021-05-02 14-57-36_image-20210502145735190.png" alt="image-20210502145735190"></p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 14-59-00_image-20210502145859423.png" alt="image-20210502145859423"></p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-02-19_image-20210502150218246.png" alt="image-20210502150218246"></p>
-</li>
-<li><p>配置完成，点击运行</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-04-52_image-20210502150451149.png" alt="image-20210502150451149"></p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-06-21_image-20210502150620073.png" alt="image-20210502150620073"></p>
-<p>浏览器访问结果：</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-07-01_image-20210502150700084.png" alt="image-20210502150700084"></p>
-</li>
-</ol>
-<blockquote>
-<p>下载的插件在repository的org目录下</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">D:\maven\apache-maven-3.8.1\repository\org\apache\tomcat</span><br></pre></td></tr></table></figure></blockquote>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>Maven</category>
-      </categories>
-      <tags>
-        <tag>Maven</tag>
       </tags>
   </entry>
   <entry>
@@ -1850,6 +1756,100 @@
       </tags>
   </entry>
   <entry>
+    <title>1-maven基本概念</title>
+    <url>/posts/52e2375.html</url>
+    <content><![CDATA[<h1 id="Maven基本概念"><a href="#Maven基本概念" class="headerlink" title="Maven基本概念"></a>Maven基本概念</h1><h2 id="Maven学习内容"><a href="#Maven学习内容" class="headerlink" title="Maven学习内容"></a>Maven学习内容</h2><p><img src="https://gitee.com/aJream/images/raw/master/img/2021-05-02 10-08-42_Maven.svg" alt="Maven" style="zoom:100%;" /></p>
+<h2 id="Maven简介"><a href="#Maven简介" class="headerlink" title="Maven简介"></a>Maven简介</h2><p>Maven主要用于项目构建、依赖管理、项目信息管理</p>
+<ol>
+<li>小型项目</li>
+<li>大型企业项目</li>
+<li>传统瀑布式开发</li>
+<li>流行的敏捷开发</li>
+</ol>
+<h2 id="项目构建"><a href="#项目构建" class="headerlink" title="项目构建"></a>项目构建</h2><p>​        总结一下， 我们会发现， 除了编写源代码， 我们每天有相当一部分时间花在了编</p>
+<p>译，运行单元测试， 生成文档， 打包和部署等繁琐且不起眼的工作上， 这就是构建。</p>
+<h2 id="项目构建工具"><a href="#项目构建工具" class="headerlink" title="项目构建工具"></a>项目构建工具</h2><h3 id="Ant"><a href="#Ant" class="headerlink" title="Ant"></a>Ant</h3><p>最早的构建工具， 基于 IDE, 大概是 2000 年有的， 当时是最流行 java 构建工具，不过它的 XML 脚本编写格式让 XML 文件特别大。 对工程构建过程中的过程控制特别好。</p>
+<h3 id="Maven"><a href="#Maven" class="headerlink" title="Maven"></a>Maven</h3><ul>
+<li>项目对象模型， 通过其描述信息来管理项目的构建， 报告和文档的软件项目管理工具。 </li>
+<li>填补了 Ant 缺点， Maven 第一次支持了从网络上下载的功能， 仍然采用 xml 作为配置文件格式。</li>
+<li>Maven 专注的是依赖管理， 使用 Java 编写。</li>
+</ul>
+<h3 id="Gradle"><a href="#Gradle" class="headerlink" title="Gradle"></a>Gradle</h3><ul>
+<li>结合以上两个的优点， 它继承了 Ant 的灵活和 Maven 的生命周期管理， 它最后被 google 作为了 Android 御用管理工具。</li>
+<li>它最大的区别是不用 XML 作为配置文件格式， 采用了 DSL 格式， 使得脚本更加简洁。</li>
+</ul>
+<h2 id="Maven四大特性"><a href="#Maven四大特性" class="headerlink" title="Maven四大特性"></a>Maven四大特性</h2><h3 id="依赖管理系统（jar项目的多模块）"><a href="#依赖管理系统（jar项目的多模块）" class="headerlink" title="依赖管理系统（jar项目的多模块）"></a>依赖管理系统（jar项目的多模块）</h3><ul>
+<li>Maven 为 Java 世界引入了一个新的依赖管理系统 jar 包管理 ，jar 升级时修改配置文件即可。 </li>
+<li>在 Java 世界中， 可以用 <u>groupId</u>、 <u>artifactId</u>、 <u>version</u> 组成的Coordination（ 坐标）唯一标识一个依赖。 </li>
+<li>任何基于 Maven 构建的项目自身也必须定义这三项属性， 生成的包可以是 Jar 包， 也可以是 war 包或者 jar 包。</li>
+</ul>
+<p>一个典型的依赖引用如下所示：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>javax.servlet<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span> //包名/项目名</span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>javax.servlet-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span> //某一模块名</span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>3.1.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span>	//所需要jar的版本</span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="多模块构建"><a href="#多模块构建" class="headerlink" title="多模块构建"></a>多模块构建</h3><p> 项目复查时 dao service controller 层分离将一个项目分解为多个模块已经是很通用的一种方式。在 Maven 中需要定义一个 parent POM 作为一组 module 的聚合 POM。在该 POM 中可以使用 标签来定义一组子模块。 parent POM 不会有什么实际构建产出。 而 parent POM 中的 build 配置以及依赖配置都会自动继承给子 module。</p>
+<h3 id="一致的项目结构（不同的IDE项目结构是一致）"><a href="#一致的项目结构（不同的IDE项目结构是一致）" class="headerlink" title="一致的项目结构（不同的IDE项目结构是一致）"></a>一致的项目结构（不同的IDE项目结构是一致）</h3><p> Ant 时代大家创建 Java 项目目录时比较随意， 然后通过 Ant 配置指定哪些属于source，那些属于 testSource 等。而 Maven 在设计之初的理念就是 Conversion overconfiguration（ 约定大于配置）。 其制定了一套项目目录结构作为标准的 Java 项目结构,解决不同 ide 带来的文件目录不一致问题。</p>
+<h3 id="一致的构建模型和插件机制"><a href="#一致的构建模型和插件机制" class="headerlink" title="一致的构建模型和插件机制"></a>一致的构建模型和插件机制</h3><p>通过 pom 配置 tomcat、 jetty 插件:</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">	<span class="comment">&lt;!--这里是所有添加插件配置的地方--&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mortbay.jetty<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-jetty-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>6.1.25<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">scanIntervalSeconds</span>&gt;</span>10<span class="tag">&lt;/<span class="name">scanIntervalSeconds</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">contextPath</span>&gt;</span>/test<span class="tag">&lt;/<span class="name">contextPath</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>Maven</category>
+      </categories>
+      <tags>
+        <tag>Maven</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>3-maven+IDEA创建webapp</title>
+    <url>/posts/79c0e989.html</url>
+    <content><![CDATA[<ol>
+<li><p>创建project</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 14-35-33_image-20210502143531044.png" alt="image-20210502143531044"></p>
+<p><img src="https://gitee.com/aJream/images/raw/master/img/2021-05-02 14-38-23_image-20210502143822062.png" alt="image-20210502143822062"></p>
+<p><img src="https://gitee.com/aJream/images/raw/master/img/2021-05-02 14-41-29_image-20210502144127624.png" alt="image-20210502144127624"></p>
+<p>接着等待下载一些文件</p>
+</li>
+<li><p>进入工程下文件 <code>pom.xml</code>，做以下配置：</p>
+<ol>
+<li><p>修改Java编译器版本为<code>1.8</code>（根据自己情况）</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">project.build.sourceEncoding</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">project.build.sourceEncoding</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">maven.compiler.source</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">maven.compiler.source</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">maven.compiler.target</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">maven.compiler.target</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+</ol>
+<ol>
+<li><p>删除下面两个标签及标签中的内容</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">pluginManagement</span>&gt;</span></span><br><span class="line">    ...</span><br><span class="line"><span class="tag">&lt;/<span class="name">pluginManagement</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果使用tomcat服务器，在刚才删除的地方添加下面内容</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.tomcat.maven<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>tomcat7-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span>  <span class="comment">&lt;!--tomcat版本--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">port</span>&gt;</span>8088<span class="tag">&lt;/<span class="name">port</span>&gt;</span> <span class="comment">&lt;!--端口--&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">path</span>&gt;</span>/test<span class="tag">&lt;/<span class="name">path</span>&gt;</span> <span class="comment">&lt;!--项目站点名--&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">uriEncoding</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">uriEncoding</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">server</span>&gt;</span>tomcat7<span class="tag">&lt;/<span class="name">server</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>然后：</p>
+<p><img src="https://gitee.com/aJream/images/raw/master/img/2021-05-02 14-54-53_image-20210502145452277.png" alt="image-20210502145452277"></p>
+</li>
+<li><p>等待下载完成后</p>
+<p><img src="https://gitee.com/aJream/images/raw/master/img/2021-05-02 14-57-36_image-20210502145735190.png" alt="image-20210502145735190"></p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 14-59-00_image-20210502145859423.png" alt="image-20210502145859423"></p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-02-19_image-20210502150218246.png" alt="image-20210502150218246"></p>
+</li>
+<li><p>配置完成，点击运行</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-04-52_image-20210502150451149.png" alt="image-20210502150451149"></p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-06-21_image-20210502150620073.png" alt="image-20210502150620073"></p>
+<p>浏览器访问结果：</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-07-01_image-20210502150700084.png" alt="image-20210502150700084"></p>
+</li>
+</ol>
+<blockquote>
+<p>下载的插件在repository的org目录下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">D:\maven\apache-maven-3.8.1\repository\org\apache\tomcat</span><br></pre></td></tr></table></figure></blockquote>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>Maven</category>
+      </categories>
+      <tags>
+        <tag>Maven</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>mybatis动态SQL(七)</title>
     <url>/posts/6e81c43e.html</url>
     <content><![CDATA[<p>前面我们通过实例讲解了用mybatis对一张表进行的CRUD操作，但是我们发现写的 SQL 语句都比较简单，如果有比较复杂的业务，我们需要写复杂的 SQL 语句，往往需要拼接，而拼接 SQL，稍微不注意，由于引号，空格等缺失可能都会导致错误。</p>
@@ -1986,49 +1986,6 @@
       </tags>
   </entry>
   <entry>
-    <title>mybatis的Mapper详解(三)</title>
-    <url>/posts/f218ca42.html</url>
-    <content><![CDATA[<h2 id="mapper-xml"><a href="#mapper-xml" class="headerlink" title="mapper.xml"></a>mapper.xml</h2><p>在jdbc中，增(insert)、删(delete)、查(select)、改(update)统称为statement</p>
-<p>因此，在mapper中，statement包含这4种标签，在相应的标签内可以使用相应的SQL语句操作数据</p>
-<h3 id="parameterType-参数数据类型"><a href="#parameterType-参数数据类型" class="headerlink" title="parameterType: 参数数据类型"></a>parameterType: 参数数据类型</h3><ul>
-<li><p>基本数据类型，int, long, …</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">delete</span> <span class="attr">id</span>=<span class="string">&quot;deleteById&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;int&quot;</span>&gt;</span></span><br><span class="line">    delete from t_acount where id = #&#123;id&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">delete</span>&gt;</span></span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<ul>
-<li><p>String类型: <code>java.lang.String</code></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;select id=&quot;findByName&quot; resultType=&quot;com.ajream.entity.Account&quot; parameterType=&quot;java.lang.String&quot;&gt;</span><br><span class="line">    select * from t_acount where username=#&#123;username&#125;</span><br><span class="line">&lt;/select&gt;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>包装类，如：<code>java.lang.Integer</code>， <code>java.lang.Long</code>…</p>
-</li>
-<li><p>自定义类类型</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">insert</span> <span class="attr">id</span>=<span class="string">&quot;save&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;com.ajream.entity.Account&quot;</span>&gt;</span></span><br><span class="line">	insert into t_acount(id, username, passwd, age) values(#&#123;id&#125;,#&#123;username&#125;, #&#123;passwd&#125;, #&#123;age&#125;)</span><br><span class="line"><span class="tag">&lt;/<span class="name">insert</span>&gt;</span></span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>方法中有多个参数，不用写 parameterType，获取参数时不能用参数名，要用下标 <code>param1</code>, <code>param2</code> …或者 <code>arg0</code>, <code>arg1</code> … 【不同mybatis版本写可能不同，要注意param下标是从1开始的】</p>
-<p>例如：</p>
-<p>这是方法：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Account <span class="title">findByNameAndAge</span><span class="params">(name, age)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>则mapper如下</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;findByNameAndAge&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;com.ajream.entity.Account&quot;</span>&gt;</span></span><br><span class="line">    select * from t_acount where username=#&#123;param1&#125; and age=#&#123;param2&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h3 id="resultType：返回类型"><a href="#resultType：返回类型" class="headerlink" title="resultType：返回类型"></a>resultType：返回类型</h3><p>用法与parameterType相同</p>
-<p>【增删改默认返回int类型，表示影响的行数，不需要指定返回类型是<code>int</code>】</p>
-<ul>
-<li>基本数据类型</li>
-<li>包装类</li>
-<li>String类型</li>
-<li>自定义类类型</li>
-</ul>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>Mybatis</category>
-      </categories>
-      <tags>
-        <tag>Mybatis</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>mybatis介绍与使用（一）</title>
     <url>/posts/78903d87.html</url>
     <content><![CDATA[<h2 id="1、简介"><a href="#1、简介" class="headerlink" title="1、简介"></a>1、简介</h2><h3 id="什么是-MyBatis"><a href="#什么是-MyBatis" class="headerlink" title="什么是 MyBatis"></a>什么是 MyBatis</h3><p>​    MyBatis 是一款优秀的持久层框架，它支持自定义 SQL、存储过程以及高级映射。MyBatis 免除了几乎所有的 JDBC 代码以及设置参数和获取结果集的工作。MyBatis 可以通过简单的 XML 或注解来配置和映射原始类型、接口和 Java POJO（Plain Old Java Objects，普通老式 Java 对象）为数据库中的记录。</p>
@@ -2070,6 +2027,49 @@
 <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">resources</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">resource</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">directory</span>&gt;</span>src/main/resources<span class="tag">&lt;/<span class="name">directory</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">includes</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">include</span>&gt;</span>**/*.properties<span class="tag">&lt;/<span class="name">include</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">include</span>&gt;</span>**/*.xml<span class="tag">&lt;/<span class="name">include</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">includes</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">filtering</span>&gt;</span>true<span class="tag">&lt;/<span class="name">filtering</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">resource</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">resource</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">directory</span>&gt;</span>src/main/java<span class="tag">&lt;/<span class="name">directory</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">includes</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">include</span>&gt;</span>**/*.properties<span class="tag">&lt;/<span class="name">include</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">include</span>&gt;</span>**/*.xml<span class="tag">&lt;/<span class="name">include</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">includes</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">filtering</span>&gt;</span>true<span class="tag">&lt;/<span class="name">filtering</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">resource</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">resources</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>运行结果：</p>
 <p><img src="https://gitee.com/ajream/images/raw/master/img/2021-08-13 00-18-01_image-20210813001800000.png" alt="image-20210813001800000"></p>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>Mybatis</category>
+      </categories>
+      <tags>
+        <tag>Mybatis</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>mybatis的Mapper详解(三)</title>
+    <url>/posts/f218ca42.html</url>
+    <content><![CDATA[<h2 id="mapper-xml"><a href="#mapper-xml" class="headerlink" title="mapper.xml"></a>mapper.xml</h2><p>在jdbc中，增(insert)、删(delete)、查(select)、改(update)统称为statement</p>
+<p>因此，在mapper中，statement包含这4种标签，在相应的标签内可以使用相应的SQL语句操作数据</p>
+<h3 id="parameterType-参数数据类型"><a href="#parameterType-参数数据类型" class="headerlink" title="parameterType: 参数数据类型"></a>parameterType: 参数数据类型</h3><ul>
+<li><p>基本数据类型，int, long, …</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">delete</span> <span class="attr">id</span>=<span class="string">&quot;deleteById&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;int&quot;</span>&gt;</span></span><br><span class="line">    delete from t_acount where id = #&#123;id&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">delete</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><p>String类型: <code>java.lang.String</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;select id=&quot;findByName&quot; resultType=&quot;com.ajream.entity.Account&quot; parameterType=&quot;java.lang.String&quot;&gt;</span><br><span class="line">    select * from t_acount where username=#&#123;username&#125;</span><br><span class="line">&lt;/select&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>包装类，如：<code>java.lang.Integer</code>， <code>java.lang.Long</code>…</p>
+</li>
+<li><p>自定义类类型</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">insert</span> <span class="attr">id</span>=<span class="string">&quot;save&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;com.ajream.entity.Account&quot;</span>&gt;</span></span><br><span class="line">	insert into t_acount(id, username, passwd, age) values(#&#123;id&#125;,#&#123;username&#125;, #&#123;passwd&#125;, #&#123;age&#125;)</span><br><span class="line"><span class="tag">&lt;/<span class="name">insert</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>方法中有多个参数，不用写 parameterType，获取参数时不能用参数名，要用下标 <code>param1</code>, <code>param2</code> …或者 <code>arg0</code>, <code>arg1</code> … 【不同mybatis版本写可能不同，要注意param下标是从1开始的】</p>
+<p>例如：</p>
+<p>这是方法：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Account <span class="title">findByNameAndAge</span><span class="params">(name, age)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>则mapper如下</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;findByNameAndAge&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;com.ajream.entity.Account&quot;</span>&gt;</span></span><br><span class="line">    select * from t_acount where username=#&#123;param1&#125; and age=#&#123;param2&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="resultType：返回类型"><a href="#resultType：返回类型" class="headerlink" title="resultType：返回类型"></a>resultType：返回类型</h3><p>用法与parameterType相同</p>
+<p>【增删改默认返回int类型，表示影响的行数，不需要指定返回类型是<code>int</code>】</p>
+<ul>
+<li>基本数据类型</li>
+<li>包装类</li>
+<li>String类型</li>
+<li>自定义类类型</li>
+</ul>
 ]]></content>
       <categories>
         <category>java</category>
@@ -2455,6 +2455,41 @@
       </tags>
   </entry>
   <entry>
+    <title>7-多任务执行</title>
+    <url>/posts/c25015c5.html</url>
+    <content><![CDATA[<!--toc-->
+<p>通过Ticker库可以让esp8266同时执行多个任务</p>
+<h2 id="1、如何实现"><a href="#1、如何实现" class="headerlink" title="1、如何实现"></a>1、如何实现</h2><p>示例：在实现一个呼吸灯的同时，在串口监视器打印一些字符信息</p>
+<ol>
+<li><p>创建 <code>Ticker</code>对象</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Ticker ticker;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>定时执行某个函数</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">ticker.attach(time, func);   <span class="comment">//time单位为s，func为函数名</span></span><br><span class="line">ticker.attach_ms(time, func);   <span class="comment">//time单位为ms，func为函数名</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;Ticker.h&gt;</span></span></span><br><span class="line"></span><br><span class="line">Ticker ticker;<span class="comment">// 建立Ticker用于实现定时功能</span></span><br><span class="line"><span class="keyword">int</span> count;    <span class="comment">// 计数用变量</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Serial.begin(<span class="number">9600</span>);</span><br><span class="line">    pinMode(LED_BUILTIN, OUTPUT);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// attach函数的第一个参数是控制定时间隔的变量。该参数的单位为秒。第二个参数是</span></span><br><span class="line">    <span class="comment">// 定时执行的函数名称。</span></span><br><span class="line">    ticker.attach(<span class="number">1</span>, sayHi);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 用LED呼吸灯效果来演示在Tinker对象控制下，ESP8266可以定时执行其它任务</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> fadeValue = <span class="number">0</span> ; fadeValue &lt;= <span class="number">1023</span>; fadeValue += <span class="number">5</span>) &#123;</span><br><span class="line">        analogWrite(LED_BUILTIN, fadeValue);</span><br><span class="line">        delay(<span class="number">10</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> fadeValue = <span class="number">1023</span> ; fadeValue &gt;= <span class="number">0</span>; fadeValue -= <span class="number">5</span>) &#123;</span><br><span class="line">        analogWrite(LED_BUILTIN, fadeValue);</span><br><span class="line">        delay(<span class="number">10</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    delay(<span class="number">3000</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在Tinker对象控制下，此函数将会定时执行。</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sayHi</span><span class="params">()</span></span>&#123;</span><br><span class="line">    count++;</span><br><span class="line">    Serial.print(<span class="string">&quot;Hi &quot;</span>);</span><br><span class="line">    Serial.println(count);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="2、其他操作"><a href="#2、其他操作" class="headerlink" title="2、其他操作"></a>2、其他操作</h2><ul>
+<li><p>停止执行定时任务：ticker.detach()</p>
+</li>
+<li><p>向定时调用函数传递参数：ticker.attach(1, sayHi, 8)</p>
+<p>【注意】：</p>
+<p>attach函数所能传递的参数最多只有一个</p>
+<p>该参数仅能是以下类型中的一种：char, short, int, float, void*, char*</p>
+</li>
+<li><p><strong>利用多个Ticker对象可以让ESP8266处理多任务</strong></p>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>硬件学习</category>
+        <category>esp8266</category>
+      </categories>
+      <tags>
+        <tag>esp8266</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>6-WiFi配网</title>
     <url>/posts/baad5185.html</url>
     <content><![CDATA[<!--toc-->
@@ -2491,41 +2526,6 @@
 <p>完整code：</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ESP8266WiFi.h&gt;</span>          </span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;DNSServer.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ESP8266WebServer.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;WiFiManager.h&gt;</span>         </span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Serial.begin(<span class="number">9600</span>);       </span><br><span class="line">    <span class="comment">// 建立WiFiManager对象</span></span><br><span class="line">    WiFiManager wifiManager;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 自动连接WiFi。以下语句的参数是连接ESP8266时的WiFi名称</span></span><br><span class="line">    wifiManager.autoConnect(<span class="string">&quot;ESP8266-wifi&quot;</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 如果您希望该WiFi添加密码，可以使用以下语句：</span></span><br><span class="line">    <span class="comment">// wifiManager.autoConnect(&quot;ESP8266-wifi&quot;, &quot;12345678&quot;);</span></span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="comment">// WiFi连接成功后将通过串口监视器输出连接成功信息 </span></span><br><span class="line">    Serial.println(<span class="string">&quot;&quot;</span>); </span><br><span class="line">    Serial.print(<span class="string">&quot;ESP8266 Connected to &quot;</span>);</span><br><span class="line">    Serial.println(WiFi.SSID());              <span class="comment">// 连接上的WiFi名称</span></span><br><span class="line">    Serial.print(<span class="string">&quot;IP address:\t&quot;</span>);</span><br><span class="line">    Serial.println(WiFi.localIP());           <span class="comment">// IP</span></span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
 <p><img src="https://gitee.com/ajream/images/raw/master/img/2021-08-11 09-56-45_image-20210811095227391.png" alt="image-20210811095227391"></p>
-]]></content>
-      <categories>
-        <category>硬件学习</category>
-        <category>esp8266</category>
-      </categories>
-      <tags>
-        <tag>esp8266</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>7-多任务执行</title>
-    <url>/posts/c25015c5.html</url>
-    <content><![CDATA[<!--toc-->
-<p>通过Ticker库可以让esp8266同时执行多个任务</p>
-<h2 id="1、如何实现"><a href="#1、如何实现" class="headerlink" title="1、如何实现"></a>1、如何实现</h2><p>示例：在实现一个呼吸灯的同时，在串口监视器打印一些字符信息</p>
-<ol>
-<li><p>创建 <code>Ticker</code>对象</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Ticker ticker;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>定时执行某个函数</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">ticker.attach(time, func);   <span class="comment">//time单位为s，func为函数名</span></span><br><span class="line">ticker.attach_ms(time, func);   <span class="comment">//time单位为ms，func为函数名</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;Ticker.h&gt;</span></span></span><br><span class="line"></span><br><span class="line">Ticker ticker;<span class="comment">// 建立Ticker用于实现定时功能</span></span><br><span class="line"><span class="keyword">int</span> count;    <span class="comment">// 计数用变量</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Serial.begin(<span class="number">9600</span>);</span><br><span class="line">    pinMode(LED_BUILTIN, OUTPUT);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// attach函数的第一个参数是控制定时间隔的变量。该参数的单位为秒。第二个参数是</span></span><br><span class="line">    <span class="comment">// 定时执行的函数名称。</span></span><br><span class="line">    ticker.attach(<span class="number">1</span>, sayHi);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 用LED呼吸灯效果来演示在Tinker对象控制下，ESP8266可以定时执行其它任务</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> fadeValue = <span class="number">0</span> ; fadeValue &lt;= <span class="number">1023</span>; fadeValue += <span class="number">5</span>) &#123;</span><br><span class="line">        analogWrite(LED_BUILTIN, fadeValue);</span><br><span class="line">        delay(<span class="number">10</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> fadeValue = <span class="number">1023</span> ; fadeValue &gt;= <span class="number">0</span>; fadeValue -= <span class="number">5</span>) &#123;</span><br><span class="line">        analogWrite(LED_BUILTIN, fadeValue);</span><br><span class="line">        delay(<span class="number">10</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    delay(<span class="number">3000</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在Tinker对象控制下，此函数将会定时执行。</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sayHi</span><span class="params">()</span></span>&#123;</span><br><span class="line">    count++;</span><br><span class="line">    Serial.print(<span class="string">&quot;Hi &quot;</span>);</span><br><span class="line">    Serial.println(count);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="2、其他操作"><a href="#2、其他操作" class="headerlink" title="2、其他操作"></a>2、其他操作</h2><ul>
-<li><p>停止执行定时任务：ticker.detach()</p>
-</li>
-<li><p>向定时调用函数传递参数：ticker.attach(1, sayHi, 8)</p>
-<p>【注意】：</p>
-<p>attach函数所能传递的参数最多只有一个</p>
-<p>该参数仅能是以下类型中的一种：char, short, int, float, void*, char*</p>
-</li>
-<li><p><strong>利用多个Ticker对象可以让ESP8266处理多任务</strong></p>
-</li>
-</ul>
 ]]></content>
       <categories>
         <category>硬件学习</category>
@@ -2710,61 +2710,6 @@
       </tags>
   </entry>
   <entry>
-    <title>1-Servlet</title>
-    <url>/posts/345d8e17.html</url>
-    <content><![CDATA[<h1 id="Servlet"><a href="#Servlet" class="headerlink" title="Servlet"></a>Servlet</h1><h2 id="servlet技术"><a href="#servlet技术" class="headerlink" title="servlet技术"></a>servlet技术</h2><ol>
-<li>Servlet是Java EE规范之一，规范即接口</li>
-<li>是JavaWeb三大组件之一，其他2个是：Filter过滤器、Listener监听器</li>
-<li>是运行在服务器上一个Java小程序，可以接收客户端发来的请求，并相应给客户端</li>
-<li>Servlet没有 <code>main()</code>方法，由系统自动调用</li>
-</ol>
-<h2 id="IDEA创建servlet"><a href="#IDEA创建servlet" class="headerlink" title="IDEA创建servlet"></a>IDEA创建servlet</h2><p><img src="https://img-blog.csdnimg.cn/20210502184910567.png" alt="在这里插入图片描述" style="zoom:43%;" /></p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 16-37-34_image-20210502163733514.png" alt="image-20210502163733514" style="zoom: 67%;" /></p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 16-38-39_image-20210502163838549.png" alt="image-20210502163838549" style="zoom:67%;" /></p>
-<h2 id="手动实现Servlet程序"><a href="#手动实现Servlet程序" class="headerlink" title="手动实现Servlet程序"></a>手动实现Servlet程序</h2><ol>
-<li><p>编写类实现Servlet规范，有3种方式：</p>
-<ol>
-<li><p>继承 <code>HttpServlet</code>类</p>
- <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloServlet</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>实现 <code>Servlet</code>接口</p>
- <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.servlet01;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.servlet.*;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Servlet01</span> <span class="keyword">implements</span> <span class="title">Servlet</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(ServletConfig servletConfig)</span> <span class="keyword">throws</span> ServletException </span>&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ServletConfig <span class="title">getServletConfig</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(ServletRequest servletRequest, ServletResponse servletResponse)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;实现Servlet接口&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getServletInfo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destroy</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-</li>
-</ol>
-<ol>
-<li><p>实现 <code>service()</code>方法，处理请求，响应数据</p>
-<p>【快捷键 <kbd>ctrl + o</kbd> 可以重写方法或实现接口】</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloServlet</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(HttpServletRequest req, HttpServletResponse resp)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">        <span class="comment">//控制台打印</span></span><br><span class="line">        System.out.println(<span class="string">&quot;Hello Servlet&quot;</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//通过流输出数据到浏览器</span></span><br><span class="line">        resp.getWriter().write(<span class="string">&quot;hello servlet!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>设置注解<code>@WebServlet</code>，指定访问路径</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@WebServlet(name=&quot;helloServlet&quot;, value = &quot;/ser01&quot;)</span> <span class="comment">//name可以不设置</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<blockquote>
-<p>在第二步中，也可以不重写 <code>Service()</code>方法，而是更具体些，重写 <code>doGet()</code>、<code>doPost</code>方法；</p>
-<p>根据浏览器请求方式来进行不同处理</p>
-<p>但实际我们不知道浏览器以何种方式请求，故两个方法都需要去写，因此这种方式用的较少</p>
-</blockquote>
-<h2 id="Servlet工作流程"><a href="#Servlet工作流程" class="headerlink" title="Servlet工作流程"></a>Servlet工作流程</h2><p>url<code>http://localhost:8083/servlet01/ser01</code>含义：</p>
-<blockquote>
-<ul>
-<li>服务器：<code>http://localhost:8083</code></li>
-<li>项目：<code>/servlet01</code></li>
-<li>资源：<code>/ser01</code></li>
-</ul>
-</blockquote>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>javaEE</category>
-      </categories>
-      <tags>
-        <tag>javaEE</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>MQTT篇（二）消息的发布、订阅与取消订阅</title>
     <url>/posts/adfcabaa.html</url>
     <content><![CDATA[<h2 id="发布信息"><a href="#发布信息" class="headerlink" title="发布信息"></a>发布信息</h2><ol>
@@ -2845,14 +2790,51 @@
       </tags>
   </entry>
   <entry>
-    <title>2-Servlet生命周期</title>
-    <url>/posts/e7ba7594.html</url>
-    <content><![CDATA[<h1 id="Servlet生命周期"><a href="#Servlet生命周期" class="headerlink" title="Servlet生命周期"></a>Servlet生命周期</h1><ol>
-<li>通过调用 <code>init()</code>方法创建、初始化服务（系统自动调用，只执行一次）</li>
-<li>调用 <code>Service()</code> 方法执行服务</li>
-<li>调用 <code>destroy()</code>销毁服务（关闭服务器时系统自动调用，只执行一次）</li>
+    <title>1-Servlet</title>
+    <url>/posts/345d8e17.html</url>
+    <content><![CDATA[<h1 id="Servlet"><a href="#Servlet" class="headerlink" title="Servlet"></a>Servlet</h1><h2 id="servlet技术"><a href="#servlet技术" class="headerlink" title="servlet技术"></a>servlet技术</h2><ol>
+<li>Servlet是Java EE规范之一，规范即接口</li>
+<li>是JavaWeb三大组件之一，其他2个是：Filter过滤器、Listener监听器</li>
+<li>是运行在服务器上一个Java小程序，可以接收客户端发来的请求，并相应给客户端</li>
+<li>Servlet没有 <code>main()</code>方法，由系统自动调用</li>
 </ol>
-<h4 id="Servlet工作流程"><a href="#Servlet工作流程" class="headerlink" title="Servlet工作流程"></a>Servlet工作流程</h4><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 17-00-01_image-20210502165959933.png" alt="image-20210502165959933"></p>
+<h2 id="IDEA创建servlet"><a href="#IDEA创建servlet" class="headerlink" title="IDEA创建servlet"></a>IDEA创建servlet</h2><p><img src="https://img-blog.csdnimg.cn/20210502184910567.png" alt="在这里插入图片描述" style="zoom:43%;" /></p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 16-37-34_image-20210502163733514.png" alt="image-20210502163733514" style="zoom: 67%;" /></p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 16-38-39_image-20210502163838549.png" alt="image-20210502163838549" style="zoom:67%;" /></p>
+<h2 id="手动实现Servlet程序"><a href="#手动实现Servlet程序" class="headerlink" title="手动实现Servlet程序"></a>手动实现Servlet程序</h2><ol>
+<li><p>编写类实现Servlet规范，有3种方式：</p>
+<ol>
+<li><p>继承 <code>HttpServlet</code>类</p>
+ <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloServlet</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>实现 <code>Servlet</code>接口</p>
+ <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.servlet01;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.servlet.*;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Servlet01</span> <span class="keyword">implements</span> <span class="title">Servlet</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(ServletConfig servletConfig)</span> <span class="keyword">throws</span> ServletException </span>&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ServletConfig <span class="title">getServletConfig</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(ServletRequest servletRequest, ServletResponse servletResponse)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;实现Servlet接口&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getServletInfo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destroy</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+</ol>
+<ol>
+<li><p>实现 <code>service()</code>方法，处理请求，响应数据</p>
+<p>【快捷键 <kbd>ctrl + o</kbd> 可以重写方法或实现接口】</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloServlet</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(HttpServletRequest req, HttpServletResponse resp)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">        <span class="comment">//控制台打印</span></span><br><span class="line">        System.out.println(<span class="string">&quot;Hello Servlet&quot;</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//通过流输出数据到浏览器</span></span><br><span class="line">        resp.getWriter().write(<span class="string">&quot;hello servlet!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置注解<code>@WebServlet</code>，指定访问路径</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@WebServlet(name=&quot;helloServlet&quot;, value = &quot;/ser01&quot;)</span> <span class="comment">//name可以不设置</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<blockquote>
+<p>在第二步中，也可以不重写 <code>Service()</code>方法，而是更具体些，重写 <code>doGet()</code>、<code>doPost</code>方法；</p>
+<p>根据浏览器请求方式来进行不同处理</p>
+<p>但实际我们不知道浏览器以何种方式请求，故两个方法都需要去写，因此这种方式用的较少</p>
+</blockquote>
+<h2 id="Servlet工作流程"><a href="#Servlet工作流程" class="headerlink" title="Servlet工作流程"></a>Servlet工作流程</h2><p>url<code>http://localhost:8083/servlet01/ser01</code>含义：</p>
+<blockquote>
+<ul>
+<li>服务器：<code>http://localhost:8083</code></li>
+<li>项目：<code>/servlet01</code></li>
+<li>资源：<code>/ser01</code></li>
+</ul>
+</blockquote>
 ]]></content>
       <categories>
         <category>java</category>
@@ -2910,6 +2892,47 @@
       </tags>
   </entry>
   <entry>
+    <title>2-Servlet生命周期</title>
+    <url>/posts/e7ba7594.html</url>
+    <content><![CDATA[<h1 id="Servlet生命周期"><a href="#Servlet生命周期" class="headerlink" title="Servlet生命周期"></a>Servlet生命周期</h1><ol>
+<li>通过调用 <code>init()</code>方法创建、初始化服务（系统自动调用，只执行一次）</li>
+<li>调用 <code>Service()</code> 方法执行服务</li>
+<li>调用 <code>destroy()</code>销毁服务（关闭服务器时系统自动调用，只执行一次）</li>
+</ol>
+<h4 id="Servlet工作流程"><a href="#Servlet工作流程" class="headerlink" title="Servlet工作流程"></a>Servlet工作流程</h4><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 17-00-01_image-20210502165959933.png" alt="image-20210502165959933"></p>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>javaEE</category>
+      </categories>
+      <tags>
+        <tag>javaEE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>IDEA配置Tomcat</title>
+    <url>/posts/1a57c6b6.html</url>
+    <content><![CDATA[<p>三个步骤</p>
+<ol>
+<li><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-23-11_image-20210502152308870.png" alt="image-20210502152308870"></p>
+</li>
+<li></li>
+</ol>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-28-04_image-20210502152803463.png" alt="image-20210502152803463"></p>
+<ol>
+<li><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-29-56_image-20210502152955436.png" alt="image-20210502152955436"></p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>javaEE</category>
+      </categories>
+      <tags>
+        <tag>javaEE</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>4-请求转发</title>
     <url>/posts/1a9b2152.html</url>
     <content><![CDATA[<h1 id="请求转发"><a href="#请求转发" class="headerlink" title="请求转发"></a>请求转发</h1><ol>
@@ -2942,29 +2965,6 @@
 </li>
 </ol>
 <p>   <img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 21-16-32_image-20210502211627393.png" alt="image-20210502211627393"></p>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>javaEE</category>
-      </categories>
-      <tags>
-        <tag>javaEE</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>IDEA配置Tomcat</title>
-    <url>/posts/1a57c6b6.html</url>
-    <content><![CDATA[<p>三个步骤</p>
-<ol>
-<li><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-23-11_image-20210502152308870.png" alt="image-20210502152308870"></p>
-</li>
-<li></li>
-</ol>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-28-04_image-20210502152803463.png" alt="image-20210502152803463"></p>
-<ol>
-<li><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-05-02 15-29-56_image-20210502152955436.png" alt="image-20210502152955436"></p>
-</li>
-</ol>
 ]]></content>
       <categories>
         <category>java</category>
@@ -4128,63 +4128,6 @@
       </tags>
   </entry>
   <entry>
-    <title>20-反射机制</title>
-    <url>/posts/c9f91dab.html</url>
-    <content><![CDATA[<h1 id="Java反射机制"><a href="#Java反射机制" class="headerlink" title="Java反射机制"></a>Java反射机制</h1><h2 id="获取类对象"><a href="#获取类对象" class="headerlink" title="获取类对象"></a>获取类对象</h2><h3 id="类对象"><a href="#类对象" class="headerlink" title="类对象"></a>类对象</h3><p><strong>类对象</strong>，用于描述这种类，都有什么属性，什么方法的</p>
-<h3 id="获取类对象-1"><a href="#获取类对象-1" class="headerlink" title="获取类对象"></a>获取类对象</h3><ul>
-<li><p>Class.forName();</p>
-</li>
-<li><p>Hero.class</p>
-<p>（注：Hero是自定义类的类名）</p>
-</li>
-<li><p>new Hero().getClass()</p>
-</li>
-</ul>
-<p>在一个JVM中，一种类，只会有一个类对象存在。所以以上三种方式取出来的类对象，都是一样的。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String className = <span class="string">&quot;charactor.Hero&quot;</span>;</span><br><span class="line"></span><br><span class="line">Class pClass1 = Class.forName(className);</span><br><span class="line">Class pClass2 = Hero.class;</span><br><span class="line">Class pClass3 = <span class="keyword">new</span> Hero().getClass();</span><br><span class="line"></span><br><span class="line">System.out.println(pClass1 == pClass2);<span class="comment">//true</span></span><br><span class="line">System.out.println(pClass1 == pClass3);<span class="comment">//true</span></span><br></pre></td></tr></table></figure>
-<h3 id="获取类对象，会导致类属性的初始化"><a href="#获取类对象，会导致类属性的初始化" class="headerlink" title="获取类对象，会导致类属性的初始化"></a>获取类对象，会导致类属性的初始化</h3><p>无论什么途径获取类对象，都会导致静态属性被初始化，而且只会执行一次。</p>
-<p>（除了直接使用 Class c = Hero.class 这种方式，这种方式不会导致静态属性被初始化）</p>
-<h2 id="创建类对象"><a href="#创建类对象" class="headerlink" title="创建类对象"></a>创建类对象</h2><p>使用反射机制创建类对象，3个步骤</p>
-<ol>
-<li>获取类对象</li>
-<li>获取构造器</li>
-<li>通过构造器实例化</li>
-</ol>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//使用反射的方式创建对象</span></span><br><span class="line">String className = <span class="string">&quot;charactor.Hero&quot;</span>;</span><br><span class="line"><span class="comment">//类对象</span></span><br><span class="line">Class pClass = Class.forName(className);</span><br><span class="line"></span><br><span class="line"><span class="comment">//构造器</span></span><br><span class="line">Constructor c = pClass.getConstructor();</span><br><span class="line"></span><br><span class="line"><span class="comment">//通过构造器实例化</span></span><br><span class="line">Hero h2 = (Hero) c.newInstance();</span><br></pre></td></tr></table></figure>
-<h2 id="属性访问"><a href="#属性访问" class="headerlink" title="属性访问"></a>属性访问</h2><h3 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h3><p>使用反射机制获取并修改类对象属性（也叫字段<code>Field</code>），4个步骤</p>
-<ol>
-<li>导包</li>
-<li>获取类对象</li>
-<li>获取属性（<u><strong>字段</strong></u>）—— <code>getDeclaredField</code></li>
-<li>修改指定对象的属性值—— <code>set</code></li>
-</ol>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"></span><br><span class="line">Hero h = <span class="keyword">new</span> Hero();</span><br><span class="line"></span><br><span class="line">Class c = h.getClass();</span><br><span class="line"></span><br><span class="line">Field f = c.getDeclaredField(<span class="string">&quot;name&quot;</span>);</span><br><span class="line"></span><br><span class="line">f1.set(h, <span class="string">&quot;teemo&quot;</span>);<span class="comment">//修改这个字段的值</span></span><br></pre></td></tr></table></figure>
-<h3 id="区分-getField-与-getDeclaredField"><a href="#区分-getField-与-getDeclaredField" class="headerlink" title="区分 getField 与 getDeclaredField"></a>区分 getField 与 getDeclaredField</h3><ul>
-<li><p>这两个方法都是用于获取字段</p>
-</li>
-<li><p><code>getField</code> <strong>只能获取</strong>public的，包括<strong>从父类继承</strong>来的字段。</p>
-</li>
-<li><p><code>getDeclaredField</code> 可以获取本类所有的字段，<strong>包括private</strong>的，但是<strong>不能获取继承</strong>来的字段。</p>
-<p><strong>注</strong>： 这里只能获取到private的<strong>字段</strong>，但并不能访问该private字段的<strong>值</strong>,除非加上<strong>setAccessible(true)</strong></p>
-</li>
-</ul>
-<h2 id="方法获取"><a href="#方法获取" class="headerlink" title="方法获取"></a>方法获取</h2><ol>
-<li>导包</li>
-<li>获取类对象</li>
-<li>获取到方法—— <code>getMethod</code></li>
-<li>调用指定对象的方法—— <code>invoke</code></li>
-</ol>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line">Hero h = <span class="keyword">new</span> Hero();</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 获取这个名字叫做setName，参数类型是String的方法</span></span><br><span class="line">Method m = h.getClass().getMethod(<span class="string">&quot;setName&quot;</span>, String.class);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对h对象，调用这个方法</span></span><br><span class="line">m.invoke(h, <span class="string">&quot;garent&quot;</span>);</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>javaSE</category>
-      </categories>
-      <tags>
-        <tag>javaSE</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>2.2-访问修饰符</title>
     <url>/posts/51a2ab89.html</url>
     <content><![CDATA[<h1 id="访问修饰符"><a href="#访问修饰符" class="headerlink" title="访问修饰符"></a>访问修饰符</h1><h2 id="区分："><a href="#区分：" class="headerlink" title="区分："></a>区分：</h2><p>有 <code>public</code>、<code>private</code>、<code>protected</code></p>
@@ -4271,6 +4214,63 @@
 </ul>
 <p>例如：</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Target(&#123;ElementType.METHOD, ElementType.TYPE&#125;)</span></span><br><span class="line"><span class="meta">@Retention(value = RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="keyword">public</span><span class="meta">@interface</span> User&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//下面是注解的参数，定义格式：“类型 参数名();” , 默认值看自己要不要写</span></span><br><span class="line">    <span class="function">String <span class="title">name</span><span class="params">()</span> <span class="keyword">default</span> &quot;&quot;</span>;      <span class="comment">//默认值为空</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">id</span><span class="params">()</span> <span class="keyword">default</span> -1</span>;     <span class="comment">//默认值-1，代表不存在</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>javaSE</category>
+      </categories>
+      <tags>
+        <tag>javaSE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>20-反射机制</title>
+    <url>/posts/c9f91dab.html</url>
+    <content><![CDATA[<h1 id="Java反射机制"><a href="#Java反射机制" class="headerlink" title="Java反射机制"></a>Java反射机制</h1><h2 id="获取类对象"><a href="#获取类对象" class="headerlink" title="获取类对象"></a>获取类对象</h2><h3 id="类对象"><a href="#类对象" class="headerlink" title="类对象"></a>类对象</h3><p><strong>类对象</strong>，用于描述这种类，都有什么属性，什么方法的</p>
+<h3 id="获取类对象-1"><a href="#获取类对象-1" class="headerlink" title="获取类对象"></a>获取类对象</h3><ul>
+<li><p>Class.forName();</p>
+</li>
+<li><p>Hero.class</p>
+<p>（注：Hero是自定义类的类名）</p>
+</li>
+<li><p>new Hero().getClass()</p>
+</li>
+</ul>
+<p>在一个JVM中，一种类，只会有一个类对象存在。所以以上三种方式取出来的类对象，都是一样的。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String className = <span class="string">&quot;charactor.Hero&quot;</span>;</span><br><span class="line"></span><br><span class="line">Class pClass1 = Class.forName(className);</span><br><span class="line">Class pClass2 = Hero.class;</span><br><span class="line">Class pClass3 = <span class="keyword">new</span> Hero().getClass();</span><br><span class="line"></span><br><span class="line">System.out.println(pClass1 == pClass2);<span class="comment">//true</span></span><br><span class="line">System.out.println(pClass1 == pClass3);<span class="comment">//true</span></span><br></pre></td></tr></table></figure>
+<h3 id="获取类对象，会导致类属性的初始化"><a href="#获取类对象，会导致类属性的初始化" class="headerlink" title="获取类对象，会导致类属性的初始化"></a>获取类对象，会导致类属性的初始化</h3><p>无论什么途径获取类对象，都会导致静态属性被初始化，而且只会执行一次。</p>
+<p>（除了直接使用 Class c = Hero.class 这种方式，这种方式不会导致静态属性被初始化）</p>
+<h2 id="创建类对象"><a href="#创建类对象" class="headerlink" title="创建类对象"></a>创建类对象</h2><p>使用反射机制创建类对象，3个步骤</p>
+<ol>
+<li>获取类对象</li>
+<li>获取构造器</li>
+<li>通过构造器实例化</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//使用反射的方式创建对象</span></span><br><span class="line">String className = <span class="string">&quot;charactor.Hero&quot;</span>;</span><br><span class="line"><span class="comment">//类对象</span></span><br><span class="line">Class pClass = Class.forName(className);</span><br><span class="line"></span><br><span class="line"><span class="comment">//构造器</span></span><br><span class="line">Constructor c = pClass.getConstructor();</span><br><span class="line"></span><br><span class="line"><span class="comment">//通过构造器实例化</span></span><br><span class="line">Hero h2 = (Hero) c.newInstance();</span><br></pre></td></tr></table></figure>
+<h2 id="属性访问"><a href="#属性访问" class="headerlink" title="属性访问"></a>属性访问</h2><h3 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h3><p>使用反射机制获取并修改类对象属性（也叫字段<code>Field</code>），4个步骤</p>
+<ol>
+<li>导包</li>
+<li>获取类对象</li>
+<li>获取属性（<u><strong>字段</strong></u>）—— <code>getDeclaredField</code></li>
+<li>修改指定对象的属性值—— <code>set</code></li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"></span><br><span class="line">Hero h = <span class="keyword">new</span> Hero();</span><br><span class="line"></span><br><span class="line">Class c = h.getClass();</span><br><span class="line"></span><br><span class="line">Field f = c.getDeclaredField(<span class="string">&quot;name&quot;</span>);</span><br><span class="line"></span><br><span class="line">f1.set(h, <span class="string">&quot;teemo&quot;</span>);<span class="comment">//修改这个字段的值</span></span><br></pre></td></tr></table></figure>
+<h3 id="区分-getField-与-getDeclaredField"><a href="#区分-getField-与-getDeclaredField" class="headerlink" title="区分 getField 与 getDeclaredField"></a>区分 getField 与 getDeclaredField</h3><ul>
+<li><p>这两个方法都是用于获取字段</p>
+</li>
+<li><p><code>getField</code> <strong>只能获取</strong>public的，包括<strong>从父类继承</strong>来的字段。</p>
+</li>
+<li><p><code>getDeclaredField</code> 可以获取本类所有的字段，<strong>包括private</strong>的，但是<strong>不能获取继承</strong>来的字段。</p>
+<p><strong>注</strong>： 这里只能获取到private的<strong>字段</strong>，但并不能访问该private字段的<strong>值</strong>,除非加上<strong>setAccessible(true)</strong></p>
+</li>
+</ul>
+<h2 id="方法获取"><a href="#方法获取" class="headerlink" title="方法获取"></a>方法获取</h2><ol>
+<li>导包</li>
+<li>获取类对象</li>
+<li>获取到方法—— <code>getMethod</code></li>
+<li>调用指定对象的方法—— <code>invoke</code></li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line">Hero h = <span class="keyword">new</span> Hero();</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 获取这个名字叫做setName，参数类型是String的方法</span></span><br><span class="line">Method m = h.getClass().getMethod(<span class="string">&quot;setName&quot;</span>, String.class);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对h对象，调用这个方法</span></span><br><span class="line">m.invoke(h, <span class="string">&quot;garent&quot;</span>);</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>java</category>
@@ -4981,6 +4981,45 @@
       </tags>
   </entry>
   <entry>
+    <title>13-动态代理</title>
+    <url>/posts/26c04051.html</url>
+    <content><![CDATA[<h1 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h1><p><a href="https://codechina.csdn.net/m0_46079750/spring1-proxy/-/tree/master3">项目地址</a></p>
+<p>底层用到<code>反射</code></p>
+<ul>
+<li>动态代理与静态代理角色一样</li>
+<li>动态代理的代理类是动态生成，并非我们直接写好</li>
+<li>分类：基于接口和基于类的<ul>
+<li>基于接口——JDK动态代理</li>
+<li>基于类——cglib</li>
+<li>Java字节码实现——javasist</li>
+</ul>
+</li>
+</ul>
+<p>需要了解2个类：</p>
+<ul>
+<li><p>Proxy：调用<code>newProxyInstance</code> 方法用于生成代理角色</p>
+</li>
+<li><p>InvocationHandler：重写 <code>invoke</code> 方法，指明代理角色要处理的功能，详细<a href="https://codechina.csdn.net/m0_46079750/spring1-proxy/-/tree/master3">查看项目</a></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//这是一个用于创建代理角色的类，不是代理类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProxyInvocationHandler</span> <span class="keyword">implements</span> <span class="title">InvocationHandler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//指向被代理的接口（即真实角色）</span></span><br><span class="line">    <span class="keyword">private</span> Rent r;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setRent</span><span class="params">(Rent r)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.r = r;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//生成代理角色</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">getProxy</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Proxy.newProxyInstance(<span class="keyword">this</span>.getClass().getClassLoader(), r.getClass().getInterfaces(), <span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="comment">//处理代理实例（即被代理者），并返回结果</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        seeHouse();</span><br><span class="line">        fare();</span><br><span class="line">        Object result = method.invoke(r, args);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>动态代理好处：</p>
+<ul>
+<li>可以使真实角色的操作更加纯粹</li>
+<li>公共交给代理角色，实现业务分工</li>
+<li>公共业务扩展时，方便集中管理</li>
+<li>一个动态代理类可以代理多个类（只要实现的是同一个接口即可）</li>
+</ul>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>spring</category>
+      </categories>
+      <tags>
+        <tag>spring</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>12-静态代理</title>
     <url>/posts/be39d4e8.html</url>
     <content><![CDATA[<h1 id="静态代理"><a href="#静态代理" class="headerlink" title="静态代理"></a>静态代理</h1><h2 id="角色分析"><a href="#角色分析" class="headerlink" title="角色分析"></a>角色分析</h2><p><a href="https://codechina.csdn.net/m0_46079750/spring1-proxy/-/tree/master">项目地址</a></p>
@@ -5105,45 +5144,6 @@
       </tags>
   </entry>
   <entry>
-    <title>13-动态代理</title>
-    <url>/posts/26c04051.html</url>
-    <content><![CDATA[<h1 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h1><p><a href="https://codechina.csdn.net/m0_46079750/spring1-proxy/-/tree/master3">项目地址</a></p>
-<p>底层用到<code>反射</code></p>
-<ul>
-<li>动态代理与静态代理角色一样</li>
-<li>动态代理的代理类是动态生成，并非我们直接写好</li>
-<li>分类：基于接口和基于类的<ul>
-<li>基于接口——JDK动态代理</li>
-<li>基于类——cglib</li>
-<li>Java字节码实现——javasist</li>
-</ul>
-</li>
-</ul>
-<p>需要了解2个类：</p>
-<ul>
-<li><p>Proxy：调用<code>newProxyInstance</code> 方法用于生成代理角色</p>
-</li>
-<li><p>InvocationHandler：重写 <code>invoke</code> 方法，指明代理角色要处理的功能，详细<a href="https://codechina.csdn.net/m0_46079750/spring1-proxy/-/tree/master3">查看项目</a></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//这是一个用于创建代理角色的类，不是代理类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProxyInvocationHandler</span> <span class="keyword">implements</span> <span class="title">InvocationHandler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//指向被代理的接口（即真实角色）</span></span><br><span class="line">    <span class="keyword">private</span> Rent r;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setRent</span><span class="params">(Rent r)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.r = r;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//生成代理角色</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">getProxy</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Proxy.newProxyInstance(<span class="keyword">this</span>.getClass().getClassLoader(), r.getClass().getInterfaces(), <span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="comment">//处理代理实例（即被代理者），并返回结果</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        seeHouse();</span><br><span class="line">        fare();</span><br><span class="line">        Object result = method.invoke(r, args);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>动态代理好处：</p>
-<ul>
-<li>可以使真实角色的操作更加纯粹</li>
-<li>公共交给代理角色，实现业务分工</li>
-<li>公共业务扩展时，方便集中管理</li>
-<li>一个动态代理类可以代理多个类（只要实现的是同一个接口即可）</li>
-</ul>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>spring</category>
-      </categories>
-      <tags>
-        <tag>spring</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>2-SpringIOC</title>
     <url>/posts/752d4bdb.html</url>
     <content><![CDATA[<h1 id="SpringIOC"><a href="#SpringIOC" class="headerlink" title="SpringIOC"></a>SpringIOC</h1><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-30 21-11-35_Spring+IOC.svg" alt="Spring+IOC"></p>
@@ -5156,6 +5156,49 @@
 </li>
 </ol>
 <p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-28 21-17-37_ioc.svg" alt="ioc"></p>
+]]></content>
+      <categories>
+        <category>java</category>
+        <category>spring</category>
+      </categories>
+      <tags>
+        <tag>spring</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>4-HelloSpring程序</title>
+    <url>/posts/59e405f3.html</url>
+    <content><![CDATA[<h1 id="HelloSpring项目"><a href="#HelloSpring项目" class="headerlink" title="HelloSpring项目"></a>HelloSpring项目</h1><h2 id="使用maven创建"><a href="#使用maven创建" class="headerlink" title="使用maven创建"></a>使用maven创建</h2><p>创建后目录结构如下：</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-29 12-59-47_image-20210729125943211.png" alt="image-20210729125943211"></p>
+<p>pom.xml：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.ajream<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>hello_spring<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-context<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>5.2.9.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">maven.compiler.source</span>&gt;</span>8<span class="tag">&lt;/<span class="name">maven.compiler.source</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">maven.compiler.target</span>&gt;</span>8<span class="tag">&lt;/<span class="name">maven.compiler.target</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><ol>
+<li>在java文件夹下创建<code>com.xxx.pojo.Hello</code>类</li>
+</ol>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-29 13-06-43_image-20210729130640647.png" alt="image-20210729130640647"></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.ajream.pojo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hello</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String str1;       <span class="comment">//先不管属性名为什么是str1</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setStr2</span><span class="params">(String s)</span></span>&#123;        <span class="comment">//先不管为什么函数名设置为setStr2</span></span><br><span class="line">        <span class="keyword">this</span>.str1 = s;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">printStr</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Hello:-&gt;&quot;</span> + str1);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ol>
+<li>在resources下创建<code>beans.xml</code>配置文件</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="string"><span class="tag">        https://www.springframework.org/schema/beans/spring-beans.xsd&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;helloworld&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.Hello&quot;</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--        通过name来识别出调用了哪个函数， value为传入参数--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;str2&quot;</span> <span class="attr">value</span>=<span class="string">&quot;spring&quot;</span> /&gt;</span>   <span class="comment">&lt;!--这行代码表示调用函数 setStr2, 传入参数为字符串&quot;spring&quot; --&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>该文件内容模板可以从spring<a href="https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#spring-core">官网</a>中找到</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-29 13-13-19_image-20210729131316578.png" alt="image-20210729131316578"></p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="string"><span class="tag">        https://www.springframework.org/schema/beans/spring-beans.xsd&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;...&quot;</span> <span class="attr">class</span>=<span class="string">&quot;...&quot;</span>&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- collaborators and configuration for this bean go here --&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;...&quot;</span> <span class="attr">class</span>=<span class="string">&quot;...&quot;</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- collaborators and configuration for this bean go here --&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- more bean definitions go here --&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<ol>
+<li>在test/java下创建MyTest类来进行测试输出：</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> com.ajream.pojo.Hello;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.ApplicationContext;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.support.ClassPathXmlApplicationContext;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        ApplicationContext context = <span class="keyword">new</span> ClassPathXmlApplicationContext(<span class="string">&quot;beans.xml&quot;</span>);  <span class="comment">//加载xml配置文件</span></span><br><span class="line">        Hello h = (Hello) context.getBean(<span class="string">&quot;helloworld&quot;</span>);</span><br><span class="line">        h.printStr();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-29 13-17-08_image-20210729131704285.png" alt="image-20210729131704285"></p>
+<h2 id="三者之间的关系"><a href="#三者之间的关系" class="headerlink" title="三者之间的关系"></a>三者之间的关系</h2><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-29 13-46-29_image-20210729134624753.png" alt="image-20210729134624753"></p>
+<p>执行流程：</p>
+<ol>
+<li>获取 <code>beans.xml</code> 配置文件信息</li>
+<li>根据beans.xml中的id获取bean，创建对象h，并调用了setStr2方法</li>
+<li>调用函数printStr</li>
+</ol>
 ]]></content>
       <categories>
         <category>java</category>
@@ -5229,39 +5272,30 @@
       </tags>
   </entry>
   <entry>
-    <title>4-HelloSpring程序</title>
-    <url>/posts/59e405f3.html</url>
-    <content><![CDATA[<h1 id="HelloSpring项目"><a href="#HelloSpring项目" class="headerlink" title="HelloSpring项目"></a>HelloSpring项目</h1><h2 id="使用maven创建"><a href="#使用maven创建" class="headerlink" title="使用maven创建"></a>使用maven创建</h2><p>创建后目录结构如下：</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-29 12-59-47_image-20210729125943211.png" alt="image-20210729125943211"></p>
-<p>pom.xml：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.ajream<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>hello_spring<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-context<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>5.2.9.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">maven.compiler.source</span>&gt;</span>8<span class="tag">&lt;/<span class="name">maven.compiler.source</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">maven.compiler.target</span>&gt;</span>8<span class="tag">&lt;/<span class="name">maven.compiler.target</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><ol>
-<li>在java文件夹下创建<code>com.xxx.pojo.Hello</code>类</li>
-</ol>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-29 13-06-43_image-20210729130640647.png" alt="image-20210729130640647"></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.ajream.pojo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hello</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String str1;       <span class="comment">//先不管属性名为什么是str1</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setStr2</span><span class="params">(String s)</span></span>&#123;        <span class="comment">//先不管为什么函数名设置为setStr2</span></span><br><span class="line">        <span class="keyword">this</span>.str1 = s;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">printStr</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Hello:-&gt;&quot;</span> + str1);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+    <title>5-ioc创建对象方式</title>
+    <url>/posts/d8642fb9.html</url>
+    <content><![CDATA[<h1 id="ioc创建对象方式"><a href="#ioc创建对象方式" class="headerlink" title="ioc创建对象方式"></a>ioc创建对象方式</h1><h2 id="构造函数注入"><a href="#构造函数注入" class="headerlink" title="构造函数注入"></a>构造函数注入</h2><p>User.java</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.ajream.pojo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">(String name)</span></span>&#123;   <span class="comment">//构造函数</span></span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;name: &quot;</span> + name);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <ol>
-<li>在resources下创建<code>beans.xml</code>配置文件</li>
+<li><p>下标指定参数</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">index</span>=<span class="string">&quot;0&quot;</span> <span class="attr">value</span>=<span class="string">&quot;张三&quot;</span> /&gt;</span>       <span class="comment">&lt;!-- 0表示第一个参数--&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
 </ol>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="string"><span class="tag">        https://www.springframework.org/schema/beans/spring-beans.xsd&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;helloworld&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.Hello&quot;</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--        通过name来识别出调用了哪个函数， value为传入参数--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;str2&quot;</span> <span class="attr">value</span>=<span class="string">&quot;spring&quot;</span> /&gt;</span>   <span class="comment">&lt;!--这行代码表示调用函数 setStr2, 传入参数为字符串&quot;spring&quot; --&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>该文件内容模板可以从spring<a href="https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#spring-core">官网</a>中找到</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-29 13-13-19_image-20210729131316578.png" alt="image-20210729131316578"></p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="string"><span class="tag">        https://www.springframework.org/schema/beans/spring-beans.xsd&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;...&quot;</span> <span class="attr">class</span>=<span class="string">&quot;...&quot;</span>&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- collaborators and configuration for this bean go here --&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;...&quot;</span> <span class="attr">class</span>=<span class="string">&quot;...&quot;</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- collaborators and configuration for this bean go here --&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- more bean definitions go here --&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
-</blockquote>
 <ol>
-<li>在test/java下创建MyTest类来进行测试输出：</li>
+<li><p>变量名指定参数</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;李四&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
 </ol>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> com.ajream.pojo.Hello;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.ApplicationContext;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.support.ClassPathXmlApplicationContext;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        ApplicationContext context = <span class="keyword">new</span> ClassPathXmlApplicationContext(<span class="string">&quot;beans.xml&quot;</span>);  <span class="comment">//加载xml配置文件</span></span><br><span class="line">        Hello h = (Hello) context.getBean(<span class="string">&quot;helloworld&quot;</span>);</span><br><span class="line">        h.printStr();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-29 13-17-08_image-20210729131704285.png" alt="image-20210729131704285"></p>
-<h2 id="三者之间的关系"><a href="#三者之间的关系" class="headerlink" title="三者之间的关系"></a>三者之间的关系</h2><p><img src="https://gitee.com/ajream/images/raw/master/img/2021-07-29 13-46-29_image-20210729134624753.png" alt="image-20210729134624753"></p>
-<p>执行流程：</p>
 <ol>
-<li>获取 <code>beans.xml</code> 配置文件信息</li>
-<li>根据beans.xml中的id获取bean，创建对象h，并调用了setStr2方法</li>
-<li>调用函数printStr</li>
+<li><p>类型指定参数（不建议，有可能多个参数的类型相同）</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">type</span>=<span class="string">&quot;String&quot;</span> <span class="attr">value</span>=<span class="string">&quot;王五&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>构造函数没有参数的话</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
 </ol>
+<h2 id="set注入"><a href="#set注入" class="headerlink" title="set注入"></a>set注入</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.ajream.pojo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span></span>&#123;   <span class="comment">// set注入</span></span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;name: &quot;</span> + name);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;李四&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>java</category>
@@ -5289,40 +5323,6 @@
 <blockquote>
 <p>适用于团队合作时使用</p>
 </blockquote>
-]]></content>
-      <categories>
-        <category>java</category>
-        <category>spring</category>
-      </categories>
-      <tags>
-        <tag>spring</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>5-ioc创建对象方式</title>
-    <url>/posts/d8642fb9.html</url>
-    <content><![CDATA[<h1 id="ioc创建对象方式"><a href="#ioc创建对象方式" class="headerlink" title="ioc创建对象方式"></a>ioc创建对象方式</h1><h2 id="构造函数注入"><a href="#构造函数注入" class="headerlink" title="构造函数注入"></a>构造函数注入</h2><p>User.java</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.ajream.pojo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">(String name)</span></span>&#123;   <span class="comment">//构造函数</span></span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;name: &quot;</span> + name);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<ol>
-<li><p>下标指定参数</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">index</span>=<span class="string">&quot;0&quot;</span> <span class="attr">value</span>=<span class="string">&quot;张三&quot;</span> /&gt;</span>       <span class="comment">&lt;!-- 0表示第一个参数--&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<ol>
-<li><p>变量名指定参数</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;李四&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<ol>
-<li><p>类型指定参数（不建议，有可能多个参数的类型相同）</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">type</span>=<span class="string">&quot;String&quot;</span> <span class="attr">value</span>=<span class="string">&quot;王五&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>构造函数没有参数的话</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h2 id="set注入"><a href="#set注入" class="headerlink" title="set注入"></a>set注入</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.ajream.pojo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span></span>&#123;   <span class="comment">// set注入</span></span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;name: &quot;</span> + name);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;user&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.ajream.pojo.User&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;李四&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>java</category>
