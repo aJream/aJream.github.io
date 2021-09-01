@@ -34,6 +34,7 @@ audio {
 
 ::-webkit-scrollbar-track {
     background-color: rgba(73, 177, 245, .2);
+    /* background-color: rgb(245, 73, 236,); */
     border-radius: 2em
 }
 
@@ -90,7 +91,9 @@ audio {
 }
 
 @media screen and (max-width:768px) {
-    width: 100%
+    html{
+        width: 100%
+    }
 }
 
 #recent-posts>.recent-post-item,
@@ -1916,10 +1919,17 @@ div.snote.error:before {
     color: var(--hlnumber-color)
 }
 
-#article-container pre[class*=language-]::-webkit-scrollbar-thumb {
+#article-container pre[class*=language-] ::-webkit-scrollbar-thumb {
     background-color: #49b1f5 !important;
     background-image: -webkit-linear-gradient(45deg, hsla(0, 0%, 100%, .4) 25%, transparent 0, transparent 50%, hsla(0, 0%, 100%, .4) 0, hsla(0, 0%, 100%, .4) 75%, transparent 0, transparent) !important;
-    border-radius: 2em !important
+    border-radius: 2em !important;
+}
+
+/* 代码框下方的scrollbar */
+figure.highlight table::-webkit-scrollbar-thumb {
+    background-color: #49b1f5 !important;
+    background-image: -webkit-linear-gradient(45deg, hsla(0, 0%, 100%, .4) 25%, transparent 0, transparent 50%, hsla(0, 0%, 100%, .4) 0, hsla(0, 0%, 100%, .4) 75%, transparent 0, transparent) !important;
+    border-radius: 2em !important;
 }
 
 code[class*=language-],
@@ -2126,5 +2136,4 @@ pre[class*=language-] {
 
 .fa-heart {
     color: red
-}
 }
