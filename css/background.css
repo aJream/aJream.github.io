@@ -81,7 +81,7 @@
 
 
  /*侧边栏时钟*/
-#hexo_electric_clock {
+[data-theme="light"] #hexo_electric_clock {
     background: #deeef4;
     border-radius: 6px;
 }
