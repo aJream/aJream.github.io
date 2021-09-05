@@ -85,3 +85,14 @@
     background: #deeef4;
     border-radius: 6px;
 }
+
+[data-theme="dark"] .magnet_link_context {
+    background: #201e1e;
+    border-radius: 6px;
+    color: white;
+    
+}
+
+[data-theme="dark"] .magnet_link_context:hover {
+    background: #3b4042;
+}
