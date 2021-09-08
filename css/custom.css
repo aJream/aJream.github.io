@@ -7,35 +7,36 @@
 
 @font-face {
   font-family: 'HanyiYahei';
-  src: url('/fonts/HanYiYaHei.ttf');
+  src: url('https://cdn.jsdelivr.net/gh/ajream/ajream.github.io/fonts/HanYiYaHei.ttf');
   font-display: wrap;
 }
 
 @font-face {
   font-family: 'CircleBlack';
-  src: url('/fonts/CircleBlack.ttf');
+  src: url('https://cdn.jsdelivr.net/gh/ajream/ajream.github.io/fonts/CircleBlack.ttf');
   font-display: wrap;
 }
 @font-face {
   font-family: 'ajLangMan';
-  src: url('/fonts/ajLangMan.ttf');
+  src: url('https://cdn.jsdelivr.net/gh/ajream/ajream.github.io/fonts/ajLangMan.ttf');
   font-display: wrap;
 }
 @font-face {
   font-family: 'SSblack';
-  src: url('/fonts/shishangblack.ttf');
+  src: url('https://cdn.jsdelivr.net/gh/ajream/ajream.github.io/fonts/shishangblack.ttf');
   font-display: wrap;
 }
 
 @font-face {
   font-family: 'Love';
-  src: url('/fonts/loving.ttf');
+  src: url('https://cdn.jsdelivr.net/gh/ajream/ajream.github.io/fonts/loving.ttf');
   font-display: wrap;
 }
 
 @font-face {
   font-family: 'MyDream';
-  src: url('/fonts/ZhuZiAWan.woff2');
+  src: url('https://cdn.jsdelivr.net/gh/ajream/ajream.github.io/fonts/ZhuZiAWan.woff2');
+  /* https://cdn.jsdelivr.net/gh/ajream/ajream.github.io/css/index.css */
   font-display: wrap;
 }
 
