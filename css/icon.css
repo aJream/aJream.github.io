@@ -2,10 +2,11 @@
   font-family: "iconfont"; /* Project id 2746409 */
   /* Color fonts */
   src: 
-       url('//at.alicdn.com/t/font_2746409_ybofjbfemsf.woff2?t=1630326624344') format('woff2'),
-       url('//at.alicdn.com/t/font_2746409_ybofjbfemsf.woff?t=1630326624344') format('woff'),
-       url('//at.alicdn.com/t/font_2746409_ybofjbfemsf.ttf?t=1630326624344') format('truetype');
+       url('//at.alicdn.com/t/font_2746409_gyfrre4bz9c.woff2?t=1631416593147') format('woff2'),
+       url('//at.alicdn.com/t/font_2746409_gyfrre4bz9c.woff?t=1631416593147') format('woff'),
+       url('//at.alicdn.com/t/font_2746409_gyfrre4bz9c.ttf?t=1631416593147') format('truetype');
 }
+
 
 .iconfont {
   font-family: "iconfont" !important;
@@ -13,6 +14,11 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+
+.icon-yinyue:before {
+  content: "\e604";
 }
 
 .icon-gitee:before {

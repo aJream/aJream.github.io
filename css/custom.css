@@ -262,3 +262,10 @@ h6::before {
   -webkit-animation: ccc 3.2s linear infinite;
   animation: ccc 3.2s linear infinite;
 }
+
+
+/* 音乐图标“其它”颜色 */
+/* .fa-music:before {
+    content: "\f001";
+    color: rgb(127, 27, 221);
+} */
