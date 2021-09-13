@@ -1,21 +1,8 @@
-@font-face{
-  font-family:'Candyhome' ;  /* 字体名自定义即可 */
-  src:url('https://cdn.jsdelivr.net/gh/ajream/ajream.github.io/fonts/Candy.ttf');
-  /* 字体文件路径 */
-  font-display : swap;
-}
 
-@font-face {
-  font-family: 'HanyiYahei';
-  src: url('https://cdn.jsdelivr.net/gh/ajream/ajream.github.io/fonts/HanYiYaHei.ttf');
-  font-display: wrap;
-}
 
-@font-face {
-  font-family: 'CircleBlack';
-  src: url('https://cdn.jsdelivr.net/gh/ajream/ajream.github.io/fonts/CircleBlack.ttf');
-  font-display: wrap;
-}
+
+
+
 @font-face {
   font-family: 'ajLangMan';
   src: url('https://cdn.jsdelivr.net/gh/ajream/ajream.github.io/fonts/ajLangMan.ttf');
