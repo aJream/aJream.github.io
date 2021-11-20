@@ -1,1 +1,272 @@
-@font-face{font-family:iconfont;src:url(//at.alicdn.com/t/font_2746409_dauq61cffi.woff2?t=1631435698323) format('woff2'),url(//at.alicdn.com/t/font_2746409_dauq61cffi.woff?t=1631435698323) format('woff'),url(//at.alicdn.com/t/font_2746409_dauq61cffi.ttf?t=1631435698323) format('truetype')}.iconfont{font-family:iconfont!important;font-size:20px;font-style:normal;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.icon-kuwo:before{content:"\e60d"}.icon-yinyue:before{content:"\e604"}.icon-gitee:before{content:"\eb7d"}.icon-niu:before{content:"\e633"}.icon-youjian:before{content:"\e670";font-size:23px}.icon-youjian1:before{content:"\e64e"}.icon-git-copy:before{content:"\e602"}.icon-zhihu:before{content:"\eac3";font-size:22px}.icon-youxiang:before{content:"\e603"}.icon-wangyiyunyinle:before{content:"\e601"}.icon-kugoulingsheng:before{content:"\eaf9"}.icon-qqyinle:before{content:"\e9b7"}.icon-wenzhang:before{content:"\e712";font-size:16px}.icon-bilibili1:before{content:"\e68d"}.icon-Bilibili:before{content:"\e627"}
+/* @font-face {
+  font-family: "iconfont"; 
+  src: 
+       url('//at.alicdn.com/t/font_2746409_dauq61cffi.woff2?t=1631435698323') format('woff2'),
+       url('//at.alicdn.com/t/font_2746409_dauq61cffi.woff?t=1631435698323') format('woff'),
+       url('//at.alicdn.com/t/font_2746409_dauq61cffi.ttf?t=1631435698323') format('truetype');
+}
+
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 20px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-kuwo:before {
+  content: "\e60d";
+}
+
+.icon-yinyue:before {
+  content: "\e604";
+}
+
+.icon-gitee:before {
+  content: "\eb7d";
+}
+
+.icon-niu:before {
+  content: "\e633";
+}
+
+.icon-youjian:before {
+  content: "\e670";
+  font-size: 23px;
+}
+
+.icon-youjian1:before {
+  content: "\e64e";
+}
+
+.icon-git-copy:before {
+  content: "\e602";
+}
+
+.icon-zhihu:before {
+  content: "\eac3";
+  font-size: 22px;
+}
+
+.icon-youxiang:before {
+  content: "\e603";
+}
+
+.icon-wangyiyunyinle:before {
+  content: "\e601";
+}
+
+.icon-kugoulingsheng:before {
+  content: "\eaf9";
+}
+
+.icon-qqyinle:before {
+  content: "\e9b7";
+}
+
+.icon-wenzhang:before {
+  content: "\e712";
+  font-size: 16px;
+}
+
+.icon-bilibili1:before {
+  content: "\e68d";
+}
+
+.icon-Bilibili:before {
+  content: "\e627";
+} */
+
+@font-face {
+  font-family: "iconfont";
+  /* Project id 2746409 */
+  src: url('//at.alicdn.com/t/font_2746409_m7zl6nvqhnh.woff2?t=1633572622492') format('woff2'),
+    url('//at.alicdn.com/t/font_2746409_m7zl6nvqhnh.woff?t=1633572622492') format('woff');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 20px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+
+.icon-kuwo:before {
+  content: "\e678";
+  color: #ff7a08;
+}
+
+.icon-yinyue:before {
+  content: "\e604";
+  color: rgb(226, 43, 217);
+}
+
+.icon-gitee:before {
+  content: "\e605";
+  color: rgb(40, 109, 236);
+  font-size: 18px;
+}
+
+.icon-niu:before {
+  content: "\e633";
+  color: rgb(40, 118, 236);
+}
+
+.icon-mybatis:before {
+  content: "\e60a";
+  color: rgb(224, 108, 79);
+}
+
+.icon-youjian:before {
+  content: "\e670";
+  color: rgb(40, 148, 236);
+
+}
+
+.icon-youjian1:before {
+  content: "\e64e";
+  color: rgb(40, 148, 236);
+}
+
+.icon-git-copy:before {
+  content: "\e602";
+  color: rgb(10, 65, 97);
+}
+
+.icon-zhihu:before {
+  content: "\eac3";
+  color: rgb(40, 118, 236);
+}
+
+.icon-youxiang:before {
+  content: "\e603";
+  color: rgb(40, 118, 236);
+  font-size: 18px;
+}
+
+.icon-wangyiyunyinle:before {
+  content: "\e601";
+  color: rgb(236, 79, 40);
+}
+
+.icon-kugoulingsheng:before {
+  content: "\eaf9";
+  color: rgb(40, 108, 236);
+}
+
+.icon-qqyinle:before {
+  content: "\e9b7";
+  color: #03ea2a;
+}
+
+.icon-wenzhang:before {
+  content: "\e712";
+  color: rgb(107, 107, 107);
+}
+
+.icon-bilibili1:before {
+  content: "\e75d";
+  color: rgb(40, 108, 236);
+  font-size: 22px;
+}
+
+.icon-Bilibili:before {
+  content: "\e627";
+  color: rgb(40, 108, 236);
+  
+}
+
+
+/* fa-社交图标 */
+.fa-github-alt:before {
+  /* content: "\f113"; */
+  color: #dc0e77;
+  font-size: 20px;
+}
+
+.fa-envelope:before {
+  /* content: "\f0e0"; */
+  color: #2b67ea;
+}
+
+.fa-film:before {
+  /* content: "\f008"; */
+  color: #ea165b;
+  
+}
+
+.fa-compass:before {
+  color: #af18ee;
+  font-size: 18px;
+}
+
+
+/* 菜单栏 */
+
+.fa-home:before{
+  color: #37BAFB;
+}
+
+.fa-file-alt:before{
+  color: #a633d8;
+  font-size: 20px;
+}
+
+.fa-list:before{
+  color:#e4597c
+}
+
+.fa-link:before{
+  color:rgb(131, 198, 224)
+}
+
+.fa-address-card:before{
+  color:rgb(231, 110, 94)
+}
+
+.fa-archive:before{
+  color:rgb(228, 125, 84)
+}
+
+.fa-tags:before{
+  color:rgb(129, 228, 84)
+}
+
+.fa-folder-open:before{
+  color:rgb(94, 231, 185)
+}
+
+.fa-edit:before{
+  color:rgb(89, 197, 224)
+}
+
+.fa-music:before{
+  color:rgb(235, 92, 216)
+}
+
+.fa-video:before{
+  color:rgb(94, 115, 231)
+}
+
+.fa-book:before{
+  color:rgb(228, 166, 86)
+}
+
+.fa-pound-sign:before{
+  color:rgb(224, 93, 69)
+}
+
+
+
+.fa-user-friends:before{
+  color:#e07232
+}
+
+.fa-paperclip:before{
+  color:#4e76cc
+}
+
