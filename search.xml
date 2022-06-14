@@ -8533,6 +8533,110 @@ PLL主时钟PLLCLK = 72MHZ<br>
       </tags>
   </entry>
   <entry>
+    <title>Coding图床配置</title>
+    <url>/posts/559512d3.html</url>
+    <content><![CDATA[<h2 id="前言">前言</h2>
+<p>之前用Gitee图床，没想到这么快就寄了，还好的是虽然不能通过外链访问了，但是图片还是在的，现在的问题有2个，找到新的替代图床、以及将旧图床的图片迁移至新图床。</p>
+<ul>
+<li>替代图床：一直不愿意使用Github仓库作为图床，因为网上一直有声音说有被封号、或删库的风险，也不愿意使用公共图床，总感觉把图片放在别人的服务器上不安全，于是经过一番寻找，决定使用Coding暂时作为图床使用（也不知道能撑多久😥）</li>
+<li>旧图床的迁移：这个比较简单，由于图片文件名一样，只是换了个存放位置，所以可以使用python写个脚本，将原本文章中的图片链接替换为新的图片链接即可</li>
+</ul>
+<blockquote>
+<p>本文实现 Coding + Picgo Core + Typora 一条龙配置服务，配置完成即可在Typora写作，插入图片自动上传到Coding仓库中。</p>
+<p><img src="https://ajream.coding.net/p/images/d/img/git/raw/master/img_coding/2022/6/14/234755_20220607103831_coding_.gif" alt="coding_"></p>
+</blockquote>
+<h2 id="软件下载">软件下载</h2>
+<ol>
+<li>
+<p>下载nodejs（自行百度）</p>
+</li>
+<li>
+<p>安装picgo.exe，如下</p>
+<p>打开typora后，选择 【文件】-【偏好设置】-【图像】，看下图：</p>
+<img src="https://gitcode.net/ajream/myimages/-/raw/master/img/2021-04-1916-12-52_image-20210419161251100.png" alt="image-20210419161251100" style="zoom:60%;" />
+</li>
+<li>
+<p>下载插件 coding 插件 和 super-prefix</p>
+</li>
+</ol>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment">#先切换到picgo安装目录下：cd C:\Users\用户名\AppData\Roaming\Typora\picgo\win64&gt;</span></span><br><span class="line">C:\Users\用户名\AppData\Roaming\Typora\picgo\win64&gt;picgo install coding super-prefix</span><br></pre></td></tr></table></figure>
+<h2 id="上传配置">上传配置</h2>
+<p>首先要新建一个仓库用于存放图片，然后是配置插件，让插件将图片上传到指定仓库中。</p>
+<h3 id="Coding创建仓库">Coding创建仓库</h3>
+<ol>
+<li>
+<p>创建<img src="https://ajream.coding.net/p/images/d/img/git/raw/master/img/2022/6/6/20220606232028_image-20220606232022672.png" alt="image-20220606232022672"></p>
+</li>
+<li>
+<p>选择全功能的（懂的可以选择右边，最后按需启用相应功能即可）<img src="https://ajream.coding.net/p/images/d/img/git/raw/master/img/2022/6/6/20220606232229_image-20220606232222855.png" alt="image-20220606232222855"></p>
+</li>
+<li>
+<p>创建仓库</p>
+<p><img src="https://ajream.coding.net/p/images/d/img/git/raw/master/img/2022/6/6/20220606232814_image-20220606232808841.png" alt="image-20220606232808841"></p>
+</li>
+<li>
+<p>然后就像Github、Gitee仓库那样使用就行了，我这里创建好了，commit一些文件、文件夹上去后是这样的</p>
+<p><img src="https://ajream.coding.net/p/images/d/img/git/raw/master/img/2022/6/6/20220606233117_image-20220606233112871.png" alt="image-20220606233112871"></p>
+</li>
+</ol>
+<h3 id="配置文件信息设置">配置文件信息设置</h3>
+<p>配置文件在 <code>C:\Users\用户名\.picgo</code>目录下的 <code>config.json</code>文件中</p>
+<p>打开插件的配置文件，把下面的内容覆盖掉 <code>config.json</code> 原来的内容</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;picBed&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;uploader&quot;</span>: <span class="string">&quot;coding&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;current&quot;</span>: <span class="string">&quot;coding&quot;</span>,    <span class="comment">// 与uploader一致</span></span><br><span class="line">    <span class="attr">&quot;transformer&quot;</span>: <span class="string">&quot;path&quot;</span>,</span><br><span class="line"></span><br><span class="line">    <span class="attr">&quot;coding&quot;</span>: &#123;</span><br><span class="line">      <span class="attr">&quot;groupName&quot;</span>: <span class="string">&quot;ajream&quot;</span>, </span><br><span class="line">      <span class="attr">&quot;Project&quot;</span>: <span class="string">&quot;images&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;repoName&quot;</span>: <span class="string">&quot;img&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;Token&quot;</span>: <span class="string">&quot;xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&quot;</span>,  <span class="comment">//你的token</span></span><br><span class="line">      <span class="attr">&quot;branch&quot;</span>: <span class="string">&quot;master&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;floder&quot;</span>: <span class="string">&quot;img&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;save_with_date&quot;</span>: <span class="literal">true</span>,  </span><br><span class="line">      <span class="attr">&quot;customUrl&quot;</span>: <span class="string">&quot;&quot;</span>   <span class="comment">//自定义域名</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;picgoPlugins&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;picgo-plugin-gitee-uploader&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">&quot;picgo-plugin-super-prefix&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">&quot;picgo-plugin-coding&quot;</span>: <span class="literal">true</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;picgo-plugin-super-prefix&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;prefixFormat&quot;</span>: <span class="string">&quot;YYYYMMDDHHmmss_&quot;</span>  <span class="comment">// 图片命名格式，这里设置为加上日期+时间作为前缀</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;picgo-plugin-gitee-uploader&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;lastSync&quot;</span>: <span class="string">&quot;2022-05-30 01:23:50&quot;</span> </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>关注以下几个字段：</p>
+<p>首先找到仓库的路径，获取一些信息：</p>
+<p><img src="https://ajream.coding.net/p/images/d/img/git/raw/master/img/2022/6/6/20220606233742_image-20220606233738790.png" alt="image-20220606233738790"></p>
+<ol>
+<li>
+<p>“groupName”  组名，根据上图进行修改，我的是 “ajream”</p>
+</li>
+<li>
+<p>“project”  项目名，根据上图进行修改</p>
+</li>
+<li>
+<p>“repoName” 仓库名，根据上图进行修改</p>
+</li>
+<li>
+<p>“Token”  获取方式：</p>
+<p>进入个人账户设置</p>
+<p><img src="https://ajream.coding.net/p/images/d/img/git/raw/master/img/2022/6/6/20220606234111_image-20220606234108884.png" alt="image-20220606234108884"></p>
+<p>新建token</p>
+<p><img src="https://ajream.coding.net/p/images/d/img/git/raw/master/img/2022/6/6/20220606234322_image-20220606234318731.png" alt="image-20220606234318731"></p>
+<p>打勾</p>
+<p><img src="https://ajream.coding.net/p/images/d/img/git/raw/master/img/2022/6/6/20220606234541_image-20220606234538637.png" alt="image-20220606234538637"></p>
+<p>复制token，粘贴到config.json配置文件</p>
+<p><img src="https://ajream.coding.net/p/images/d/img/git/raw/master/img/2022/6/6/20220606234822_image-20220606234820360.png" alt="image-20220606234820360"></p>
+</li>
+<li>
+<p>“floder”  设置你的图片保存在哪个文件夹，像我之前瞎搞的时候弄了2个文件夹，这里就保存在 img 文件夹了（吐个槽：作者把文件夹folder的单词拼成了floder🤣）</p>
+<p><img src="https://ajream.coding.net/p/images/d/img/git/raw/master/img/2022/6/6/20220606235124_image-20220606235121853.png" alt="image-20220606235121853"></p>
+</li>
+<li>
+<p>“save_with_date”: 设置为true的话，会在保存的文件夹（我的是img）下，以日期&quot;YYYY/MM/DD&quot;的格式创建文件夹，并把图片放在这个新建的文件夹里，也就是同一天上传的图片会被放到一起，我这里设置为true，方便后面整理</p>
+</li>
+<li>
+<p>“customUrl”  自定义域名，没有的话设置为空<code>&quot;&quot;</code>即可</p>
+</li>
+<li>
+<p>“branch”  图片上传的分支名，没有特殊要求用 <code>master</code> 即可</p>
+</li>
+</ol>
+<h2 id="Python脚本">Python脚本</h2>
+<p>随便写了个脚本，用于将之前的博客文章中旧图片的链接转为新的链接，首先对比下新旧图片链接的差异：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://gitee.com/ajream/images/raw/master/img/2021-04-1916-12-52_image-20210419161251100.png</span><br><span class="line">https://ajream.coding.net/p/images/d/img/git/raw/master/img/2021-04-1916-12-52_image-20210419161251100.png</span><br></pre></td></tr></table></figure>
+<p>经过对比新、旧图片链接，可以发现后面部分（如下）是相同的，因此只需要把前面部分替换掉即可</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/raw/master/img/2021-04-1916-12-52_image-20210419161251100.png</span><br></pre></td></tr></table></figure>
+<p>参考代码如下</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;输入需要遍历的文件夹的路径，如：D:\MyBlogs\source\_posts&quot;</span>)</span><br><span class="line">dir_path = <span class="built_in">input</span>(<span class="string">r&quot;&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;输入旧的图片链接的前缀，如：https://gitee.com/ajream/images&quot;</span>)</span><br><span class="line">gitee_name_prefix = <span class="built_in">input</span>(<span class="string">&quot;&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;输入新的图片链接的前缀，如：https://ajream.coding.net/p/images/d/img/git&quot;</span>)</span><br><span class="line">coding_name_prefix = <span class="built_in">input</span>(<span class="string">&quot;&quot;</span>) </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">update_img_name</span>(<span class="params">fpath</span>):</span></span><br><span class="line">    new_text = []</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(fpath, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&quot;utf8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        text = f.readlines()</span><br><span class="line">        <span class="keyword">for</span> t <span class="keyword">in</span> text:</span><br><span class="line">            <span class="keyword">if</span> t.startswith(<span class="string">&quot;![&quot;</span>) <span class="keyword">or</span> t.startswith(<span class="string">&quot;&lt;img&quot;</span>) <span class="keyword">or</span> (<span class="string">&quot;/images/raw/master/&quot;</span> <span class="keyword">in</span> t):  <span class="comment"># 判断是图片链接</span></span><br><span class="line">                <span class="keyword">if</span>(gitee_name_prefix <span class="keyword">in</span> t):</span><br><span class="line">                    t = t.replace(gitee_name_prefix, coding_name_prefix)   <span class="comment"># 替换为新链接</span></span><br><span class="line">            new_text.append(t)</span><br><span class="line"><span class="comment">#     with open(fpath[:-3] + &quot;_after.md&quot;, &#x27;w&#x27;, encoding=&quot;utf8&quot;) as nf:    # 修改后另存为新文件</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(fpath, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&quot;utf8&quot;</span>) <span class="keyword">as</span> nf:                        <span class="comment"># 在原文件直接修改</span></span><br><span class="line">        <span class="keyword">for</span> nt <span class="keyword">in</span> new_text:</span><br><span class="line">            nf.write(nt)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;ok&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">find_files</span>(<span class="params">file_path</span>):</span>   <span class="comment"># 递归文件夹下的所有md文件</span></span><br><span class="line">    <span class="keyword">if</span> os.path.isfile(file_path):    <span class="comment">#判断是否为文件</span></span><br><span class="line">        <span class="keyword">if</span> file_path.endswith(<span class="string">&quot;.md&quot;</span>):</span><br><span class="line">            file_list.append(file_path)</span><br><span class="line">        <span class="keyword">return</span> </span><br><span class="line">    <span class="keyword">else</span>:           <span class="comment">#如果是目录，执行下边的程序</span></span><br><span class="line">        <span class="keyword">for</span> file_ls <span class="keyword">in</span> os.listdir(file_path):<span class="comment">#循环目录中的文件</span></span><br><span class="line">            find_files(os.path.join(file_path, file_ls))<span class="comment">#再次判断目录中的文件，实现递归，函数调用函数本身</span></span><br><span class="line"></span><br><span class="line">file_list = []     <span class="comment"># 存储查找到的md文件路径</span></span><br><span class="line"></span><br><span class="line">find_files(dir_path)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(file_list)):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;第<span class="subst">&#123;i&#125;</span>篇---<span class="subst">&#123;file_list[i]&#125;</span>&quot;</span>)</span><br><span class="line">    update_img_name(file_list[i])</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>杂七杂八</category>
+      </categories>
+      <tags>
+        <tag>图床</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Github搜索技巧</title>
     <url>/posts/4b9291b6.html</url>
     <content><![CDATA[<div class="tip bell"><p>该文章教你如何利用Github搜索框优雅地搜索到自己需要的、中意的项目</p>
@@ -8569,11 +8673,11 @@ PLL主时钟PLLCLK = 72MHZ<br>
       </tags>
   </entry>
   <entry>
-    <title>Typora图床配置</title>
+    <title>Gitee图床配置</title>
     <url>/posts/8b75069d.html</url>
     <content><![CDATA[<div class="tip warning"><p>注意：gitee图床现在已经不能通过外链访问，推荐使用coding图床</p>
 </div>
-<a class="btn-beautify button--animated outline" href="https://blog.csdn.net/m0_46079750/article/details/125157065" 
+<a class="btn-beautify button--animated outline" href="/posts/559512d3" 
   title="Coding图床教程"><i class="far fa-hand-point-right"></i><span>Coding图床教程</span></a>
 <h2 id="下载相关软件">下载相关软件</h2>
 <ol>
