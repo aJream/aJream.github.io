@@ -8628,9 +8628,29 @@ PLL主时钟PLLCLK = 72MHZ<br>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/raw/master/img/2021-04-1916-12-52_image-20210419161251100.png</span><br></pre></td></tr></table></figure>
 <p>参考代码如下</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;输入需要遍历的文件夹的路径，如：D:\MyBlogs\source\_posts&quot;</span>)</span><br><span class="line">dir_path = <span class="built_in">input</span>(<span class="string">r&quot;&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;输入旧的图片链接的前缀，如：https://gitee.com/ajream/images&quot;</span>)</span><br><span class="line">gitee_name_prefix = <span class="built_in">input</span>(<span class="string">&quot;&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;输入新的图片链接的前缀，如：https://ajream.coding.net/p/images/d/img/git&quot;</span>)</span><br><span class="line">coding_name_prefix = <span class="built_in">input</span>(<span class="string">&quot;&quot;</span>) </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">update_img_name</span>(<span class="params">fpath</span>):</span></span><br><span class="line">    new_text = []</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(fpath, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&quot;utf8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        text = f.readlines()</span><br><span class="line">        <span class="keyword">for</span> t <span class="keyword">in</span> text:</span><br><span class="line">            <span class="keyword">if</span> t.startswith(<span class="string">&quot;![&quot;</span>) <span class="keyword">or</span> t.startswith(<span class="string">&quot;&lt;img&quot;</span>) <span class="keyword">or</span> (<span class="string">&quot;/images/raw/master/&quot;</span> <span class="keyword">in</span> t):  <span class="comment"># 判断是图片链接</span></span><br><span class="line">                <span class="keyword">if</span>(gitee_name_prefix <span class="keyword">in</span> t):</span><br><span class="line">                    t = t.replace(gitee_name_prefix, coding_name_prefix)   <span class="comment"># 替换为新链接</span></span><br><span class="line">            new_text.append(t)</span><br><span class="line"><span class="comment">#     with open(fpath[:-3] + &quot;_after.md&quot;, &#x27;w&#x27;, encoding=&quot;utf8&quot;) as nf:    # 修改后另存为新文件</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(fpath, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&quot;utf8&quot;</span>) <span class="keyword">as</span> nf:                        <span class="comment"># 在原文件直接修改</span></span><br><span class="line">        <span class="keyword">for</span> nt <span class="keyword">in</span> new_text:</span><br><span class="line">            nf.write(nt)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;ok&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">find_files</span>(<span class="params">file_path</span>):</span>   <span class="comment"># 递归文件夹下的所有md文件</span></span><br><span class="line">    <span class="keyword">if</span> os.path.isfile(file_path):    <span class="comment">#判断是否为文件</span></span><br><span class="line">        <span class="keyword">if</span> file_path.endswith(<span class="string">&quot;.md&quot;</span>):</span><br><span class="line">            file_list.append(file_path)</span><br><span class="line">        <span class="keyword">return</span> </span><br><span class="line">    <span class="keyword">else</span>:           <span class="comment">#如果是目录，执行下边的程序</span></span><br><span class="line">        <span class="keyword">for</span> file_ls <span class="keyword">in</span> os.listdir(file_path):<span class="comment">#循环目录中的文件</span></span><br><span class="line">            find_files(os.path.join(file_path, file_ls))<span class="comment">#再次判断目录中的文件，实现递归，函数调用函数本身</span></span><br><span class="line"></span><br><span class="line">file_list = []     <span class="comment"># 存储查找到的md文件路径</span></span><br><span class="line"></span><br><span class="line">find_files(dir_path)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(file_list)):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;第<span class="subst">&#123;i&#125;</span>篇---<span class="subst">&#123;file_list[i]&#125;</span>&quot;</span>)</span><br><span class="line">    update_img_name(file_list[i])</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="其他">其他</h2>
+<p>网上有很多图床，但很多时候大家可能找不到相应的插件，实际上使用picgo为核心的图床插件基本可以在npm官方仓库里找到，输入 <code>picgo</code>作为前缀即可</p>
+<a class="btn-beautify button--animated outline" href="https://www.npmjs.com/" 
+  title="前往npm"><i class="far fa-hand-point-right"></i><span>前往npm</span></a>
+<p><img src="https://ajream.coding.net/p/images/d/img/git/raw/master/img_coding/2022/6/15/094807_image-20220615094801573.png" alt="image-20220615094801573"></p>
+<p>picgo与picgo-core的官方地址如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><a href="https://picgo.github.io/PicGo-Doc/">picgo</a></th>
+<th style="text-align:center"><a href="https://picgo.github.io/PicGo-Core-Doc/">picgo-core</a></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">图形化界面操作</td>
+<td style="text-align:center">使用命令行操作</td>
+</tr>
+</tbody>
+</table>
 ]]></content>
       <categories>
-        <category>杂七杂八</category>
+        <category>创作笔记</category>
       </categories>
       <tags>
         <tag>图床</tag>
@@ -8666,7 +8686,7 @@ PLL主时钟PLLCLK = 72MHZ<br>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">stm32 created:&lt;2021-01-01   在2021-01-01之前创建的项目</span><br><span class="line"></span><br><span class="line">pushed:&gt;2021-02-02 			在2021-02-02后还在pushed的项目</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
-        <category>杂七杂八</category>
+        <category>创作笔记</category>
       </categories>
       <tags>
         <tag>Github</tag>
@@ -8739,7 +8759,7 @@ PLL主时钟PLLCLK = 72MHZ<br>
 </blockquote>
 ]]></content>
       <categories>
-        <category>杂七杂八</category>
+        <category>创作笔记</category>
       </categories>
       <tags>
         <tag>图床</tag>
@@ -8905,7 +8925,7 @@ PLL主时钟PLLCLK = 72MHZ<br>
 <hr>
 ]]></content>
       <categories>
-        <category>杂七杂八</category>
+        <category>创作笔记</category>
       </categories>
       <tags>
         <tag>傅里叶</tag>
@@ -9557,7 +9577,7 @@ PLL主时钟PLLCLK = 72MHZ<br>
 </div>
 ]]></content>
       <categories>
-        <category>杂七杂八</category>
+        <category>创作笔记</category>
       </categories>
       <tags>
         <tag>自动化</tag>
@@ -9733,13 +9753,13 @@ c-16-25.333-24-45-24-59z'/></svg></span></span></span></span><span class="vlist-
 </ol>
 <blockquote>
 <p>将负数的【补码转为原码】，只需要记住：“补码的补码==&gt;原码”，也就是通过计算补码的补码即可还原出原码。</p>
-<p>如：-1的补码 <code>1111 1111</code>  —[符号位不变，其余取反]—&gt; <code>1000 0000</code> —[+1]—&gt; <code>1000 0001</code><br>
-<img src="https://img2022.cnblogs.com/blog/2566822/202206/2566822-20220614160722915-4804407.png" alt="image"></p>
+<p>如：-1的补码 <code>1111 1111</code>  —[符号位不变，其余取反]—&gt; <code>1000 0000</code> —[+1]—&gt; <code>1000 0001</code></p>
+<p><img src="https://ajream.coding.net/p/images/d/img/git/raw/master/img_coding/2022/6/15/095850_2566822-20220614160722915-4804407.png" alt="image"></p>
 </blockquote>
 <p>下图来源于维基百科，是几个特殊的数字的补码</p>
 <p><img src="https://ajream.coding.net/p/images/d/img/git/raw/master/img_coding/2022/6/14/151058_image-20220614151055902.png" alt="image-20220614151055902"></p>
 <h2 id="【127-1】的运算">【127+1】的运算</h2>
-<h3 id="手算">手算</h3>
+<h3 id="运算步骤">运算步骤</h3>
 <p>前面说过，在计算机内部，数字的存储、运算都是以补码形式进行</p>
 <p>那么 &quot;127+1&quot;的运算过程如下</p>
 <ol>
@@ -9767,7 +9787,7 @@ c-16-25.333-24-45-24-59z'/></svg></span></span></span></span><span class="vlist-
 <li>相加结果转为原码： <code>1000 0001(补码)</code> —&gt; <code>1111 1110(反码)</code>—&gt; <code>1111 1111(原码)=-127</code></li>
 </ol>
 </blockquote>
-<h3 id="C程序">C程序</h3>
+<h3 id="C程序验证">C程序验证</h3>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> a=<span class="number">127</span>, b=<span class="number">127</span>;</span><br><span class="line">	a+=<span class="number">1</span>;</span><br><span class="line">	b+=<span class="number">2</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;计算结果：%d ，%d\n&quot;</span>, a, b); <span class="comment">// 输出: 计算结果：-128 ，-127</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><a href="https://c.runoob.com/compile/11/">去菜鸟工具验证</a></p>
 <p><img src="https://ajream.coding.net/p/images/d/img/git/raw/master/img_coding/2022/6/14/135251_image-20220614135246641.png" alt="image-20220614135246641"></p>
