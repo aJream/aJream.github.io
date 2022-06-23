@@ -3923,6 +3923,81 @@
       </tags>
   </entry>
   <entry>
+    <title>ArduinoIDE搭建ESP32开发环境</title>
+    <url>/posts/16a5fe78/</url>
+    <content><![CDATA[<p><img src="https://ajream.coding.net/p/images/d/img/git/raw/master/img_coding/2022/6/23/101346_image-20220623101342429.png" alt="image-20220623101342429"></p>
+<h2 id="IDE内部下载-不推荐">IDE内部下载(不推荐)</h2>
+<p>网上看到有些通过在IDE内部直接下载开发板的，首先打开【文件】-&gt;【首选项】：<br>
+<img src="https://img-blog.csdnimg.cn/img_convert/1a83874a11f2d68fb93173bddd84d8f1.png" alt="image"></p>
+<p>然后添加开发板管理器网址(第三条是esp8266的，因为之前使用过，我这里没有删除，这里不用管)<br>
+<img src="https://img-blog.csdnimg.cn/img_convert/5369c18272aa1cd5d04591707bef544d.png" alt="image"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://git.oschina.net/dfrobot/FireBeetle-ESP32/raw/master/package_esp32_index.json</span><br><span class="line">https://dl.espressif.com/dl/package_esp32_index.json</span><br><span class="line">http://arduino.esp8266.com/stable/package_esp8266com_index.json</span><br></pre></td></tr></table></figure>
+<p>然后去【工具】-&gt;【开发板】-&gt;【开发板管理器】里下载对应的开发板即可<br>
+<img src="https://img-blog.csdnimg.cn/img_convert/6fab561442d1ad8160543636a3e41471.png" alt="image"></p>
+<blockquote>
+<p>注意：这种方法虽然简单，但由于各种网络原因可能容易下载失败，所以不推荐，推荐下面这种外部下载的方式。</p>
+</blockquote>
+<h2 id="外部下载-推荐">外部下载(推荐)</h2>
+<blockquote>
+<p>说明：以下基于win10平台进行esp32开发环境搭建</p>
+</blockquote>
+<h3 id="文件目录创建">文件目录创建</h3>
+<p>创建文件夹用于存放开发板资料</p>
+<p>在<code>hardware</code>目录下创建目录：<code>espressif/esp32/</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/../arduino-1.8.15/hardware/espressif/esp32/</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/cb8ade5590dbb27d00416fc496a75ffc.png" alt="image-20220623002104258"></p>
+<h3 id="安装ESP32开发工具包">安装ESP32开发工具包</h3>
+<p>首先进入<a href="https://github.com/espressif/arduino-esp32">仓库</a>，点击下载完整工程（直接下载zip或者git克隆），然后将工程里面的文件全部解压在 <code>esp32</code>文件夹下</p>
+<ul>
+<li>
+<p>git克隆：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://github.com/espressif/arduino-esp32.git</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>下载zip：</p>
+<p>下载的话慢可以去这个<a href="https://gh.api.99988866.xyz/">网站</a>加速，把下面的链接粘贴在编辑框即可</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://github.com/espressif/arduino-esp32/archive/refs/heads/master.zip</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/d498713802ac52e009ed7d4fa75679f3.png" alt="image-20220623002545764"></p>
+</li>
+</ul>
+<p>然后进入<code>tools/package</code>文件夹,打开文件 <code>package_esp32_index.template.json</code></p>
+<p>需要找到三个文件的链接进行下载：<code>xtensa-esp32-elf-gcc</code>, <code>esptool_py</code> 和 <code>mkspiffs</code>，<strong>根据文件中给出的【url】</strong> 直接去浏览器或者其他下载器(如迅雷)下载</p>
+<ul>
+<li>
+<p>xtensa-esp32-elf-gcc</p>
+<p>64位电脑选择下面 <code>x86_64-mingw32</code>这个，或者<a href="https://github.com/espressif/crosstool-NG/releases/download/esp-2021r2-patch3/xtensa-esp32-elf-gcc8_4_0-esp-2021r2-patch3-win64.zip">直接点击下载</a></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;host&quot;: &quot;i686-mingw32&quot;,</span><br><span class="line">    &quot;url&quot;: &quot;https://github.com/espressif/crosstool-NG/releases/download/esp-2021r2-patch3/xtensa-esp32-elf-gcc8_4_0-esp-2021r2-patch3-win32.zip&quot;,</span><br><span class="line">	......</span><br><span class="line">&#125;,</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    &quot;host&quot;: &quot;x86_64-mingw32&quot;,</span><br><span class="line">    &quot;url&quot;: &quot;https://github.com/espressif/crosstool-NG/releases/download/esp-2021r2-patch3/xtensa-esp32-elf-gcc8_4_0-esp-2021r2-patch3-win64.zip&quot;,</span><br><span class="line">	......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>esptool_py</p>
+<p>64位电脑选第二个的链接，或者<a href="https://github.com/espressif/arduino-esp32/releases/download/2.0.2/esptool-3.3-windows.zip">直接点击下载</a></p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;host&quot;</span>: <span class="string">&quot;i686-mingw32&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;url&quot;</span>: <span class="string">&quot;https://github.com/espressif/arduino-esp32/releases/download/2.0.2/esptool-3.3-windows.zip&quot;</span>,</span><br><span class="line">	......</span><br><span class="line">&#125;,</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;host&quot;</span>: <span class="string">&quot;x86_64-mingw32&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;url&quot;</span>: <span class="string">&quot;https://github.com/espressif/arduino-esp32/releases/download/2.0.2/esptool-3.3-windows.zip&quot;</span>,</span><br><span class="line">     ......</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>mkspiffs</p>
+<p>windows只有一个可以下载，<a href="https://github.com/igrr/mkspiffs/releases/download/0.2.3/mkspiffs-0.2.3-arduino-esp32-win32.zip">点击直接下载</a></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;host&quot;: &quot;i686-mingw32&quot;,</span><br><span class="line">    &quot;url&quot;: &quot;https://github.com/igrr/mkspiffs/releases/download/0.2.3/mkspiffs-0.2.3-arduino-esp32-win32.zip&quot;,</span><br><span class="line">	......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/443ee8dcd75852215e402f3038460350.png" alt="image-20220623003317865"></p>
+<p>下载完成后解压到tools文件夹：</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/8da32a6a694b668bce73b54555404fab.png" alt="image-20220623005028014"></p>
+</li>
+</ul>
+<h2 id="下载测试">下载测试</h2>
+<p>选择一个示例程序，在ArduinoIDE编译下载程序成功</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/007f4bb87969f5cca8875789bf988466.png" alt="image-20220623005123695"></p>
+<h2 id="放两张引脚图">放两张引脚图</h2>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/d91f3d828d6d0c2347fe305bff869b93.png" alt="右键复制链接打开源图"></p>
+<p><img src="https://img-blog.csdnimg.cn/907a367f58514952be5c222d3aa482b5.png" alt="在这里插入图片描述"></p>
+]]></content>
+      <categories>
+        <category>硬件学习</category>
+        <category>ESP32</category>
+      </categories>
+      <tags>
+        <tag>ESP32</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>esp8266(0)-Arduino配置esp8266开发环境</title>
     <url>/posts/5aa91944/</url>
     <content><![CDATA[<!-- toc -->
@@ -10382,7 +10457,7 @@ c-16-25.333-24-45-24-59z'/></svg></span></span></span></span><span class="vlist-
 <h2 id="外挂标签">外挂标签</h2>
 <details class="folding-tag" ><summary> 查看 </summary>
               <div class='content'>
-              <p>参考小康博客</p><p><a href="https://www.antmoe.com/posts/3b43914f/">小康博客butterfly主题使用文档</a></p>
+              <p>参考：</p><ul><li><p><a href="https://www.antmoe.com/posts/3b43914f/">小康博客butterfly主题使用文档</a></p></li><li><p><a href="https://akilar.top/posts/615e2dec/">糖果屋-外挂标签</a></p></li></ul>
               </div>
             </details>
 <h2 id="全局背景透明渐变">全局背景透明渐变</h2>
@@ -10390,7 +10465,7 @@ c-16-25.333-24-45-24-59z'/></svg></span></span></span></span><span class="vlist-
 <h2 id="加载动画">加载动画</h2>
 <p>跳转到<a href="/posts/ff7a696e.html">文章-背景整体修改</a>查看, 参考<a href="https://akilar.top/posts/3d221bf2/">Akilar-糖果屋</a></p>
 <h2 id="首页置顶轮播图">首页置顶轮播图</h2>
-<p><a href="https://www.akilar.top/posts/8e1264d1/">糖果屋Akilar大佬教程</a></p>
+<p><a href="https://www.akilar.top/posts/8e1264d1/">糖果屋Akilar教程</a></p>
 <details class="folding-tag" cyan><summary> 步骤 </summary>
               <div class='content'>
               <ol><li><p>安装插件</p><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm install hexo-butterfly-swiper --save</span><br></pre></td></tr></table></figure></li><li><p>在站点文件 <code>_config.yml</code>添加如下内容：</p><figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># hexo-butterfly-swiper</span></span><br><span class="line"><span class="comment"># see https://akilar.top/posts/8e1264d1/</span></span><br><span class="line"><span class="attr">swiper:</span></span><br><span class="line"> <span class="attr">enable:</span> <span class="literal">true</span> <span class="comment"># 开关</span></span><br><span class="line">  <span class="attr">priority:</span> <span class="number">5</span> <span class="comment">#过滤器优先权</span></span><br><span class="line">  <span class="attr">enable_page:</span> <span class="string">all</span> <span class="comment"># 应用页面</span></span><br><span class="line">  <span class="attr">timemode:</span> <span class="string">date</span> <span class="comment">#date/updated</span></span><br><span class="line">  <span class="attr">layout:</span> <span class="comment"># 挂载容器类型</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">id</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">recent-posts</span></span><br><span class="line">    <span class="attr">index:</span> <span class="number">0</span></span><br><span class="line">  <span class="attr">default_descr:</span> <span class="string">再怎么看我也不知道怎么描述它的啦！</span></span><br><span class="line">  <span class="attr">custom_css:</span> <span class="string">https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.1.6/css/swiper.min.css</span> <span class="comment">#自定义swiper css依赖</span></span><br><span class="line">  <span class="attr">custom_js:</span> <span class="string">https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.1.6/js/swiper.min.js</span> <span class="comment">#自定义swiper js依赖</span></span><br></pre></td></tr></table></figure></li></ol><table><thead><tr><th style="text-align:left">参数</th><th style="text-align:left">备选值/类型</th><th style="text-align:left">释义</th></tr></thead><tbody><tr><td style="text-align:left">priority</td><td style="text-align:left">number</td><td style="text-align:left">【可选】过滤器优先级，数值越小，执行越早，默认为10，选填</td></tr><tr><td style="text-align:left">enable</td><td style="text-align:left">true/false</td><td style="text-align:left">【必选】控制开关</td></tr><tr><td style="text-align:left">enable_page</td><td style="text-align:left">path/all</td><td style="text-align:left">【可选】填写想要应用的页面的相对路径（即路由地址）,如根目录就填’/‘,分类页面就填’/categories/‘。若要应用于所有页面，就填’all’，默认为all</td></tr><tr><td style="text-align:left">timemode</td><td style="text-align:left">date/updated</td><td style="text-align:left">【可选】时间显示，date为显示创建日期，updated为显示更新日期,默认为date</td></tr><tr><td style="text-align:left">layout.type</td><td style="text-align:left">id/class</td><td style="text-align:left">【可选】挂载容器类型，填写id或class，不填则默认为id</td></tr><tr><td style="text-align:left"><a href="http://layout.name">layout.name</a></td><td style="text-align:left">text</td><td style="text-align:left">【必选】挂载容器名称</td></tr><tr><td style="text-align:left">layout.index</td><td style="text-align:left">0和正整数</td><td style="text-align:left">【可选】前提是layout.type为class，因为同一页面可能有多个class，此项用来确认究竟排在第几个顺位</td></tr><tr><td style="text-align:left">default_descr</td><td style="text-align:left">text</td><td style="text-align:left">默认文章描述</td></tr><tr><td style="text-align:left">custom_css</td><td style="text-align:left">url</td><td style="text-align:left">【可选】自定义的swiper依赖项css链接</td></tr><tr><td style="text-align:left">custom_js</td><td style="text-align:left">url</td><td style="text-align:left">【可选】自定义的swiper依赖项加js链接</td></tr></tbody></table><ol start="3"><li><p>在文章的 <code>front_matter</code> 添加 <code>swiper_index</code> 配置项即可</p><figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">title:</span> <span class="string">文章标题</span></span><br><span class="line"><span class="attr">date:</span> <span class="string">创建日期</span></span><br><span class="line"><span class="attr">updated:</span> <span class="string">更新日期</span></span><br><span class="line"><span class="attr">cover:</span> <span class="string">文章封面</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">文章描述</span></span><br><span class="line"><span class="attr">swiper_index:</span> <span class="number">1</span> <span class="comment">#置顶轮播图顺序，非负整数，数字越大越靠前</span></span><br><span class="line"><span class="meta">---</span></span><br></pre></td></tr></table></figure></li></ol>
