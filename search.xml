@@ -3998,7 +3998,7 @@
       </tags>
   </entry>
   <entry>
-    <title>esp8266(0)-Arduino配置esp8266开发环境</title>
+    <title>ESP8266(0)-Arduino配置esp8266开发环境</title>
     <url>/posts/5aa91944/</url>
     <content><![CDATA[<!-- toc -->
 <h3 id="一般方法（要求网速较好）">一般方法（要求网速较好）</h3>
@@ -4048,14 +4048,14 @@
 ]]></content>
       <categories>
         <category>硬件学习</category>
-        <category>esp8266</category>
+        <category>ESP8266</category>
       </categories>
       <tags>
-        <tag>esp8266</tag>
+        <tag>ESP8266</tag>
       </tags>
   </entry>
   <entry>
-    <title>esp8266(1)-接入点模式-无线终端模式</title>
+    <title>ESP8266(1)-接入点模式-无线终端模式</title>
     <url>/posts/78253259/</url>
     <content><![CDATA[<p>接入点模式：开发板作为路由器（网关），可以让其他设备连接</p>
 <p>无线终端模式：开发板作为终端，可以连接路由器WiFi</p>
@@ -4107,14 +4107,14 @@
 ]]></content>
       <categories>
         <category>硬件学习</category>
-        <category>esp8266</category>
+        <category>ESP8266</category>
       </categories>
       <tags>
-        <tag>esp8266</tag>
+        <tag>ESP8266</tag>
       </tags>
   </entry>
   <entry>
-    <title>esp8266(2)-网络服务器</title>
+    <title>ESP8266(2)-网络服务器</title>
     <url>/posts/a5d9474e/</url>
     <content><![CDATA[<h2 id="1、建立基本网络服务器">1、建立基本网络服务器</h2>
 <ol>
@@ -4191,14 +4191,14 @@
 ]]></content>
       <categories>
         <category>硬件学习</category>
-        <category>esp8266</category>
+        <category>ESP8266</category>
       </categories>
       <tags>
-        <tag>esp8266</tag>
+        <tag>ESP8266</tag>
       </tags>
   </entry>
   <entry>
-    <title>esp8266(3)-闪存文件系统</title>
+    <title>ESP8266(3)-闪存文件系统</title>
     <url>/posts/44570809/</url>
     <content><![CDATA[<h2 id="1、文件基本操作">1、文件基本操作</h2>
 <p>ESP8266配有一个闪存，这就像是一个小硬盘，上传的文件就可以存放在这个闪存里，这个闪存简称为 SPIFFS</p>
@@ -4244,14 +4244,14 @@
 ]]></content>
       <categories>
         <category>硬件学习</category>
-        <category>esp8266</category>
+        <category>ESP8266</category>
       </categories>
       <tags>
-        <tag>esp8266</tag>
+        <tag>ESP8266</tag>
       </tags>
   </entry>
   <entry>
-    <title>esp8266(4)-NodeMCU作为客户端使用</title>
+    <title>ESP8266(4)-NodeMCU作为客户端使用</title>
     <url>/posts/7128433b/</url>
     <content><![CDATA[<p>ESP8266-Arduino库中有两个库用于控制ESP8266与网络服务器进行通讯。他们是<code>WiFiClient</code>库和<code>ESP8266HTTPClient</code>库。</p>
 <p>【注意】</p>
@@ -4309,14 +4309,14 @@
 ]]></content>
       <categories>
         <category>硬件学习</category>
-        <category>esp8266</category>
+        <category>ESP8266</category>
       </categories>
       <tags>
-        <tag>esp8266</tag>
+        <tag>ESP8266</tag>
       </tags>
   </entry>
   <entry>
-    <title>esp8266(5)-Stream数据流</title>
+    <title>ESP8266(5)-Stream数据流</title>
     <url>/posts/6e0f87da/</url>
     <content><![CDATA[<h1>Stream数据流</h1>
 <h2 id="1、串口收发数据">1、串口收发数据</h2>
@@ -4336,14 +4336,14 @@
 ]]></content>
       <categories>
         <category>硬件学习</category>
-        <category>esp8266</category>
+        <category>ESP8266</category>
       </categories>
       <tags>
-        <tag>esp8266</tag>
+        <tag>ESP8266</tag>
       </tags>
   </entry>
   <entry>
-    <title>esp8266(6)-WiFi配网</title>
+    <title>ESP8266(6)-WiFi配网</title>
     <url>/posts/94500478/</url>
     <content><![CDATA[<p>之前nodeMCU一直都要用代码进行连接WiFi的操作，但这样很不方便，如何使用电脑或手机等设备来实时扫描周围WiFi进行配网？</p>
 <p>这里主要用到 <code>WiFiManager</code>库，可以去太极创客<a href="https://github.com/taichi-maker/WiFiManager/archive/refs/heads/master.zip">下载</a>并加载到ArduinoIDE中。</p>
@@ -4389,14 +4389,14 @@
 ]]></content>
       <categories>
         <category>硬件学习</category>
-        <category>esp8266</category>
+        <category>ESP8266</category>
       </categories>
       <tags>
-        <tag>esp8266</tag>
+        <tag>ESP8266</tag>
       </tags>
   </entry>
   <entry>
-    <title>esp8266(7)-多任务执行</title>
+    <title>ESP8266(7)-多任务执行</title>
     <url>/posts/50c8eab4/</url>
     <content><![CDATA[<p>通过Ticker库可以让esp8266同时执行多个任务</p>
 <h2 id="1、如何实现">1、如何实现</h2>
@@ -4430,14 +4430,14 @@
 ]]></content>
       <categories>
         <category>硬件学习</category>
-        <category>esp8266</category>
+        <category>ESP8266</category>
       </categories>
       <tags>
-        <tag>esp8266</tag>
+        <tag>ESP8266</tag>
       </tags>
   </entry>
   <entry>
-    <title>esp8266(8)-OTA上传代码</title>
+    <title>ESP8266(8)-OTA上传代码</title>
     <url>/posts/b90f11fc/</url>
     <content><![CDATA[<p>所谓OTA，就是Over-The-Air的缩写，通过OTA我们无需将ESP8266与电脑连接，而仅仅通过WiFi就可以用Arduino IDE向ESP8266上传程序。</p>
 <p>在这一节课程里，我们将分步骤向您介绍如何实现ESP8266的OTA操作。</p>
@@ -4461,10 +4461,10 @@
 ]]></content>
       <categories>
         <category>硬件学习</category>
-        <category>esp8266</category>
+        <category>ESP8266</category>
       </categories>
       <tags>
-        <tag>esp8266</tag>
+        <tag>ESP8266</tag>
       </tags>
   </entry>
   <entry>
@@ -4577,7 +4577,7 @@
         <category>物联网开发</category>
       </categories>
       <tags>
-        <tag>esp8266</tag>
+        <tag>ESP8266</tag>
         <tag>物联网</tag>
       </tags>
   </entry>
@@ -4631,7 +4631,7 @@
         <category>物联网开发</category>
       </categories>
       <tags>
-        <tag>esp8266</tag>
+        <tag>ESP8266</tag>
         <tag>物联网</tag>
       </tags>
   </entry>
@@ -4713,7 +4713,7 @@
         <category>物联网开发</category>
       </categories>
       <tags>
-        <tag>esp8266</tag>
+        <tag>ESP8266</tag>
         <tag>物联网</tag>
       </tags>
   </entry>
@@ -11204,7 +11204,7 @@ c-16-25.333-24-45-24-59z'/></svg></span></span></span></span><span class="vlist-
         <category>嵌入式课程设计</category>
       </categories>
       <tags>
-        <tag>esp8266</tag>
+        <tag>ESP8266</tag>
         <tag>物联网</tag>
       </tags>
   </entry>
