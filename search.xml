@@ -8611,6 +8611,76 @@ PLL主时钟PLLCLK = 72MHZ<br>
       </tags>
   </entry>
   <entry>
+    <title>WIN10突然无法上网(WiFi)的解决方法</title>
+    <url>/posts/12f4c955/</url>
+    <content><![CDATA[<h2 id="初陷迷雾">初陷迷雾</h2>
+<p>今天刚一打开电脑，连接上WiFi后就显示 “无Internet”</p>
+<p><img src="https://i0.hdslb.com/bfs/album/16a0df2d78c3f8bbc9bb8b7c9e60aaff665c67d1.png" alt="image-20220703131611342"></p>
+<p>打开网页也是</p>
+<img src="https://i0.hdslb.com/bfs/album/725b890a0b8b95247bc7a8ab8a4a11ecb538c98e.png" alt="image-20220703131713675" style="zoom:50%;" />
+<p>此时内心一点不慌，觉得等个一两分钟应该就好了，但过了五分钟后，还不行，就觉得有点不妙，于是使用了万能的“重启”大法</p>
+<p>重新开机后，还是不行，此时心中已经开始有一万只草泥马狂奔而过了</p>
+<h2 id="云开雾散">云开雾散</h2>
+<p>一番挣扎后，逐渐放弃，还好有个手机还能上网搜一下，搜到一篇文章【<a href="https://www.xitongcheng.com/jiaocheng/win10_article_47416.html">Win10连接wifi显示“无Internet,安全”的三种解决方法</a>】，我按照第一种方法解决了问题。</p>
+<p>下面以手机热点为例，电脑连接上手机热点后，不能上网的问题的解决方法。</p>
+<h3 id="步骤-2">步骤</h3>
+<ol>
+<li>
+<p>打开控制面板，双击WiFi</p>
+<p><img src="https://i0.hdslb.com/bfs/album/077b685e36257da58fa73f0a3fce033e2f3ad90e.png" alt="image-20220703132712352"></p>
+</li>
+<li>
+<p>然后如下操作</p>
+<table>
+<thead>
+<tr>
+<th>(1)看到【IPv4连接】是“无Internet访问权限”的，点击【属性】</th>
+<th>(2)双击“Internet协议版本4（TCP/IPv4）”</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="https://i0.hdslb.com/bfs/album/9efd823ecffc594346eed01bbce17861d30db2f9.png" alt="image-20220703132944635"></td>
+<td><img src="https://i0.hdslb.com/bfs/album/7c55e3edf8e03e8d7cbd06d1072ee99131806f80.png" alt="image-20220703133054970"></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>继续</p>
+<table>
+<thead>
+<tr>
+<th>(1)选择两个“自动…”，然后点击“高级”</th>
+<th>(2)在【WINS】的NetBIOS选择第二个“启用TCP/IP上的NetBIOS(N)”，确认</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="https://i0.hdslb.com/bfs/album/9ce65d28927fcb5a1767c7f96ab489e0c89aa2f0.png" alt="image-20220703133509801"></td>
+<td><img src="https://i0.hdslb.com/bfs/album/659bea257555a380101ced76a700331f58bae9dc.png" alt="image-20220703133724781"></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>最后，一路确认，回到WLAN状态窗口，稍等十几秒，发现【IPv4连接】变成了“Internet”，说明已经可以上网了</p>
+<img src="https://i0.hdslb.com/bfs/album/6ec78dd11ca00f4cd933e06da6e7c8c91f130b6e.png" alt="image-20220703134012599" style="zoom:67%;" />
+</li>
+</ol>
+<p>WiFi显示“已连接”，而不是“无Internet”，说明可以上网了</p>
+<p><img src="https://i0.hdslb.com/bfs/album/7e1fd84f317c10b0c5eb06f3c246ba8e1f44cb80.png" alt="image-20220703134622895"></p>
+<div class="note info flat"><p>注意：换一个WiFi后可能还要重新走一遍这个流程，可以一次性把常用的几个WiFi都配置好。</p>
+</div>
+]]></content>
+      <categories>
+        <category>win10</category>
+      </categories>
+      <tags>
+        <tag>win10</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Coding图床配置</title>
     <url>/posts/559512d3/</url>
     <content><![CDATA[<h2 id="前言">前言</h2>
