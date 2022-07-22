@@ -1,0 +1,1 @@
+document.addEventListener("visibilitychange",(function(){let t=document.visibilityState;"hidden"==t&&(document.title="ಥ_ಥ呜呜，再看看呗"),"visible"==t&&(document.title=">_<好耶！")}));
