@@ -31,9 +31,17 @@
       <meta name="msapplication-TileImage" content="https://unpkg.com/volantis-static@0.0.1649552113628/media/org.volantis/blog/favicon/favicon-32x32.png">
       <meta name="theme-color" content="#f4f4f4" media="(prefers-color-scheme: light)">
       <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">
+      <link rel="stylesheet" href="https://unpkg.com/katex@0.16.4/dist/katex.min.css">
+      <script defer src="https://unpkg.com/katex@0.16.4/dist/katex.min.js"></script>
+      <script defer src="https://unpkg.com/katex@0.16.4/dist/contrib/auto-render.min.js"><script>
+      <script src="https://unpkg.com/katex@0.16.4/dist/contrib/copy-tex.min.js"></script>
   <!-- import head_begin end -->
   <!-- Custom Files headBegin begin-->
   
+<!-- <script defer src="/static/js/darkmode.js"></script> -->
+<script defer src="/static/js/poem.js"></script>
+<script defer src="/static/js/funnytitle.js"></script>
+
   <!-- Custom Files headBegin end-->
   <!-- front-matter head_begin begin -->
   <!-- front-matter head_begin end -->
@@ -61,6 +69,10 @@
     /* 首屏样式 */
     #safearea {
   display: none;
+}
+.post-story + .post-story {
+  content-visibility: auto;
+  contain-intrinsic-size: 10px 500px;
 }
 :root {
   --color-site-body: #eafae1;
@@ -1841,14 +1853,14 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
   <script>
   /************这个文件存放不需要重载的全局变量和全局函数*********/
   window.volantis = {}; // volantis 全局变量
-  volantis.debug = "env"; // 调试模式
+  volantis.debug = "false"; // 调试模式
   volantis.dom = {}; // 页面Dom see: /source/js/app.js etc.
 
   volantis.GLOBAL_CONFIG ={
-    debug: "env",
+    debug: false,
     cdn: {"js":{"app":"/js/app.js","parallax":"/js/plugins/parallax.js","rightMenu":"/js/plugins/rightMenu.js","rightMenus":"/js/plugins/rightMenus.js","sites":"/js/plugins/tags/sites.js","friends":"/js/plugins/tags/friends.js","contributors":"/js/plugins/tags/contributors.js","search":"/js/search/hexo.js"},"css":{"style":"/css/style.css"}},
     default: {"avatar":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/avatar/round/3442075.svg","link":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/link/8f277b4ee0ecd.svg","cover":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/cover/76b86c0226ffd.svg","image":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/image/2659360.svg"},
-    lastupdate: new Date(1693882344688),
+    lastupdate: new Date(1693922432089),
     sidebar: {
       for_page: ["blogger","fastnav","tagcloud","webinfo"],
       for_post: ["blogger","category","toc"],
@@ -1874,7 +1886,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
       
       
       
-      rightmenus: {"enable":true,"order":["plugins.navigation","hr","plugins.inputBox","plugins.seletctText","plugins.elementCheck","plugins.elementImage","menus.link","hr","menus.darkMode","plugins.articlePage","music"],"options":{"iconPrefix":"fa-solid","articleShowLink":true,"musicAlwaysShow":true},"plugins":{"navigation":[{"id":"left","name":"转到上一页","icon":"fa-solid fa-arrow-left","event":"history.back()","group":"navigation"},{"id":"right","name":"转到下一页","icon":"fa-solid fa-arrow-right","event":"history.forward()","group":"navigation"},{"id":"redo","name":"刷新当前页面","icon":"fa-solid fa-redo","event":"window.location.reload()","group":"navigation"},{"id":"up","name":"回到顶部","icon":"fa-solid fa-arrow-up","event":"VolantisApp.scrolltoElement(volantis.dom.bodyAnchor)","group":"navigation"}],"inputBox":[{"id":"copyPaste","name":"粘贴文本","icon":"fa-solid fa-paste","event":"copyPaste","group":"inputBox"},{"id":"copyAll","name":"全选文本","icon":"fa-solid fa-object-ungroup","event":"copyAll","group":"inputBox"},{"id":"copyCut","name":"剪切文本","icon":"fa-solid fa-cut","event":"copyCut","group":"inputBox"}],"seletctText":[{"id":"copyText","name":"复制文本","icon":"fa-solid fa-copy","event":"copyText","group":"seletctText"},{"id":"searchWord","name":"站内搜索","icon":"fa-solid fa-search","event":"OpenSearch(__text__)","group":"seletctText"},{"id":"bingSearch","name":"必应搜索","icon":"fa-solid fa-search","event":"window.open(`https://cn.bing.com/search?q=${__text__}`)","group":"seletctText"}],"elementCheck":[{"id":"openTab","name":"新标签页打开","icon":"fa-solid fa-external-link-square-alt","event":"window.open(__link__)","group":"elementCheck"},{"id":"copyLink","name":"复制链接地址","icon":"fa-solid fa-link","event":"copyLink","group":"elementCheck"}],"elementImage":[{"id":"copyImg","name":"复制图片","icon":"fa-solid fa-image","event":"copyImg","group":"elementImage"},{"id":"googleImg","name":"谷歌识图","icon":"fa-solid fa-images","event":"window.open(`https://www.google.com.hk/searchbyimage?image_url=${__link__}`)","group":"elementImage"}],"articlePage":[{"id":"printMode","name":"打印页面","icon":"fa-solid fa-print","event":"printMode","group":"articlePage"},{"id":"readMode","name":"阅读模式","icon":"fa-solid fa-book-open","event":"readMode","group":"articlePage"}]},"menus":{"link":[{"id":"home","name":"主页","icon":"fa-solid fa-home","link":"/","group":"link"},{"id":"category","name":"分类","icon":"fa-solid fa-folder","link":"/categories/","group":"link"},{"id":"tag","name":"标签","icon":"fa-solid fa-tag","link":"/tags/","group":"link"},"hr",{"id":"friendlink","name":"友链","icon":"fa-solid fa-fan","link":"/friends/","group":"link"},{"id":"go","name":"开往","icon":"fa-solid fa-paper-plane","link":"https://www.travellings.cn/go.html","group":"link"}],"darkMode":[{"id":"darkMode","name":"暗黑模式","icon":"fa-solid fa-circle-half-stroke","event":"volantis.dark.toggle()","group":"darkMode"}]}}
+      rightmenus: {"enable":true,"order":["plugins.navigation","hr","menus.darkMode","hr","menus.prevNext","hr","plugins.inputBox","plugins.seletctText","plugins.elementCheck","plugins.elementImage","menus.link","hr","plugins.articlePage","music"],"options":{"iconPrefix":"fa-solid","articleShowLink":true,"musicAlwaysShow":true},"plugins":{"navigation":[{"id":"left","name":"转到上一页","icon":"fa-solid fa-arrow-left","event":"history.back()","group":"navigation"},{"id":"right","name":"转到下一页","icon":"fa-solid fa-arrow-right","event":"history.forward()","group":"navigation"},{"id":"redo","name":"刷新当前页面","icon":"fa-solid fa-redo","event":"window.location.reload()","group":"navigation"},{"id":"up","name":"回到顶部","icon":"fa-solid fa-arrow-up","event":"VolantisApp.scrolltoElement(volantis.dom.bodyAnchor)","group":"navigation"}],"inputBox":[{"id":"copyPaste","name":"粘贴文本","icon":"fa-solid fa-paste","event":"copyPaste","group":"inputBox"},{"id":"copyAll","name":"全选文本","icon":"fa-solid fa-object-ungroup","event":"copyAll","group":"inputBox"},{"id":"copyCut","name":"剪切文本","icon":"fa-solid fa-cut","event":"copyCut","group":"inputBox"}],"seletctText":[{"id":"copyText","name":"复制文本","icon":"fa-solid fa-copy","event":"copyText","group":"seletctText"},{"id":"searchWord","name":"站内搜索","icon":"fa-solid fa-search","event":"OpenSearch(__text__)","group":"seletctText"},{"id":"bingSearch","name":"必应搜索","icon":"fa-solid fa-search","event":"window.open(`https://cn.bing.com/search?q=${__text__}`)","group":"seletctText"}],"elementCheck":[{"id":"openTab","name":"新标签页打开","icon":"fa-solid fa-external-link-square-alt","event":"window.open(__link__)","group":"elementCheck"},{"id":"copyLink","name":"复制链接地址","icon":"fa-solid fa-link","event":"copyLink","group":"elementCheck"}],"elementImage":[{"id":"copyImg","name":"复制图片","icon":"fa-solid fa-image","event":"copyImg","group":"elementImage"},{"id":"googleImg","name":"谷歌识图","icon":"fa-solid fa-images","event":"window.open(`https://www.google.com.hk/searchbyimage?image_url=${__link__}`)","group":"elementImage"}],"articlePage":[{"id":"printMode","name":"打印页面","icon":"fa-solid fa-print","event":"printMode","group":"articlePage"},{"id":"readMode","name":"阅读模式","icon":"fa-solid fa-book-open","event":"readMode","group":"articlePage"}]},"menus":{"link":[{"id":"home","name":"主页","icon":"fa-solid fa-home","link":"/","group":"link"},{"id":"category","name":"分类","icon":"fa-solid fa-folder","link":"/categories/","group":"link"},{"id":"tag","name":"标签","icon":"fa-solid fa-tag","link":"/tags/","group":"link"},{"id":"notes","name":"笔记","icon":"fa-solid fa-pen-square","link":"/notes/","group":"link"},"hr",{"id":"friendlink","name":"友链","icon":"fa-solid fa-fan","link":"/friends/","group":"link"},{"id":"go","name":"开往","icon":"fa-solid fa-paper-plane","link":"https://www.travellings.cn/go.html","group":"link"}],"darkMode":[{"id":"darkMode","name":"暗黑模式","icon":"fa-solid fa-circle-half-stroke","event":"volantis.dark.toggle()","group":"darkMode"}],"prevNext":[{"id":"prev","name":"查看上一篇","icon":"fa-solid fa-angles-left","event":"volantis.rightmenu.jump('prev')","group":"prevNext"},{"id":"next","name":"查看下一篇","icon":"fa-solid fa-angles-right","event":"volantis.rightmenu.jump('next')","group":"prevNext"}]}}
       
     }
   }
@@ -2270,7 +2282,32 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
   <!-- import head_end begin -->
   <!-- import head_end end -->
   <!-- Custom Files headEnd begin-->
-  
+  <!-- 右键菜单按钮：上一篇、下一篇 -->
+<script>
+    volantis.rightmenu.jump = (type) => {
+        const selector = type === 'prev' ? 'article .prev-next a.prev' : 'article .prev-next a.next';
+        const item = document.querySelector(selector);
+        if (!!item) {
+            if (typeof pjax !== 'undefined') {
+                pjax.loadUrl(item.href)
+            } else {
+                window.location.href = item.href;
+            }
+        }
+    }
+
+    volantis.rightmenu.handle(() => {
+        const prev = document.querySelector('#prev').parentElement,
+            next = document.querySelector('#next').parentElement,
+            articlePrev = document.querySelector('article .prev-next a.prev p.title'),
+            articleNext = document.querySelector('article .prev-next a.next p.title');
+
+        prev.style.display = articlePrev ? 'block' : 'none';
+        prev.title = articlePrev ? articlePrev.innerText : null;
+        next.style.display = articleNext ? 'block' : 'none';
+        next.title = articleNext ? articleNext.innerText : null;
+    }, 'prevNext', false) 
+</script>
   <!-- Custom Files headEnd end-->
   <!-- front-matter head_end begin -->
   <!-- front-matter head_end end -->
@@ -2399,6 +2436,29 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
                     active-action="action-archives"
                   >
                   <i class='fa-solid fa-archive fa-fw'></i>归档
+                </a>
+                
+              </li>
+            
+          
+                    
+                      
+            
+              <hr>
+            
+          
+                    
+                      
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover"
+                href="/notes/" title="笔记"
+                  
+                  
+                  
+                    active-action="action-notes"
+                  >
+                  <i class='fa-solid fa-pen-square fa-fw'></i>笔记
                 </a>
                 
               </li>
@@ -2567,6 +2627,29 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
             
           
                     
+                      
+            
+              <hr>
+            
+          
+                    
+                      
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover"
+                href="/notes/" title="笔记"
+                  
+                  
+                  
+                    active-action="action-notes"
+                  >
+                  <i class='fa-solid fa-pen-square fa-fw'></i>笔记
+                </a>
+                
+              </li>
+            
+          
+                    
                   </ul>
                 
               </li>
@@ -2642,8 +2725,10 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
   <div class='top'>
     
     
-      <p class="title">AJream'S Blog</p>
+      <p class="title"><font><span>AJream'S</span> <span>Blog</span></font></p>
     
+    
+      <p class="subtitle"><div id="binft"></div></p>
     
   </div>
   <div class='bottom'>
@@ -2665,11 +2750,11 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
               <img src='/static/imgs/book.svg'><p>博客</p>
             </a>
           
-            <a target="_blank" rel="noopener" href="https://github.com/ajream/"
+            <a href="/notes/"
               
               
-              active-action="action-https:githubcomajream">
-              <img src='/static/imgs/github.svg'><p>Github</p>
+              active-action="action-notes">
+              <img src='/static/imgs/notes.svg'><p>笔记</p>
             </a>
           
             <a href="/friends/"
@@ -2708,6 +2793,112 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
         
           
         
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
         
           
         
@@ -2724,7 +2915,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
         
           <div class='post-wrapper'>
             <div class="post post-v3 white-box reveal shadow floatable blur"  itemscope itemtype="http://schema.org/Article" >
-  <link itemprop="mainEntityOfPage" href="http://ajream.netlify.com/posts/4a17b156/">
+  <link itemprop="mainEntityOfPage" href="http://ajream.netlify.com/posts/d230206/">
   <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
     <meta itemprop="name" content="aJream">
   </span>
@@ -2742,29 +2933,34 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
   
     
     <h2 class="article-title"  itemprop="name headline">
-      <a href="/posts/4a17b156/"  itemprop="url">
-        Hello World
+      <a href="/posts/d230206/"  itemprop="url">
+        ESP32+OLED播放视频
       </a>
     </h2>
   
   <div class='md article-desc' itemprop="articleBody">
     
-      
-        Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Qu...
-      
+      <p>esp32播放视频，使用tcp协议在线传输视频帧</p>
     
   </div>
   
     <div class='meta-v3' line_style='solid'>
       <div>
         
-        <time itemprop="dateCreated datePublished" datetime="2023-09-03T13:50:03+08:00">2023-09-03</time>
+        <time itemprop="dateCreated datePublished" datetime="2023-02-06T15:30:34+08:00">2023-02-06</time>
+        
+          <span class="dot"></span>
+          <a class="category-link" href="/categories/%E7%9E%8E%E6%8A%98%E8%85%BE/">瞎折腾</a>
+          
+            <span hidden itemprop="about" itemscope itemtype="http://schema.org/Thing">
+              <a href="/categories/%E7%9E%8E%E6%8A%98%E8%85%BE/" itemprop="url"><span itemprop="name">瞎折腾</span></a>
+            </span>
+          
         
       </div>
       
         <div>
-          <a class='readmore' href='/posts/4a17b156/' itemprop="url">
+          <a class='readmore' href='/posts/d230206/' itemprop="url">
             阅读全文
           </a>
         </div>
@@ -2780,7 +2976,7 @@ Qu...
         
           <div class='post-wrapper'>
             <div class="post post-v3 white-box reveal shadow floatable blur"  itemscope itemtype="http://schema.org/Article" >
-  <link itemprop="mainEntityOfPage" href="http://ajream.netlify.com/posts/1daa047d/">
+  <link itemprop="mainEntityOfPage" href="http://ajream.netlify.com/posts/87013241/">
   <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
     <meta itemprop="name" content="aJream">
   </span>
@@ -2798,34 +2994,34 @@ Qu...
   
     
     <h2 class="article-title"  itemprop="name headline">
-      <a href="/posts/1daa047d/"  itemprop="url">
-        GitCode & Picgo图床
+      <a href="/posts/87013241/"  itemprop="url">
+        AcWing4622-整数拆分
       </a>
     </h2>
   
   <div class='md article-desc' itemprop="articleBody">
     
-      <p>又双叒换图床了。。。不说了，说多都是泪😭</p>
+      <p>难度-中等，哥德巴赫猜想解法</p>
     
   </div>
   
     <div class='meta-v3' line_style='solid'>
       <div>
         
-        <time itemprop="dateCreated datePublished" datetime="2022-08-10T23:32:49+08:00">2022-08-10</time>
+        <time itemprop="dateCreated datePublished" datetime="2022-10-07T15:55:23+08:00">2022-10-07</time>
         
           <span class="dot"></span>
-          <a class="category-link" href="/categories/%E5%88%9B%E4%BD%9C%E7%AC%94%E8%AE%B0/">创作笔记</a>
+          <a class="category-link" href="/categories/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题</a>
           
             <span hidden itemprop="about" itemscope itemtype="http://schema.org/Thing">
-              <a href="/categories/%E5%88%9B%E4%BD%9C%E7%AC%94%E8%AE%B0/" itemprop="url"><span itemprop="name">创作笔记</span></a>
+              <a href="/categories/%E7%AE%97%E6%B3%95%E9%A2%98/" itemprop="url"><span itemprop="name">算法题</span></a>
             </span>
           
         
       </div>
       
         <div>
-          <a class='readmore' href='/posts/1daa047d/' itemprop="url">
+          <a class='readmore' href='/posts/87013241/' itemprop="url">
             阅读全文
           </a>
         </div>
@@ -2841,7 +3037,7 @@ Qu...
         
           <div class='post-wrapper'>
             <div class="post post-v3 white-box reveal shadow floatable blur"  itemscope itemtype="http://schema.org/Article" >
-  <link itemprop="mainEntityOfPage" href="http://ajream.netlify.com/posts/78253259/">
+  <link itemprop="mainEntityOfPage" href="http://ajream.netlify.com/posts/87d13e4d/">
   <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
     <meta itemprop="name" content="aJream">
   </span>
@@ -2859,38 +3055,34 @@ Qu...
   
     
     <h2 class="article-title"  itemprop="name headline">
-      <a href="/posts/78253259/"  itemprop="url">
-        ESP8266(1)-接入点模式-无线终端模式
+      <a href="/posts/87d13e4d/"  itemprop="url">
+        总结一下求极限的技巧
       </a>
     </h2>
   
   <div class='md article-desc' itemprop="articleBody">
     
-      <p>ESP8266如何开启热点（接入点模式）、如何连接WiFi（无线终端模式）</p>
+      <p>做题经验，或者是突发奇想</p>
     
   </div>
   
     <div class='meta-v3' line_style='solid'>
       <div>
         
-        <time itemprop="dateCreated datePublished" datetime="2021-08-02T08:00:00+08:00">2021-08-02</time>
+        <time itemprop="dateCreated datePublished" datetime="2022-09-14T15:55:23+08:00">2022-09-14</time>
         
           <span class="dot"></span>
-          <a class="category-link" href="/categories/%E7%A1%AC%E4%BB%B6%E5%AD%A6%E4%B9%A0/">硬件学习</a><span class="sep"></span><a class="category-link" href="/categories/%E7%A1%AC%E4%BB%B6%E5%AD%A6%E4%B9%A0/ESP8266/">ESP8266</a>
+          <a class="category-link" href="/categories/%E8%80%83%E7%A0%94/">考研</a>
           
             <span hidden itemprop="about" itemscope itemtype="http://schema.org/Thing">
-              <a href="/categories/%E7%A1%AC%E4%BB%B6%E5%AD%A6%E4%B9%A0/" itemprop="url"><span itemprop="name">硬件学习</span></a>
-            </span>
-          
-            <span hidden itemprop="about" itemscope itemtype="http://schema.org/Thing">
-              <a href="/categories/%E7%A1%AC%E4%BB%B6%E5%AD%A6%E4%B9%A0/ESP8266/" itemprop="url"><span itemprop="name">ESP8266</span></a>
+              <a href="/categories/%E8%80%83%E7%A0%94/" itemprop="url"><span itemprop="name">考研</span></a>
             </span>
           
         
       </div>
       
         <div>
-          <a class='readmore' href='/posts/78253259/' itemprop="url">
+          <a class='readmore' href='/posts/87d13e4d/' itemprop="url">
             阅读全文
           </a>
         </div>
@@ -2906,7 +3098,7 @@ Qu...
         
           <div class='post-wrapper'>
             <div class="post post-v3 white-box reveal shadow floatable blur"  itemscope itemtype="http://schema.org/Article" >
-  <link itemprop="mainEntityOfPage" href="http://ajream.netlify.com/posts/5aa91944/">
+  <link itemprop="mainEntityOfPage" href="http://ajream.netlify.com/posts/63ad0f3/">
   <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
     <meta itemprop="name" content="aJream">
   </span>
@@ -2924,38 +3116,158 @@ Qu...
   
     
     <h2 class="article-title"  itemprop="name headline">
-      <a href="/posts/5aa91944/"  itemprop="url">
-        ESP8266(0)-Arduino配置esp8266开发环境
+      <a href="/posts/63ad0f3/"  itemprop="url">
+        C语言scanf输入匹配
       </a>
     </h2>
   
   <div class='md article-desc' itemprop="articleBody">
     
-      <p>如何用Arduino配置ESP8266开发环境</p>
+      <p>关于C语言scanf输入匹配（适用于sscanf）</p>
     
   </div>
   
     <div class='meta-v3' line_style='solid'>
       <div>
         
-        <time itemprop="dateCreated datePublished" datetime="2021-08-01T08:10:21+08:00">2021-08-01</time>
+        <time itemprop="dateCreated datePublished" datetime="2022-09-14T11:30:34+08:00">2022-09-14</time>
         
           <span class="dot"></span>
-          <a class="category-link" href="/categories/%E7%A1%AC%E4%BB%B6%E5%AD%A6%E4%B9%A0/">硬件学习</a><span class="sep"></span><a class="category-link" href="/categories/%E7%A1%AC%E4%BB%B6%E5%AD%A6%E4%B9%A0/ESP8266/">ESP8266</a>
+          <a class="category-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a>
           
             <span hidden itemprop="about" itemscope itemtype="http://schema.org/Thing">
-              <a href="/categories/%E7%A1%AC%E4%BB%B6%E5%AD%A6%E4%B9%A0/" itemprop="url"><span itemprop="name">硬件学习</span></a>
-            </span>
-          
-            <span hidden itemprop="about" itemscope itemtype="http://schema.org/Thing">
-              <a href="/categories/%E7%A1%AC%E4%BB%B6%E5%AD%A6%E4%B9%A0/ESP8266/" itemprop="url"><span itemprop="name">ESP8266</span></a>
+              <a href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" itemprop="url"><span itemprop="name">编程语言</span></a>
             </span>
           
         
       </div>
       
         <div>
-          <a class='readmore' href='/posts/5aa91944/' itemprop="url">
+          <a class='readmore' href='/posts/63ad0f3/' itemprop="url">
+            阅读全文
+          </a>
+        </div>
+      
+    </div>
+  
+
+</div>
+
+          </div>
+        
+      
+        
+          <div class='post-wrapper'>
+            <div class="post post-v3 white-box reveal shadow floatable blur"  itemscope itemtype="http://schema.org/Article" >
+  <link itemprop="mainEntityOfPage" href="http://ajream.netlify.com/posts/e66575b7/">
+  <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="aJream">
+  </span>
+  <span hidden itemprop="post" itemscope itemtype="http://schema.org/Post">
+    <meta itemprop="name" content="aJream">
+    <meta itemprop="description" content="aJream的个人博客">
+  </span>
+  
+  
+  
+    <div class='headimg-div'>
+      <a class='headimg-a' href="/posts/e66575b7/">
+        <img itemprop="image" class='headimg' alt="明月寄相思" src='https://pic.rmb.bdstatic.com/bjh/8d25e2d7d2d79f3fc73a1bacb590a6e6.png'/>
+      </a>
+    </div>
+  
+  
+    
+    <h2 class="article-title"  itemprop="name headline">
+      <a href="/posts/e66575b7/"  itemprop="url">
+        明月寄相思
+      </a>
+    </h2>
+  
+  <div class='md article-desc' itemprop="articleBody">
+    
+      <p>中秋节到了，中秋快乐呀~</p>
+    
+  </div>
+  
+    <div class='meta-v3' line_style='solid'>
+      <div>
+        
+        <time itemprop="dateCreated datePublished" datetime="2022-09-10T15:20:53+08:00">2022-09-10</time>
+        
+          <span class="dot"></span>
+          <a class="category-link" href="/categories/%E5%A8%B1%E4%B9%90/">娱乐</a>
+          
+            <span hidden itemprop="about" itemscope itemtype="http://schema.org/Thing">
+              <a href="/categories/%E5%A8%B1%E4%B9%90/" itemprop="url"><span itemprop="name">娱乐</span></a>
+            </span>
+          
+        
+      </div>
+      
+        <div>
+          <a class='readmore' href='/posts/e66575b7/' itemprop="url">
+            阅读全文
+          </a>
+        </div>
+      
+    </div>
+  
+
+</div>
+
+          </div>
+        
+      
+        
+          <div class='post-wrapper'>
+            <div class="post post-v3 white-box reveal shadow floatable blur"  itemscope itemtype="http://schema.org/Article" >
+  <link itemprop="mainEntityOfPage" href="http://ajream.netlify.com/posts/e923dc73/">
+  <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="aJream">
+  </span>
+  <span hidden itemprop="post" itemscope itemtype="http://schema.org/Post">
+    <meta itemprop="name" content="aJream">
+    <meta itemprop="description" content="aJream的个人博客">
+  </span>
+  
+  
+  
+    <span hidden>
+      <meta itemprop="image" content="https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png">
+    </span>
+  
+  
+    
+    <h2 class="article-title"  itemprop="name headline">
+      <a href="/posts/e923dc73/"  itemprop="url">
+        C++基础回顾
+      </a>
+    </h2>
+  
+  <div class='md article-desc' itemprop="articleBody">
+    
+      <p>关于C++的一些基本知识概念总结</p>
+    
+  </div>
+  
+    <div class='meta-v3' line_style='solid'>
+      <div>
+        
+        <time itemprop="dateCreated datePublished" datetime="2022-09-07T11:30:34+08:00">2022-09-07</time>
+        
+          <span class="dot"></span>
+          <a class="category-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a>
+          
+            <span hidden itemprop="about" itemscope itemtype="http://schema.org/Thing">
+              <a href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" itemprop="url"><span itemprop="name">编程语言</span></a>
+            </span>
+          
+        
+      </div>
+      
+        <div>
+          <a class='readmore' href='/posts/e923dc73/' itemprop="url">
             阅读全文
           </a>
         </div>
@@ -2971,6 +3283,21 @@ Qu...
     
   </section>
   
+    
+      <br>
+      <div class="prev-next">
+        
+        <p class="current">
+          1 / 4
+        </p>
+        
+          <a class="next" rel="next" href="/page/2/">
+            <section class="post next white-box shadow floatable blur">
+              &nbsp;下一页&nbsp;<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+            </section>
+          </a>
+        
+      </div>
     
   
 
@@ -3119,7 +3446,7 @@ Qu...
 
 
     <div class='content'>
-      <a href="/tags/ESP8266/" style="font-size: 24px; color: #555">ESP8266</a> <a href="/tags/%E5%9B%BE%E5%BA%8A/" style="font-size: 14px; color: #999">图床</a>
+      <a href="/tags/AcWing/" style="font-size: 14px; color: #999">AcWing</a> <a href="/tags/C-C/" style="font-size: 24px; color: #555">C/C++</a> <a href="/tags/ESP32/" style="font-size: 14px; color: #999">ESP32</a> <a href="/tags/GitHub/" style="font-size: 14px; color: #999">GitHub</a> <a href="/tags/Gitee/" style="font-size: 24px; color: #555">Gitee</a> <a href="/tags/Github/" style="font-size: 14px; color: #999">Github</a> <a href="/tags/Python/" style="font-size: 14px; color: #999">Python</a> <a href="/tags/leetcode/" style="font-size: 14px; color: #999">leetcode</a> <a href="/tags/pages/" style="font-size: 24px; color: #555">pages</a> <a href="/tags/stellar/" style="font-size: 14px; color: #999">stellar</a> <a href="/tags/vercel/" style="font-size: 14px; color: #999">vercel</a> <a href="/tags/%E4%BA%91%E5%87%BD%E6%95%B0/" style="font-size: 14px; color: #999">云函数</a> <a href="/tags/%E5%82%85%E9%87%8C%E5%8F%B6/" style="font-size: 14px; color: #999">傅里叶</a> <a href="/tags/%E5%9B%BE%E5%BA%8A/" style="font-size: 14px; color: #999">图床</a> <a href="/tags/%E6%8A%80%E5%B7%A7/" style="font-size: 14px; color: #999">技巧</a> <a href="/tags/%E6%95%B0%E5%AD%97%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/" style="font-size: 14px; color: #999">数字信号处理</a> <a href="/tags/%E6%A6%82%E7%8E%87%E8%AE%BA/" style="font-size: 14px; color: #999">概率论</a> <a href="/tags/%E7%AE%80%E5%8E%86/" style="font-size: 24px; color: #555">简历</a> <a href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/" style="font-size: 14px; color: #999">自动化</a> <a href="/tags/%E8%8A%82%E6%97%A5/" style="font-size: 14px; color: #999">节日</a> <a href="/tags/%E8%A1%A5%E7%A0%81/" style="font-size: 14px; color: #999">补码</a> <a href="/tags/%E9%80%9A%E4%BF%A1%E5%8E%9F%E7%90%86/" style="font-size: 14px; color: #999">通信原理</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 14px; color: #999">链表</a> <a href="/tags/%E9%AB%98%E6%95%B0/" style="font-size: 14px; color: #999">高数</a>
     </div>
   </section>
 
@@ -3145,7 +3472,7 @@ Qu...
       
         <div class="webinfo-item">
           <div>文章数目：</div>
-          <div>4 篇</div>
+          <div>20 篇</div>
         </div>
       
 
@@ -3197,6 +3524,26 @@ Qu...
 
 
 <!-- 没有 pjax 占位会报错 万恶的 pjax -->
+
+  <div class="pjax">
+    <!-- pjax占位 -->
+  </div>
+
+  <div class="pjax">
+    <!-- pjax占位 -->
+  </div>
+
+  <div class="pjax">
+    <!-- pjax占位 -->
+  </div>
+
+  <div class="pjax">
+    <!-- pjax占位 -->
+  </div>
+
+  <div class="pjax">
+    <!-- pjax占位 -->
+  </div>
 
   <div class="pjax">
     <!-- pjax占位 -->
@@ -3354,6 +3701,10 @@ Qu...
 
 <!-- required -->
 
+  
+<script src="https://unpkg.com/volantis-static@0.0.1654736714924/libs/jquery/dist/jquery.min.js"></script>
+
+
 
 <!-- internal -->
 
@@ -3399,6 +3750,41 @@ Qu...
 
 
   </li>
+
+
+    <hr class="menuLoad-Content" >
+
+
+
+  <li class="menuLoad-Content">
+    <span class="vlts-menu fix-cursor-default event" id="darkMode" data-event="volantis.dark.toggle()" data-group="darkMode">
+      <i class="fa-solid fa-circle-half-stroke fa-fw"></i>
+      暗黑模式
+    </span>
+  </li>
+
+
+
+    <hr class="menuLoad-Content" >
+
+
+
+  <li class="menuLoad-Content">
+    <span class="vlts-menu fix-cursor-default event" id="prev" data-event="volantis.rightmenu.jump('prev')" data-group="prevNext">
+      <i class="fa-solid fa-angles-left fa-fw"></i>
+      查看上一篇
+    </span>
+  </li>
+
+
+
+  <li class="menuLoad-Content">
+    <span class="vlts-menu fix-cursor-default event" id="next" data-event="volantis.rightmenu.jump('next')" data-group="prevNext">
+      <i class="fa-solid fa-angles-right fa-fw"></i>
+      查看下一篇
+    </span>
+  </li>
+
 
 
     <hr class="menuLoad-Content" >
@@ -3522,6 +3908,15 @@ Qu...
 
 
 
+  <li class="menuLoad-Content">
+    <a class="vlts-menu fix-cursor-default" id="notes" href="/notes/" data-group="link">
+      <i class="fa-solid fa-pen-square fa-fw"></i>
+      笔记
+    </a>
+  </li>
+
+
+
     <hr class="menuLoad-Content" >
 
 
@@ -3545,15 +3940,6 @@ Qu...
 
 
     <hr class="menuLoad-Content" >
-
-
-
-  <li class="menuLoad-Content">
-    <span class="vlts-menu fix-cursor-default event" id="darkMode" data-event="volantis.dark.toggle()" data-group="darkMode">
-      <i class="fa-solid fa-circle-half-stroke fa-fw"></i>
-      暗黑模式
-    </span>
-  </li>
 
 
 
@@ -3613,6 +3999,28 @@ Qu...
 
 
 
+
+
+
+
+
+
+
+  RightMenusFunction['darkMode'] = () => {volantis.dark.toggle()}
+
+
+
+
+
+
+
+  RightMenusFunction['prev'] = () => {volantis.rightmenu.jump('prev')}
+
+
+
+
+
+  RightMenusFunction['next'] = () => {volantis.rightmenu.jump('next')}
 
 
 
@@ -3691,10 +4099,6 @@ Qu...
 
 
 
-
-
-
-  RightMenusFunction['darkMode'] = () => {volantis.dark.toggle()}
 
 
 
@@ -3992,52 +4396,29 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 
 
 
-      <script>
-  volantis.layoutHelper("comments",`<div id="giscus_container"></div>`)
-
-  volantis.giscus = {};
-
-  function check_giscus() {
-    if (volantis.dark.mode === "dark") {
-      volantis.giscus.Theme = 'dark';
-    } else {
-      volantis.giscus.Theme = 'light';
+      <script type="text/javascript">
+  volantis.layoutHelper("comments",`<div id="gitalk-container"></div>`)
+  function pjax_gitalk() {
+    if(!document.querySelector("#gitalk-container"))return;
+    let path = pdata.commentPath;
+    if (path.length == 0) {
+      let defaultPath = '';
+      path = defaultPath || decodeURI(window.location.pathname);
     }
-
-    return document.getElementById("giscus_container");
+    if (document.getElementById('gitalk-container') != null) {
+      var gitalk = new Gitalk(
+        Object.assign(
+          Object.assign({"js":"https://unpkg.com/gitalk@1/dist/gitalk.min.js","clientID":"a243da98c2aa499fdd9b","clientSecret":"6e325fd564965e65619f882e9937459d8e216b03","repo":"gitalk-comments","owner":"ajream","admin":"ajream","path":null}, {
+            id: path,
+            distractionFreeMode: false  // Facebook-like distraction free mode
+          }),
+        pdata.commentConfig)
+      );
+      gitalk.render('gitalk-container');
+    }
   }
-
-  function pjax_giscus() {
-    const HEAD = check_giscus();
-    if (!HEAD) return;
-    let cfg = Object.assign({"theme":{"light":"light","dark":"dark"},"repo":"ajream/giscus","repo-id":"R_kgDOKPG_bA","category":"Announcements","category-id":"DIC_kwDOKPG_bM4CZEUo","mapping":"url","reactions-enabled":"1","emit-metadata":"0","lang":"zh-CN"},pdata.commentConfig)
-    const script = document.createElement('script');
-    script.setAttribute('src', 'https://giscus.app/client.js');
-    Object.keys(cfg).forEach(k=>{
-      if (k != "theme") {
-        script.setAttribute('data-'+k, cfg[k]);
-      }
-    })
-    script.setAttribute('data-theme', volantis.giscus.Theme);
-    script.setAttribute('crossorigin', "anonymous");
-    HEAD.appendChild(script);
-  }
-
-  function dark_giscus() {
-    const HEAD = check_giscus();
-    if (!HEAD) return;
-
-    const message = {
-      setConfig: {
-        theme: volantis.giscus.Theme
-      }
-    };
-    const giscusIframe = document.querySelector('iframe.giscus-frame');
-    giscusIframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-  }
-  pjax_giscus();
-  volantis.pjax.push(pjax_giscus);
-  volantis.dark.push(dark_giscus);
+  volantis.js('https://unpkg.com/gitalk@1/dist/gitalk.min.js').then(pjax_gitalk)
+  volantis.pjax.push(pjax_gitalk);
 </script>
 
     
@@ -4351,7 +4732,7 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 
 
   <script>
-  let imgs = ["https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/046.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/056.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/001.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/034.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/033.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/051.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/025.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/004.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/054.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/035.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/016.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/019.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/052.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/042.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/003.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/039.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/006.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/002.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/005.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/038.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/012.webp"];
+  let imgs = ["https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/003.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/033.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/006.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/054.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/019.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/002.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/038.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/012.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/039.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/005.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/035.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/046.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/052.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/042.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/056.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/001.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/004.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/034.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/025.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/016.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/051.webp"];
   let index = 0;
   let IntervalParallax = null;
 
@@ -4558,6 +4939,96 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
   document.addEventListener("pjax:success", ()=>{
     volantis.requestAnimationFrame(listennSidebarTOC)
   });
+</script>
+
+
+  <script>
+  try {
+    // https://web.dev/content-visibility/
+    // https://www.caniuse.com/?search=content-visibility
+    // https://infrequently.org/2020/12/content-visibility-scroll-fix/
+    // https://infrequently.org/2020/12/resize-resilient-deferred-rendering/
+
+    // 备注 目前已知的问题:
+    // 动态修改导致的内容高度变化(例如评论框异步渲染的外部盒子高度变化) 无法提前获知, 进而导致的首次滚动条跳动无法去除 (wontfix) 事实上不使用 content-visibility 也会有跳动, 不过是比使用 content-visibility 跳动提前
+    // scrollreveal 插件潜在问题 目前尚不明确
+
+    let eqIsh = (a, b, fuzz = 2) => {
+      return Math.abs(a - b) <= fuzz;
+    };
+
+    let rectNotEQ = (a, b) => {
+      return !eqIsh(a.width, b.width) || !eqIsh(a.height, b.height);
+    };
+
+    // Keep a map of elements and the dimensions of
+    // their place-holders, re-setting the element's
+    // intrinsic size when we get updated measurements
+    // from observers.
+    let spaced = new WeakMap();
+
+    // Only call this when known cheap, post layout
+    let reserveSpace = (el, rect = el.getClientBoundingRect()) => {
+      let old = spaced.get(el);
+      // Set intrinsic size to prevent jumping on un-painting:
+      //    https://drafts.csswg.org/css-sizing-4/#intrinsic-size-override
+      if (!old || rectNotEQ(old, rect)) {
+        spaced.set(el, rect);
+        el.style["contain-intrinsic-size"] = `${rect.width}px ${rect.height}px`;
+      }
+    };
+
+    let iObs = new IntersectionObserver(
+      (entries, o) => {
+        entries.forEach((entry) => {
+          // We don't care if the element is intersecting or
+          // has been laid out as our page structure ensures
+          // they'll get the right width.
+          reserveSpace(entry.target, entry.boundingClientRect);
+        });
+      },
+      { rootMargin: "500px 0px 500px 0px" }
+    );
+
+    let rObs = new ResizeObserver((entries, o) => {
+      entries.forEach((entry) => {
+        reserveSpace(entry.target, entry.contentRect);
+      });
+    });
+
+    let resizeResilientDeferredRendering = (Selector) => {
+      let articles = document.querySelectorAll(Selector);
+
+      if (articles.length) {
+        articles.forEach((el) => {
+          iObs.observe(el);
+          rObs.observe(el);
+        });
+
+        // Workaround for Chrome bug, part 2.
+        //
+        // Re-enable browser management of rendering for the
+        // first article after the first paint. Double-rAF
+        // to ensure we get called after a layout.
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            articles[0].style["content-visibility"] = "auto";
+          });
+        });
+      }
+    };
+
+    let contentVisibilityScrollFix = () => {
+      if (!("content-visibility" in document.documentElement.style)) {
+        return;
+      }
+      resizeResilientDeferredRendering(".post-story");
+    };
+    contentVisibilityScrollFix();
+    volantis.pjax.push(contentVisibilityScrollFix);
+  } catch (error) {
+    console.log(error);
+  }
 </script>
 
 

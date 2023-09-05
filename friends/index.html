@@ -31,9 +31,17 @@
       <meta name="msapplication-TileImage" content="https://unpkg.com/volantis-static@0.0.1649552113628/media/org.volantis/blog/favicon/favicon-32x32.png">
       <meta name="theme-color" content="#f4f4f4" media="(prefers-color-scheme: light)">
       <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">
+      <link rel="stylesheet" href="https://unpkg.com/katex@0.16.4/dist/katex.min.css">
+      <script defer src="https://unpkg.com/katex@0.16.4/dist/katex.min.js"></script>
+      <script defer src="https://unpkg.com/katex@0.16.4/dist/contrib/auto-render.min.js"><script>
+      <script src="https://unpkg.com/katex@0.16.4/dist/contrib/copy-tex.min.js"></script>
   <!-- import head_begin end -->
   <!-- Custom Files headBegin begin-->
   
+<!-- <script defer src="/static/js/darkmode.js"></script> -->
+<script defer src="/static/js/poem.js"></script>
+<script defer src="/static/js/funnytitle.js"></script>
+
   <!-- Custom Files headBegin end-->
   <!-- front-matter head_begin begin -->
   <!-- front-matter head_begin end -->
@@ -51,7 +59,7 @@
 <meta property="og:title" content="友链">
 <meta property="og:url" content="http://ajream.netlify.com/friends/">
 <meta property="og:site_name" content="aJream">
-<meta property="og:description" content="我自己博客园我在博客园的博客CSDN我在CSDN的博客知乎我的知乎  作者大大~xaoxuuMHuiGinkssColsrchDrew233Linhk1606W4J1e大神们Akilarの糖果屋Jerry優萌初華の霜月琉璃小伙伴们~感谢小伙伴们带来的干货🎉ReverseSacle是非题solstice23’s Blog宫水三叶の刷题日记北辰の小栈">
+<meta property="og:description" content="我自己博客园我在博客园的博客CSDN我在CSDN的博客知乎我的知乎 ThanksvolantisMHuiGinkssColsrch大神们Akilarの糖果屋Jerry優萌初華の霜月琉璃DearXuan小伙伴们~感谢小伙伴们带来的干货🎉ReverseSacle是非题solstice23’s Blog宫水三叶の刷题日记北辰の小栈">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png">
 <meta property="article:published_time" content="2023-09-04T07:35:08.664Z">
@@ -63,6 +71,10 @@
     /* 首屏样式 */
     #safearea {
   display: none;
+}
+.post-story + .post-story {
+  content-visibility: auto;
+  contain-intrinsic-size: 10px 500px;
 }
 :root {
   --color-site-body: #eafae1;
@@ -1843,14 +1855,14 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
   <script>
   /************这个文件存放不需要重载的全局变量和全局函数*********/
   window.volantis = {}; // volantis 全局变量
-  volantis.debug = "env"; // 调试模式
+  volantis.debug = "false"; // 调试模式
   volantis.dom = {}; // 页面Dom see: /source/js/app.js etc.
 
   volantis.GLOBAL_CONFIG ={
-    debug: "env",
+    debug: false,
     cdn: {"js":{"app":"/js/app.js","parallax":"/js/plugins/parallax.js","rightMenu":"/js/plugins/rightMenu.js","rightMenus":"/js/plugins/rightMenus.js","sites":"/js/plugins/tags/sites.js","friends":"/js/plugins/tags/friends.js","contributors":"/js/plugins/tags/contributors.js","search":"/js/search/hexo.js"},"css":{"style":"/css/style.css"}},
     default: {"avatar":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/avatar/round/3442075.svg","link":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/link/8f277b4ee0ecd.svg","cover":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/cover/76b86c0226ffd.svg","image":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/image/2659360.svg"},
-    lastupdate: new Date(1693882344688),
+    lastupdate: new Date(1693922432089),
     sidebar: {
       for_page: ["blogger","fastnav","tagcloud","webinfo"],
       for_post: ["blogger","category","toc"],
@@ -1876,7 +1888,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
       
       
       
-      rightmenus: {"enable":true,"order":["plugins.navigation","hr","plugins.inputBox","plugins.seletctText","plugins.elementCheck","plugins.elementImage","menus.link","hr","menus.darkMode","plugins.articlePage","music"],"options":{"iconPrefix":"fa-solid","articleShowLink":true,"musicAlwaysShow":true},"plugins":{"navigation":[{"id":"left","name":"转到上一页","icon":"fa-solid fa-arrow-left","event":"history.back()","group":"navigation"},{"id":"right","name":"转到下一页","icon":"fa-solid fa-arrow-right","event":"history.forward()","group":"navigation"},{"id":"redo","name":"刷新当前页面","icon":"fa-solid fa-redo","event":"window.location.reload()","group":"navigation"},{"id":"up","name":"回到顶部","icon":"fa-solid fa-arrow-up","event":"VolantisApp.scrolltoElement(volantis.dom.bodyAnchor)","group":"navigation"}],"inputBox":[{"id":"copyPaste","name":"粘贴文本","icon":"fa-solid fa-paste","event":"copyPaste","group":"inputBox"},{"id":"copyAll","name":"全选文本","icon":"fa-solid fa-object-ungroup","event":"copyAll","group":"inputBox"},{"id":"copyCut","name":"剪切文本","icon":"fa-solid fa-cut","event":"copyCut","group":"inputBox"}],"seletctText":[{"id":"copyText","name":"复制文本","icon":"fa-solid fa-copy","event":"copyText","group":"seletctText"},{"id":"searchWord","name":"站内搜索","icon":"fa-solid fa-search","event":"OpenSearch(__text__)","group":"seletctText"},{"id":"bingSearch","name":"必应搜索","icon":"fa-solid fa-search","event":"window.open(`https://cn.bing.com/search?q=${__text__}`)","group":"seletctText"}],"elementCheck":[{"id":"openTab","name":"新标签页打开","icon":"fa-solid fa-external-link-square-alt","event":"window.open(__link__)","group":"elementCheck"},{"id":"copyLink","name":"复制链接地址","icon":"fa-solid fa-link","event":"copyLink","group":"elementCheck"}],"elementImage":[{"id":"copyImg","name":"复制图片","icon":"fa-solid fa-image","event":"copyImg","group":"elementImage"},{"id":"googleImg","name":"谷歌识图","icon":"fa-solid fa-images","event":"window.open(`https://www.google.com.hk/searchbyimage?image_url=${__link__}`)","group":"elementImage"}],"articlePage":[{"id":"printMode","name":"打印页面","icon":"fa-solid fa-print","event":"printMode","group":"articlePage"},{"id":"readMode","name":"阅读模式","icon":"fa-solid fa-book-open","event":"readMode","group":"articlePage"}]},"menus":{"link":[{"id":"home","name":"主页","icon":"fa-solid fa-home","link":"/","group":"link"},{"id":"category","name":"分类","icon":"fa-solid fa-folder","link":"/categories/","group":"link"},{"id":"tag","name":"标签","icon":"fa-solid fa-tag","link":"/tags/","group":"link"},"hr",{"id":"friendlink","name":"友链","icon":"fa-solid fa-fan","link":"/friends/","group":"link"},{"id":"go","name":"开往","icon":"fa-solid fa-paper-plane","link":"https://www.travellings.cn/go.html","group":"link"}],"darkMode":[{"id":"darkMode","name":"暗黑模式","icon":"fa-solid fa-circle-half-stroke","event":"volantis.dark.toggle()","group":"darkMode"}]}}
+      rightmenus: {"enable":true,"order":["plugins.navigation","hr","menus.darkMode","hr","menus.prevNext","hr","plugins.inputBox","plugins.seletctText","plugins.elementCheck","plugins.elementImage","menus.link","hr","plugins.articlePage","music"],"options":{"iconPrefix":"fa-solid","articleShowLink":true,"musicAlwaysShow":true},"plugins":{"navigation":[{"id":"left","name":"转到上一页","icon":"fa-solid fa-arrow-left","event":"history.back()","group":"navigation"},{"id":"right","name":"转到下一页","icon":"fa-solid fa-arrow-right","event":"history.forward()","group":"navigation"},{"id":"redo","name":"刷新当前页面","icon":"fa-solid fa-redo","event":"window.location.reload()","group":"navigation"},{"id":"up","name":"回到顶部","icon":"fa-solid fa-arrow-up","event":"VolantisApp.scrolltoElement(volantis.dom.bodyAnchor)","group":"navigation"}],"inputBox":[{"id":"copyPaste","name":"粘贴文本","icon":"fa-solid fa-paste","event":"copyPaste","group":"inputBox"},{"id":"copyAll","name":"全选文本","icon":"fa-solid fa-object-ungroup","event":"copyAll","group":"inputBox"},{"id":"copyCut","name":"剪切文本","icon":"fa-solid fa-cut","event":"copyCut","group":"inputBox"}],"seletctText":[{"id":"copyText","name":"复制文本","icon":"fa-solid fa-copy","event":"copyText","group":"seletctText"},{"id":"searchWord","name":"站内搜索","icon":"fa-solid fa-search","event":"OpenSearch(__text__)","group":"seletctText"},{"id":"bingSearch","name":"必应搜索","icon":"fa-solid fa-search","event":"window.open(`https://cn.bing.com/search?q=${__text__}`)","group":"seletctText"}],"elementCheck":[{"id":"openTab","name":"新标签页打开","icon":"fa-solid fa-external-link-square-alt","event":"window.open(__link__)","group":"elementCheck"},{"id":"copyLink","name":"复制链接地址","icon":"fa-solid fa-link","event":"copyLink","group":"elementCheck"}],"elementImage":[{"id":"copyImg","name":"复制图片","icon":"fa-solid fa-image","event":"copyImg","group":"elementImage"},{"id":"googleImg","name":"谷歌识图","icon":"fa-solid fa-images","event":"window.open(`https://www.google.com.hk/searchbyimage?image_url=${__link__}`)","group":"elementImage"}],"articlePage":[{"id":"printMode","name":"打印页面","icon":"fa-solid fa-print","event":"printMode","group":"articlePage"},{"id":"readMode","name":"阅读模式","icon":"fa-solid fa-book-open","event":"readMode","group":"articlePage"}]},"menus":{"link":[{"id":"home","name":"主页","icon":"fa-solid fa-home","link":"/","group":"link"},{"id":"category","name":"分类","icon":"fa-solid fa-folder","link":"/categories/","group":"link"},{"id":"tag","name":"标签","icon":"fa-solid fa-tag","link":"/tags/","group":"link"},{"id":"notes","name":"笔记","icon":"fa-solid fa-pen-square","link":"/notes/","group":"link"},"hr",{"id":"friendlink","name":"友链","icon":"fa-solid fa-fan","link":"/friends/","group":"link"},{"id":"go","name":"开往","icon":"fa-solid fa-paper-plane","link":"https://www.travellings.cn/go.html","group":"link"}],"darkMode":[{"id":"darkMode","name":"暗黑模式","icon":"fa-solid fa-circle-half-stroke","event":"volantis.dark.toggle()","group":"darkMode"}],"prevNext":[{"id":"prev","name":"查看上一篇","icon":"fa-solid fa-angles-left","event":"volantis.rightmenu.jump('prev')","group":"prevNext"},{"id":"next","name":"查看下一篇","icon":"fa-solid fa-angles-right","event":"volantis.rightmenu.jump('next')","group":"prevNext"}]}}
       
     }
   }
@@ -2272,7 +2284,32 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
   <!-- import head_end begin -->
   <!-- import head_end end -->
   <!-- Custom Files headEnd begin-->
-  
+  <!-- 右键菜单按钮：上一篇、下一篇 -->
+<script>
+    volantis.rightmenu.jump = (type) => {
+        const selector = type === 'prev' ? 'article .prev-next a.prev' : 'article .prev-next a.next';
+        const item = document.querySelector(selector);
+        if (!!item) {
+            if (typeof pjax !== 'undefined') {
+                pjax.loadUrl(item.href)
+            } else {
+                window.location.href = item.href;
+            }
+        }
+    }
+
+    volantis.rightmenu.handle(() => {
+        const prev = document.querySelector('#prev').parentElement,
+            next = document.querySelector('#next').parentElement,
+            articlePrev = document.querySelector('article .prev-next a.prev p.title'),
+            articleNext = document.querySelector('article .prev-next a.next p.title');
+
+        prev.style.display = articlePrev ? 'block' : 'none';
+        prev.title = articlePrev ? articlePrev.innerText : null;
+        next.style.display = articleNext ? 'block' : 'none';
+        next.title = articleNext ? articleNext.innerText : null;
+    }, 'prevNext', false) 
+</script>
   <!-- Custom Files headEnd end-->
   <!-- front-matter head_end begin -->
   <!-- front-matter head_end end -->
@@ -2401,6 +2438,29 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
                     active-action="action-archives"
                   >
                   <i class='fa-solid fa-archive fa-fw'></i>归档
+                </a>
+                
+              </li>
+            
+          
+                    
+                      
+            
+              <hr>
+            
+          
+                    
+                      
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover"
+                href="/notes/" title="笔记"
+                  
+                  
+                  
+                    active-action="action-notes"
+                  >
+                  <i class='fa-solid fa-pen-square fa-fw'></i>笔记
                 </a>
                 
               </li>
@@ -2569,6 +2629,29 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
             
           
                     
+                      
+            
+              <hr>
+            
+          
+                    
+                      
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover"
+                href="/notes/" title="笔记"
+                  
+                  
+                  
+                    active-action="action-notes"
+                  >
+                  <i class='fa-solid fa-pen-square fa-fw'></i>笔记
+                </a>
+                
+              </li>
+            
+          
+                    
                   </ul>
                 
               </li>
@@ -2644,8 +2727,10 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
   <div class='top'>
     
     
-      <p class="title">AJream'S Blog</p>
+      <p class="title"><font><span>AJream'S</span> <span>Blog</span></font></p>
     
+    
+      <p class="subtitle"><div id="binft"></div></p>
     
   </div>
   <div class='bottom'>
@@ -2667,11 +2752,11 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
               <img src='/static/imgs/book.svg'><p>博客</p>
             </a>
           
-            <a target="_blank" rel="noopener" href="https://github.com/ajream/"
+            <a href="/notes/"
               
               
-              active-action="action-https:githubcomajream">
-              <img src='/static/imgs/github.svg'><p>Github</p>
+              active-action="action-notes">
+              <img src='/static/imgs/notes.svg'><p>笔记</p>
             </a>
           
             <a href="/friends/"
@@ -2781,14 +2866,12 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
   <div id="layoutHelper-page-plugins"></div>
   <div id="post-body" itemprop="articleBody">
     <div class="tag-plugin sites-wrap"><div class="group-header"><p>我自己</p></div><div class="group-body"><div class="site-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://www.cnblogs.com/ajream/"><img src="https://gitcode.net/m0_46079750/myimages/-/raw/master/pictures/2023/09/4_12_1_16_image-20230904120107144.png" class="lazyload" data-srcset="https://gitcode.net/m0_46079750/myimages/-/raw/master/pictures/2023/09/4_12_1_16_image-20230904120107144.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgCover(this)"/><div class="info"><img src="/static/imgs/avatar.png" class="lazyload" data-srcset="/static/imgs/avatar.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><span class="title">博客园</span><span class="desc">我在博客园的博客</span></div></a></div><div class="site-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://blog.csdn.net/m0_46079750/"><img src="https://gitcode.net/m0_46079750/myimages/-/raw/master/pictures/2023/09/4_15_14_13_image-20230904151409857.png" class="lazyload" data-srcset="https://gitcode.net/m0_46079750/myimages/-/raw/master/pictures/2023/09/4_15_14_13_image-20230904151409857.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgCover(this)"/><div class="info"><img src="/static/imgs/avatar.png" class="lazyload" data-srcset="/static/imgs/avatar.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><span class="title">CSDN</span><span class="desc">我在CSDN的博客</span></div></a></div><div class="site-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://www.zhihu.com/people/xun-yi-cao-92-1-89/"><img src="https://gitcode.net/m0_46079750/myimages/-/raw/master/pictures/2023/09/4_15_18_26_image-20230904151824582.png" class="lazyload" data-srcset="https://gitcode.net/m0_46079750/myimages/-/raw/master/pictures/2023/09/4_15_18_26_image-20230904151824582.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgCover(this)"/><div class="info"><img src="/static/imgs/avatar.png" class="lazyload" data-srcset="/static/imgs/avatar.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><span class="title">知乎</span><span class="desc">我的知乎</span></div></a></div></div></div>
-
-<div class="tag-plugin users-wrap"><div class="group-header"><p>作者大大~</p></div><div class="group-body"><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://github.com/xaoxuu"><img src="https://avatars.githubusercontent.com/u/16400144?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/16400144?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>xaoxuu</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://github.com/MHuiG"><img src="https://avatars.githubusercontent.com/u/38281581?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/38281581?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>MHuiG</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://github.com/inkss"><img src="https://avatars.githubusercontent.com/u/31947043?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/31947043?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>inkss</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://github.com/Colsrch"><img src="https://avatars.githubusercontent.com/u/58458181?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/58458181?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>Colsrch</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://github.com/Drew233"><img src="https://avatars.githubusercontent.com/u/47592224?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/47592224?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>Drew233</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://github.com/Linhk1606"><img src="https://avatars.githubusercontent.com/u/50829219?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/50829219?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>Linhk1606</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://github.com/W4J1e"><img src="https://avatars.githubusercontent.com/u/74824162?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/74824162?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>W4J1e</span></div></a></div></div><div class="group-header"><p>大神们</p></div><div class="group-body"><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://akilar.top/"><img src="https://npm.elemecdn.com/akilar-candyassets/image/siteicon/favicon.png?s=60&v=4" class="lazyload" data-srcset="https://npm.elemecdn.com/akilar-candyassets/image/siteicon/favicon.png?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>Akilarの糖果屋</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://butterfly.js.org"><img src="https://butterfly.js.org/img/avatar.png" class="lazyload" data-srcset="https://butterfly.js.org/img/avatar.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>Jerry</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://shoka.lostyu.me"><img src="https://gitcode.net/ajream/myimages/-/raw/master/pictures/2022/09/3_11_9_6_e1a87b6e73a653df3772e1e8ba13e648a90be0e6.png" class="lazyload" data-srcset="https://gitcode.net/ajream/myimages/-/raw/master/pictures/2022/09/3_11_9_6_e1a87b6e73a653df3772e1e8ba13e648a90be0e6.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>優萌初華の霜月琉璃</span></div></a></div></div><div class="group-header"><p>小伙伴们~</p><p>感谢小伙伴们带来的干货🎉</p></div><div class="group-body"><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://www.reversesacle.com/"><img src="https://img.reversesacle.com/gh/ReverseSacle/ReverseSacle.github.io@main/images/avater.webp" class="lazyload" data-srcset="https://img.reversesacle.com/gh/ReverseSacle/ReverseSacle.github.io@main/images/avater.webp" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>ReverseSacle</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://www.shifeiti.com"><img src="https://other.shifeiti.com/logo/logo.png" class="lazyload" data-srcset="https://other.shifeiti.com/logo/logo.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>是非题</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://solstice23.top"><img src="https://solstice23.top/friendlink_image/avatar/" class="lazyload" data-srcset="https://solstice23.top/friendlink_image/avatar/" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>solstice23’s Blog</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://www.acoier.com/"><img src="https://www.acoier.com/oimg/RoundCorner.png" class="lazyload" data-srcset="https://www.acoier.com/oimg/RoundCorner.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>宫水三叶の刷题日记</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://www.mz-zone.cn"><img src="https://bu.dusays.com/2023/01/17/63c5fdd06b675.gif" class="lazyload" data-srcset="https://bu.dusays.com/2023/01/17/63c5fdd06b675.gif" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>北辰の小栈</span></div></a></div></div></div>
-
+<div class="tag-plugin users-wrap"><div class="group-header"><p>Thanks</p></div><div class="group-body"><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://volantis.js.org/"><img src="/static/imgs/volantis32x32.png" class="lazyload" data-srcset="/static/imgs/volantis32x32.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>volantis</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://mhuig.top"><img src="https://fastly.jsdelivr.net/npm/mhg@latest" class="lazyload" data-srcset="https://fastly.jsdelivr.net/npm/mhg@latest" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>MHuiG</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://inkss.cn/"><img src="https://avatars.githubusercontent.com/u/31947043?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/31947043?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>inkss</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://colsrch.cn/"><img src="https://avatars.githubusercontent.com/u/58458181?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/58458181?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>Colsrch</span></div></a></div></div><div class="group-header"><p>大神们</p></div><div class="group-body"><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://akilar.top/"><img src="https://npm.elemecdn.com/akilar-candyassets/image/siteicon/favicon.png?s=60&v=4" class="lazyload" data-srcset="https://npm.elemecdn.com/akilar-candyassets/image/siteicon/favicon.png?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>Akilarの糖果屋</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://butterfly.js.org"><img src="https://butterfly.js.org/img/avatar.png" class="lazyload" data-srcset="https://butterfly.js.org/img/avatar.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>Jerry</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://shoka.lostyu.me"><img src="https://gitcode.net/ajream/myimages/-/raw/master/pictures/2022/09/3_11_9_6_e1a87b6e73a653df3772e1e8ba13e648a90be0e6.png" class="lazyload" data-srcset="https://gitcode.net/ajream/myimages/-/raw/master/pictures/2022/09/3_11_9_6_e1a87b6e73a653df3772e1e8ba13e648a90be0e6.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>優萌初華の霜月琉璃</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://blog.dearxuan.com"><img src="https://static.dearxuan.com/resource/logo.png" class="lazyload" data-srcset="https://static.dearxuan.com/resource/logo.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>DearXuan</span></div></a></div></div><div class="group-header"><p>小伙伴们~</p><p>感谢小伙伴们带来的干货🎉</p></div><div class="group-body"><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://www.reversesacle.com/"><img src="https://img.reversesacle.com/gh/ReverseSacle/ReverseSacle.github.io@main/images/avater.webp" class="lazyload" data-srcset="https://img.reversesacle.com/gh/ReverseSacle/ReverseSacle.github.io@main/images/avater.webp" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>ReverseSacle</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://www.shifeiti.com"><img src="https://other.shifeiti.com/logo/logo.png" class="lazyload" data-srcset="https://other.shifeiti.com/logo/logo.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>是非题</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://solstice23.top"><img src="https://solstice23.top/friendlink_image/avatar/" class="lazyload" data-srcset="https://solstice23.top/friendlink_image/avatar/" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>solstice23’s Blog</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://www.acoier.com/"><img src="https://www.acoier.com/oimg/RoundCorner.png" class="lazyload" data-srcset="https://www.acoier.com/oimg/RoundCorner.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>宫水三叶の刷题日记</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://www.mz-zone.cn"><img src="https://bu.dusays.com/2023/01/17/63c5fdd06b675.gif" class="lazyload" data-srcset="https://bu.dusays.com/2023/01/17/63c5fdd06b675.gif" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>北辰の小栈</span></div></a></div></div></div>
 <!-- // 显示 volantis_developer 和 community_builder -->
-<!-- <div class="tag-plugin users-wrap"><div class="group-header"><p>作者大大~</p></div><div class="group-body"><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://github.com/xaoxuu"><img src="https://avatars.githubusercontent.com/u/16400144?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/16400144?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>xaoxuu</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://github.com/MHuiG"><img src="https://avatars.githubusercontent.com/u/38281581?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/38281581?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>MHuiG</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://github.com/inkss"><img src="https://avatars.githubusercontent.com/u/31947043?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/31947043?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>inkss</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://github.com/Colsrch"><img src="https://avatars.githubusercontent.com/u/58458181?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/58458181?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>Colsrch</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://github.com/Drew233"><img src="https://avatars.githubusercontent.com/u/47592224?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/47592224?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>Drew233</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://github.com/Linhk1606"><img src="https://avatars.githubusercontent.com/u/50829219?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/50829219?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>Linhk1606</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://github.com/W4J1e"><img src="https://avatars.githubusercontent.com/u/74824162?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/74824162?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>W4J1e</span></div></a></div></div></div> -->
-
+<!-- <div class="tag-plugin users-wrap"><div class="group-header"><p>Thanks</p></div><div class="group-body"><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://volantis.js.org/"><img src="/static/imgs/volantis32x32.png" class="lazyload" data-srcset="/static/imgs/volantis32x32.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>volantis</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://mhuig.top"><img src="https://fastly.jsdelivr.net/npm/mhg@latest" class="lazyload" data-srcset="https://fastly.jsdelivr.net/npm/mhg@latest" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>MHuiG</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://inkss.cn/"><img src="https://avatars.githubusercontent.com/u/31947043?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/31947043?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>inkss</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://colsrch.cn/"><img src="https://avatars.githubusercontent.com/u/58458181?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/58458181?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>Colsrch</span></div></a></div></div></div> -->
 <!-- // 除了 community_builder 别的都显示 -->
-<!-- <div class="tag-plugin users-wrap"><div class="group-header"><p>作者大大~</p></div><div class="group-body"><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://github.com/xaoxuu"><img src="https://avatars.githubusercontent.com/u/16400144?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/16400144?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>xaoxuu</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://github.com/MHuiG"><img src="https://avatars.githubusercontent.com/u/38281581?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/38281581?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>MHuiG</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://github.com/inkss"><img src="https://avatars.githubusercontent.com/u/31947043?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/31947043?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>inkss</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://github.com/Colsrch"><img src="https://avatars.githubusercontent.com/u/58458181?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/58458181?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>Colsrch</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://github.com/Drew233"><img src="https://avatars.githubusercontent.com/u/47592224?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/47592224?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>Drew233</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://github.com/Linhk1606"><img src="https://avatars.githubusercontent.com/u/50829219?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/50829219?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>Linhk1606</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://github.com/W4J1e"><img src="https://avatars.githubusercontent.com/u/74824162?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/74824162?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>W4J1e</span></div></a></div></div><div class="group-header"><p>大神们</p></div><div class="group-body"><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://akilar.top/"><img src="https://npm.elemecdn.com/akilar-candyassets/image/siteicon/favicon.png?s=60&v=4" class="lazyload" data-srcset="https://npm.elemecdn.com/akilar-candyassets/image/siteicon/favicon.png?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>Akilarの糖果屋</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://butterfly.js.org"><img src="https://butterfly.js.org/img/avatar.png" class="lazyload" data-srcset="https://butterfly.js.org/img/avatar.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>Jerry</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://shoka.lostyu.me"><img src="https://gitcode.net/ajream/myimages/-/raw/master/pictures/2022/09/3_11_9_6_e1a87b6e73a653df3772e1e8ba13e648a90be0e6.png" class="lazyload" data-srcset="https://gitcode.net/ajream/myimages/-/raw/master/pictures/2022/09/3_11_9_6_e1a87b6e73a653df3772e1e8ba13e648a90be0e6.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>優萌初華の霜月琉璃</span></div></a></div></div><div class="group-header"><p>小伙伴们~</p><p>感谢小伙伴们带来的干货🎉</p></div><div class="group-body"><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://www.reversesacle.com/"><img src="https://img.reversesacle.com/gh/ReverseSacle/ReverseSacle.github.io@main/images/avater.webp" class="lazyload" data-srcset="https://img.reversesacle.com/gh/ReverseSacle/ReverseSacle.github.io@main/images/avater.webp" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>ReverseSacle</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://www.shifeiti.com"><img src="https://other.shifeiti.com/logo/logo.png" class="lazyload" data-srcset="https://other.shifeiti.com/logo/logo.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>是非题</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://solstice23.top"><img src="https://solstice23.top/friendlink_image/avatar/" class="lazyload" data-srcset="https://solstice23.top/friendlink_image/avatar/" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>solstice23’s Blog</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://www.acoier.com/"><img src="https://www.acoier.com/oimg/RoundCorner.png" class="lazyload" data-srcset="https://www.acoier.com/oimg/RoundCorner.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>宫水三叶の刷题日记</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://www.mz-zone.cn"><img src="https://bu.dusays.com/2023/01/17/63c5fdd06b675.gif" class="lazyload" data-srcset="https://bu.dusays.com/2023/01/17/63c5fdd06b675.gif" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>北辰の小栈</span></div></a></div></div></div> -->
+<!-- <div class="tag-plugin users-wrap"><div class="group-header"><p>Thanks</p></div><div class="group-body"><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://volantis.js.org/"><img src="/static/imgs/volantis32x32.png" class="lazyload" data-srcset="/static/imgs/volantis32x32.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>volantis</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://mhuig.top"><img src="https://fastly.jsdelivr.net/npm/mhg@latest" class="lazyload" data-srcset="https://fastly.jsdelivr.net/npm/mhg@latest" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>MHuiG</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://inkss.cn/"><img src="https://avatars.githubusercontent.com/u/31947043?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/31947043?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>inkss</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://colsrch.cn/"><img src="https://avatars.githubusercontent.com/u/58458181?s=60&v=4" class="lazyload" data-srcset="https://avatars.githubusercontent.com/u/58458181?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>Colsrch</span></div></a></div></div><div class="group-header"><p>大神们</p></div><div class="group-body"><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://akilar.top/"><img src="https://npm.elemecdn.com/akilar-candyassets/image/siteicon/favicon.png?s=60&v=4" class="lazyload" data-srcset="https://npm.elemecdn.com/akilar-candyassets/image/siteicon/favicon.png?s=60&v=4" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>Akilarの糖果屋</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://butterfly.js.org"><img src="https://butterfly.js.org/img/avatar.png" class="lazyload" data-srcset="https://butterfly.js.org/img/avatar.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>Jerry</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://shoka.lostyu.me"><img src="https://gitcode.net/ajream/myimages/-/raw/master/pictures/2022/09/3_11_9_6_e1a87b6e73a653df3772e1e8ba13e648a90be0e6.png" class="lazyload" data-srcset="https://gitcode.net/ajream/myimages/-/raw/master/pictures/2022/09/3_11_9_6_e1a87b6e73a653df3772e1e8ba13e648a90be0e6.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>優萌初華の霜月琉璃</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://blog.dearxuan.com"><img src="https://static.dearxuan.com/resource/logo.png" class="lazyload" data-srcset="https://static.dearxuan.com/resource/logo.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>DearXuan</span></div></a></div></div><div class="group-header"><p>小伙伴们~</p><p>感谢小伙伴们带来的干货🎉</p></div><div class="group-body"><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://www.reversesacle.com/"><img src="https://img.reversesacle.com/gh/ReverseSacle/ReverseSacle.github.io@main/images/avater.webp" class="lazyload" data-srcset="https://img.reversesacle.com/gh/ReverseSacle/ReverseSacle.github.io@main/images/avater.webp" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>ReverseSacle</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://www.shifeiti.com"><img src="https://other.shifeiti.com/logo/logo.png" class="lazyload" data-srcset="https://other.shifeiti.com/logo/logo.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>是非题</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://solstice23.top"><img src="https://solstice23.top/friendlink_image/avatar/" class="lazyload" data-srcset="https://solstice23.top/friendlink_image/avatar/" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>solstice23’s Blog</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://www.acoier.com/"><img src="https://www.acoier.com/oimg/RoundCorner.png" class="lazyload" data-srcset="https://www.acoier.com/oimg/RoundCorner.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>宫水三叶の刷题日记</span></div></a></div><div class="user-card"><a class="card-link" target="_blank" rel="external noopener noreferrer" href="https://www.mz-zone.cn"><img src="https://bu.dusays.com/2023/01/17/63c5fdd06b675.gif" class="lazyload" data-srcset="https://bu.dusays.com/2023/01/17/63c5fdd06b675.gif" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" onerror="errorImgAvatar(this)"/><div class="name"><span>北辰の小栈</span></div></a></div></div></div> -->
+
 
   </div>
   
@@ -2997,19 +3080,54 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
       <ul class="entry navigation">
         
           <li><a class="flat-box"
-            title="/categories/%E5%88%9B%E4%BD%9C%E7%AC%94%E8%AE%B0/" href="/categories/%E5%88%9B%E4%BD%9C%E7%AC%94%E8%AE%B0/"
-            active-action="action-categoriesE5889BE4BD9CE7AC94E8AEB0"
-            ><div class='name'>创作笔记</div><div class='badge'>(1)</div></a></li>
+            title="/categories/Hexo/" href="/categories/Hexo/"
+            active-action="action-categoriesHexo"
+            ><div class='name'>Hexo</div><div class='badge'>(1)</div></a></li>
         
           <li><a class="flat-box"
-            title="/categories/%E7%A1%AC%E4%BB%B6%E5%AD%A6%E4%B9%A0/" href="/categories/%E7%A1%AC%E4%BB%B6%E5%AD%A6%E4%B9%A0/"
-            active-action="action-categoriesE7A1ACE4BBB6E5ADA6E4B9A0"
-            ><div class='name'>硬件学习</div><div class='badge'>(2)</div></a></li>
+            title="/categories/%E5%A8%B1%E4%B9%90/" href="/categories/%E5%A8%B1%E4%B9%90/"
+            active-action="action-categoriesE5A8B1E4B990"
+            ><div class='name'>娱乐</div><div class='badge'>(1)</div></a></li>
         
-          <li><a class="flat-box child"
-            title="/categories/%E7%A1%AC%E4%BB%B6%E5%AD%A6%E4%B9%A0/ESP8266/" href="/categories/%E7%A1%AC%E4%BB%B6%E5%AD%A6%E4%B9%A0/ESP8266/"
-            active-action="action-categoriesE7A1ACE4BBB6E5ADA6E4B9A0ESP8266"
-            ><div class='name'>ESP8266</div><div class='badge'>(2)</div></a></li>
+          <li><a class="flat-box"
+            title="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"
+            active-action="action-categoriesE695B0E68DAEE7BB93E69E84"
+            ><div class='name'>数据结构</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/categories/%E7%9E%8E%E6%8A%98%E8%85%BE/" href="/categories/%E7%9E%8E%E6%8A%98%E8%85%BE/"
+            active-action="action-categoriesE79E8EE68A98E885BE"
+            ><div class='name'>瞎折腾</div><div class='badge'>(5)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/categories/%E7%AE%80%E5%8E%86/" href="/categories/%E7%AE%80%E5%8E%86/"
+            active-action="action-categoriesE7AE80E58E86"
+            ><div class='name'>简历</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/categories/%E7%AE%97%E6%B3%95%E9%A2%98/" href="/categories/%E7%AE%97%E6%B3%95%E9%A2%98/"
+            active-action="action-categoriesE7AE97E6B395E9A298"
+            ><div class='name'>算法题</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/categories/%E7%BC%96%E7%A8%8B/" href="/categories/%E7%BC%96%E7%A8%8B/"
+            active-action="action-categoriesE7BC96E7A88B"
+            ><div class='name'>编程</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/"
+            active-action="action-categoriesE7BC96E7A88BE8AFADE8A880"
+            ><div class='name'>编程语言</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/categories/%E8%80%83%E7%A0%94/" href="/categories/%E8%80%83%E7%A0%94/"
+            active-action="action-categoriesE88083E7A094"
+            ><div class='name'>考研</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/categories/%E8%AF%BE%E7%A8%8B%E8%80%83%E8%AF%95/" href="/categories/%E8%AF%BE%E7%A8%8B%E8%80%83%E8%AF%95/"
+            active-action="action-categoriesE8AFBEE7A88BE88083E8AF95"
+            ><div class='name'>课程考试</div><div class='badge'>(3)</div></a></li>
         
       </ul>
     </div>
@@ -3043,6 +3161,26 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 
 
 <!-- 没有 pjax 占位会报错 万恶的 pjax -->
+
+  <div class="pjax">
+    <!-- pjax占位 -->
+  </div>
+
+  <div class="pjax">
+    <!-- pjax占位 -->
+  </div>
+
+  <div class="pjax">
+    <!-- pjax占位 -->
+  </div>
+
+  <div class="pjax">
+    <!-- pjax占位 -->
+  </div>
+
+  <div class="pjax">
+    <!-- pjax占位 -->
+  </div>
 
   <div class="pjax">
     <!-- pjax占位 -->
@@ -3208,6 +3346,10 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 
 <!-- required -->
 
+  
+<script src="https://unpkg.com/volantis-static@0.0.1654736714924/libs/jquery/dist/jquery.min.js"></script>
+
+
 
 <!-- internal -->
 
@@ -3253,6 +3395,41 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 
 
   </li>
+
+
+    <hr class="menuLoad-Content" >
+
+
+
+  <li class="menuLoad-Content">
+    <span class="vlts-menu fix-cursor-default event" id="darkMode" data-event="volantis.dark.toggle()" data-group="darkMode">
+      <i class="fa-solid fa-circle-half-stroke fa-fw"></i>
+      暗黑模式
+    </span>
+  </li>
+
+
+
+    <hr class="menuLoad-Content" >
+
+
+
+  <li class="menuLoad-Content">
+    <span class="vlts-menu fix-cursor-default event" id="prev" data-event="volantis.rightmenu.jump('prev')" data-group="prevNext">
+      <i class="fa-solid fa-angles-left fa-fw"></i>
+      查看上一篇
+    </span>
+  </li>
+
+
+
+  <li class="menuLoad-Content">
+    <span class="vlts-menu fix-cursor-default event" id="next" data-event="volantis.rightmenu.jump('next')" data-group="prevNext">
+      <i class="fa-solid fa-angles-right fa-fw"></i>
+      查看下一篇
+    </span>
+  </li>
+
 
 
     <hr class="menuLoad-Content" >
@@ -3376,6 +3553,15 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 
 
 
+  <li class="menuLoad-Content">
+    <a class="vlts-menu fix-cursor-default" id="notes" href="/notes/" data-group="link">
+      <i class="fa-solid fa-pen-square fa-fw"></i>
+      笔记
+    </a>
+  </li>
+
+
+
     <hr class="menuLoad-Content" >
 
 
@@ -3399,15 +3585,6 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 
 
     <hr class="menuLoad-Content" >
-
-
-
-  <li class="menuLoad-Content">
-    <span class="vlts-menu fix-cursor-default event" id="darkMode" data-event="volantis.dark.toggle()" data-group="darkMode">
-      <i class="fa-solid fa-circle-half-stroke fa-fw"></i>
-      暗黑模式
-    </span>
-  </li>
 
 
 
@@ -3467,6 +3644,28 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 
 
 
+
+
+
+
+
+
+
+  RightMenusFunction['darkMode'] = () => {volantis.dark.toggle()}
+
+
+
+
+
+
+
+  RightMenusFunction['prev'] = () => {volantis.rightmenu.jump('prev')}
+
+
+
+
+
+  RightMenusFunction['next'] = () => {volantis.rightmenu.jump('next')}
 
 
 
@@ -3545,10 +3744,6 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 
 
 
-
-
-
-  RightMenusFunction['darkMode'] = () => {volantis.dark.toggle()}
 
 
 
@@ -3846,52 +4041,29 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 
 
 
-      <script>
-  volantis.layoutHelper("comments",`<div id="giscus_container"></div>`)
-
-  volantis.giscus = {};
-
-  function check_giscus() {
-    if (volantis.dark.mode === "dark") {
-      volantis.giscus.Theme = 'dark';
-    } else {
-      volantis.giscus.Theme = 'light';
+      <script type="text/javascript">
+  volantis.layoutHelper("comments",`<div id="gitalk-container"></div>`)
+  function pjax_gitalk() {
+    if(!document.querySelector("#gitalk-container"))return;
+    let path = pdata.commentPath;
+    if (path.length == 0) {
+      let defaultPath = '';
+      path = defaultPath || decodeURI(window.location.pathname);
     }
-
-    return document.getElementById("giscus_container");
+    if (document.getElementById('gitalk-container') != null) {
+      var gitalk = new Gitalk(
+        Object.assign(
+          Object.assign({"js":"https://unpkg.com/gitalk@1/dist/gitalk.min.js","clientID":"a243da98c2aa499fdd9b","clientSecret":"6e325fd564965e65619f882e9937459d8e216b03","repo":"gitalk-comments","owner":"ajream","admin":"ajream","path":null}, {
+            id: path,
+            distractionFreeMode: false  // Facebook-like distraction free mode
+          }),
+        pdata.commentConfig)
+      );
+      gitalk.render('gitalk-container');
+    }
   }
-
-  function pjax_giscus() {
-    const HEAD = check_giscus();
-    if (!HEAD) return;
-    let cfg = Object.assign({"theme":{"light":"light","dark":"dark"},"repo":"ajream/giscus","repo-id":"R_kgDOKPG_bA","category":"Announcements","category-id":"DIC_kwDOKPG_bM4CZEUo","mapping":"url","reactions-enabled":"1","emit-metadata":"0","lang":"zh-CN"},pdata.commentConfig)
-    const script = document.createElement('script');
-    script.setAttribute('src', 'https://giscus.app/client.js');
-    Object.keys(cfg).forEach(k=>{
-      if (k != "theme") {
-        script.setAttribute('data-'+k, cfg[k]);
-      }
-    })
-    script.setAttribute('data-theme', volantis.giscus.Theme);
-    script.setAttribute('crossorigin', "anonymous");
-    HEAD.appendChild(script);
-  }
-
-  function dark_giscus() {
-    const HEAD = check_giscus();
-    if (!HEAD) return;
-
-    const message = {
-      setConfig: {
-        theme: volantis.giscus.Theme
-      }
-    };
-    const giscusIframe = document.querySelector('iframe.giscus-frame');
-    giscusIframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-  }
-  pjax_giscus();
-  volantis.pjax.push(pjax_giscus);
-  volantis.dark.push(dark_giscus);
+  volantis.js('https://unpkg.com/gitalk@1/dist/gitalk.min.js').then(pjax_gitalk)
+  volantis.pjax.push(pjax_gitalk);
 </script>
 
     
@@ -4205,7 +4377,7 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 
 
   <script>
-  let imgs = ["https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/046.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/056.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/001.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/034.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/033.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/051.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/025.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/004.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/054.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/035.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/016.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/019.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/052.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/042.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/003.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/039.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/006.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/002.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/005.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/038.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/012.webp"];
+  let imgs = ["https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/003.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/033.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/006.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/054.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/019.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/002.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/038.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/012.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/039.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/005.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/035.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/046.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/052.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/042.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/056.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/001.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/004.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/034.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/025.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/016.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/051.webp"];
   let index = 0;
   let IntervalParallax = null;
 
@@ -4412,6 +4584,96 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
   document.addEventListener("pjax:success", ()=>{
     volantis.requestAnimationFrame(listennSidebarTOC)
   });
+</script>
+
+
+  <script>
+  try {
+    // https://web.dev/content-visibility/
+    // https://www.caniuse.com/?search=content-visibility
+    // https://infrequently.org/2020/12/content-visibility-scroll-fix/
+    // https://infrequently.org/2020/12/resize-resilient-deferred-rendering/
+
+    // 备注 目前已知的问题:
+    // 动态修改导致的内容高度变化(例如评论框异步渲染的外部盒子高度变化) 无法提前获知, 进而导致的首次滚动条跳动无法去除 (wontfix) 事实上不使用 content-visibility 也会有跳动, 不过是比使用 content-visibility 跳动提前
+    // scrollreveal 插件潜在问题 目前尚不明确
+
+    let eqIsh = (a, b, fuzz = 2) => {
+      return Math.abs(a - b) <= fuzz;
+    };
+
+    let rectNotEQ = (a, b) => {
+      return !eqIsh(a.width, b.width) || !eqIsh(a.height, b.height);
+    };
+
+    // Keep a map of elements and the dimensions of
+    // their place-holders, re-setting the element's
+    // intrinsic size when we get updated measurements
+    // from observers.
+    let spaced = new WeakMap();
+
+    // Only call this when known cheap, post layout
+    let reserveSpace = (el, rect = el.getClientBoundingRect()) => {
+      let old = spaced.get(el);
+      // Set intrinsic size to prevent jumping on un-painting:
+      //    https://drafts.csswg.org/css-sizing-4/#intrinsic-size-override
+      if (!old || rectNotEQ(old, rect)) {
+        spaced.set(el, rect);
+        el.style["contain-intrinsic-size"] = `${rect.width}px ${rect.height}px`;
+      }
+    };
+
+    let iObs = new IntersectionObserver(
+      (entries, o) => {
+        entries.forEach((entry) => {
+          // We don't care if the element is intersecting or
+          // has been laid out as our page structure ensures
+          // they'll get the right width.
+          reserveSpace(entry.target, entry.boundingClientRect);
+        });
+      },
+      { rootMargin: "500px 0px 500px 0px" }
+    );
+
+    let rObs = new ResizeObserver((entries, o) => {
+      entries.forEach((entry) => {
+        reserveSpace(entry.target, entry.contentRect);
+      });
+    });
+
+    let resizeResilientDeferredRendering = (Selector) => {
+      let articles = document.querySelectorAll(Selector);
+
+      if (articles.length) {
+        articles.forEach((el) => {
+          iObs.observe(el);
+          rObs.observe(el);
+        });
+
+        // Workaround for Chrome bug, part 2.
+        //
+        // Re-enable browser management of rendering for the
+        // first article after the first paint. Double-rAF
+        // to ensure we get called after a layout.
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            articles[0].style["content-visibility"] = "auto";
+          });
+        });
+      }
+    };
+
+    let contentVisibilityScrollFix = () => {
+      if (!("content-visibility" in document.documentElement.style)) {
+        return;
+      }
+      resizeResilientDeferredRendering(".post-story");
+    };
+    contentVisibilityScrollFix();
+    volantis.pjax.push(contentVisibilityScrollFix);
+  } catch (error) {
+    console.log(error);
+  }
 </script>
 
 

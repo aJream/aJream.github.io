@@ -31,9 +31,17 @@
       <meta name="msapplication-TileImage" content="https://unpkg.com/volantis-static@0.0.1649552113628/media/org.volantis/blog/favicon/favicon-32x32.png">
       <meta name="theme-color" content="#f4f4f4" media="(prefers-color-scheme: light)">
       <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">
+      <link rel="stylesheet" href="https://unpkg.com/katex@0.16.4/dist/katex.min.css">
+      <script defer src="https://unpkg.com/katex@0.16.4/dist/katex.min.js"></script>
+      <script defer src="https://unpkg.com/katex@0.16.4/dist/contrib/auto-render.min.js"><script>
+      <script src="https://unpkg.com/katex@0.16.4/dist/contrib/copy-tex.min.js"></script>
   <!-- import head_begin end -->
   <!-- Custom Files headBegin begin-->
   
+<!-- <script defer src="/static/js/darkmode.js"></script> -->
+<script defer src="/static/js/poem.js"></script>
+<script defer src="/static/js/funnytitle.js"></script>
+
   <!-- Custom Files headBegin end-->
   <!-- front-matter head_begin begin -->
   <!-- front-matter head_begin end -->
@@ -51,11 +59,11 @@
 <meta property="og:title" content="Hello World">
 <meta property="og:url" content="http://ajream.netlify.com/posts/4a17b156/">
 <meta property="og:site_name" content="aJream">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.  Quic">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png">
-<meta property="article:published_time" content="2023-09-03T05:50:03.105Z">
-<meta property="article:modified_time" content="2023-09-04T15:19:20.646Z">
+<meta property="article:published_time" content="2021-05-08T04:32:44.000Z">
+<meta property="article:modified_time" content="2023-09-05T06:07:10.883Z">
 <meta property="article:author" content="aJream">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png">
@@ -63,6 +71,10 @@
     /* 首屏样式 */
     #safearea {
   display: none;
+}
+.post-story + .post-story {
+  content-visibility: auto;
+  contain-intrinsic-size: 10px 500px;
 }
 :root {
   --color-site-body: #eafae1;
@@ -1843,14 +1855,14 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
   <script>
   /************这个文件存放不需要重载的全局变量和全局函数*********/
   window.volantis = {}; // volantis 全局变量
-  volantis.debug = "env"; // 调试模式
+  volantis.debug = "false"; // 调试模式
   volantis.dom = {}; // 页面Dom see: /source/js/app.js etc.
 
   volantis.GLOBAL_CONFIG ={
-    debug: "env",
+    debug: false,
     cdn: {"js":{"app":"/js/app.js","parallax":"/js/plugins/parallax.js","rightMenu":"/js/plugins/rightMenu.js","rightMenus":"/js/plugins/rightMenus.js","sites":"/js/plugins/tags/sites.js","friends":"/js/plugins/tags/friends.js","contributors":"/js/plugins/tags/contributors.js","search":"/js/search/hexo.js"},"css":{"style":"/css/style.css"}},
     default: {"avatar":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/avatar/round/3442075.svg","link":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/link/8f277b4ee0ecd.svg","cover":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/cover/76b86c0226ffd.svg","image":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/image/2659360.svg"},
-    lastupdate: new Date(1693882344688),
+    lastupdate: new Date(1693922432089),
     sidebar: {
       for_page: ["blogger","fastnav","tagcloud","webinfo"],
       for_post: ["blogger","category","toc"],
@@ -1876,7 +1888,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
       
       
       
-      rightmenus: {"enable":true,"order":["plugins.navigation","hr","plugins.inputBox","plugins.seletctText","plugins.elementCheck","plugins.elementImage","menus.link","hr","menus.darkMode","plugins.articlePage","music"],"options":{"iconPrefix":"fa-solid","articleShowLink":true,"musicAlwaysShow":true},"plugins":{"navigation":[{"id":"left","name":"转到上一页","icon":"fa-solid fa-arrow-left","event":"history.back()","group":"navigation"},{"id":"right","name":"转到下一页","icon":"fa-solid fa-arrow-right","event":"history.forward()","group":"navigation"},{"id":"redo","name":"刷新当前页面","icon":"fa-solid fa-redo","event":"window.location.reload()","group":"navigation"},{"id":"up","name":"回到顶部","icon":"fa-solid fa-arrow-up","event":"VolantisApp.scrolltoElement(volantis.dom.bodyAnchor)","group":"navigation"}],"inputBox":[{"id":"copyPaste","name":"粘贴文本","icon":"fa-solid fa-paste","event":"copyPaste","group":"inputBox"},{"id":"copyAll","name":"全选文本","icon":"fa-solid fa-object-ungroup","event":"copyAll","group":"inputBox"},{"id":"copyCut","name":"剪切文本","icon":"fa-solid fa-cut","event":"copyCut","group":"inputBox"}],"seletctText":[{"id":"copyText","name":"复制文本","icon":"fa-solid fa-copy","event":"copyText","group":"seletctText"},{"id":"searchWord","name":"站内搜索","icon":"fa-solid fa-search","event":"OpenSearch(__text__)","group":"seletctText"},{"id":"bingSearch","name":"必应搜索","icon":"fa-solid fa-search","event":"window.open(`https://cn.bing.com/search?q=${__text__}`)","group":"seletctText"}],"elementCheck":[{"id":"openTab","name":"新标签页打开","icon":"fa-solid fa-external-link-square-alt","event":"window.open(__link__)","group":"elementCheck"},{"id":"copyLink","name":"复制链接地址","icon":"fa-solid fa-link","event":"copyLink","group":"elementCheck"}],"elementImage":[{"id":"copyImg","name":"复制图片","icon":"fa-solid fa-image","event":"copyImg","group":"elementImage"},{"id":"googleImg","name":"谷歌识图","icon":"fa-solid fa-images","event":"window.open(`https://www.google.com.hk/searchbyimage?image_url=${__link__}`)","group":"elementImage"}],"articlePage":[{"id":"printMode","name":"打印页面","icon":"fa-solid fa-print","event":"printMode","group":"articlePage"},{"id":"readMode","name":"阅读模式","icon":"fa-solid fa-book-open","event":"readMode","group":"articlePage"}]},"menus":{"link":[{"id":"home","name":"主页","icon":"fa-solid fa-home","link":"/","group":"link"},{"id":"category","name":"分类","icon":"fa-solid fa-folder","link":"/categories/","group":"link"},{"id":"tag","name":"标签","icon":"fa-solid fa-tag","link":"/tags/","group":"link"},"hr",{"id":"friendlink","name":"友链","icon":"fa-solid fa-fan","link":"/friends/","group":"link"},{"id":"go","name":"开往","icon":"fa-solid fa-paper-plane","link":"https://www.travellings.cn/go.html","group":"link"}],"darkMode":[{"id":"darkMode","name":"暗黑模式","icon":"fa-solid fa-circle-half-stroke","event":"volantis.dark.toggle()","group":"darkMode"}]}}
+      rightmenus: {"enable":true,"order":["plugins.navigation","hr","menus.darkMode","hr","menus.prevNext","hr","plugins.inputBox","plugins.seletctText","plugins.elementCheck","plugins.elementImage","menus.link","hr","plugins.articlePage","music"],"options":{"iconPrefix":"fa-solid","articleShowLink":true,"musicAlwaysShow":true},"plugins":{"navigation":[{"id":"left","name":"转到上一页","icon":"fa-solid fa-arrow-left","event":"history.back()","group":"navigation"},{"id":"right","name":"转到下一页","icon":"fa-solid fa-arrow-right","event":"history.forward()","group":"navigation"},{"id":"redo","name":"刷新当前页面","icon":"fa-solid fa-redo","event":"window.location.reload()","group":"navigation"},{"id":"up","name":"回到顶部","icon":"fa-solid fa-arrow-up","event":"VolantisApp.scrolltoElement(volantis.dom.bodyAnchor)","group":"navigation"}],"inputBox":[{"id":"copyPaste","name":"粘贴文本","icon":"fa-solid fa-paste","event":"copyPaste","group":"inputBox"},{"id":"copyAll","name":"全选文本","icon":"fa-solid fa-object-ungroup","event":"copyAll","group":"inputBox"},{"id":"copyCut","name":"剪切文本","icon":"fa-solid fa-cut","event":"copyCut","group":"inputBox"}],"seletctText":[{"id":"copyText","name":"复制文本","icon":"fa-solid fa-copy","event":"copyText","group":"seletctText"},{"id":"searchWord","name":"站内搜索","icon":"fa-solid fa-search","event":"OpenSearch(__text__)","group":"seletctText"},{"id":"bingSearch","name":"必应搜索","icon":"fa-solid fa-search","event":"window.open(`https://cn.bing.com/search?q=${__text__}`)","group":"seletctText"}],"elementCheck":[{"id":"openTab","name":"新标签页打开","icon":"fa-solid fa-external-link-square-alt","event":"window.open(__link__)","group":"elementCheck"},{"id":"copyLink","name":"复制链接地址","icon":"fa-solid fa-link","event":"copyLink","group":"elementCheck"}],"elementImage":[{"id":"copyImg","name":"复制图片","icon":"fa-solid fa-image","event":"copyImg","group":"elementImage"},{"id":"googleImg","name":"谷歌识图","icon":"fa-solid fa-images","event":"window.open(`https://www.google.com.hk/searchbyimage?image_url=${__link__}`)","group":"elementImage"}],"articlePage":[{"id":"printMode","name":"打印页面","icon":"fa-solid fa-print","event":"printMode","group":"articlePage"},{"id":"readMode","name":"阅读模式","icon":"fa-solid fa-book-open","event":"readMode","group":"articlePage"}]},"menus":{"link":[{"id":"home","name":"主页","icon":"fa-solid fa-home","link":"/","group":"link"},{"id":"category","name":"分类","icon":"fa-solid fa-folder","link":"/categories/","group":"link"},{"id":"tag","name":"标签","icon":"fa-solid fa-tag","link":"/tags/","group":"link"},{"id":"notes","name":"笔记","icon":"fa-solid fa-pen-square","link":"/notes/","group":"link"},"hr",{"id":"friendlink","name":"友链","icon":"fa-solid fa-fan","link":"/friends/","group":"link"},{"id":"go","name":"开往","icon":"fa-solid fa-paper-plane","link":"https://www.travellings.cn/go.html","group":"link"}],"darkMode":[{"id":"darkMode","name":"暗黑模式","icon":"fa-solid fa-circle-half-stroke","event":"volantis.dark.toggle()","group":"darkMode"}],"prevNext":[{"id":"prev","name":"查看上一篇","icon":"fa-solid fa-angles-left","event":"volantis.rightmenu.jump('prev')","group":"prevNext"},{"id":"next","name":"查看下一篇","icon":"fa-solid fa-angles-right","event":"volantis.rightmenu.jump('next')","group":"prevNext"}]}}
       
     }
   }
@@ -2272,7 +2284,32 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
   <!-- import head_end begin -->
   <!-- import head_end end -->
   <!-- Custom Files headEnd begin-->
-  
+  <!-- 右键菜单按钮：上一篇、下一篇 -->
+<script>
+    volantis.rightmenu.jump = (type) => {
+        const selector = type === 'prev' ? 'article .prev-next a.prev' : 'article .prev-next a.next';
+        const item = document.querySelector(selector);
+        if (!!item) {
+            if (typeof pjax !== 'undefined') {
+                pjax.loadUrl(item.href)
+            } else {
+                window.location.href = item.href;
+            }
+        }
+    }
+
+    volantis.rightmenu.handle(() => {
+        const prev = document.querySelector('#prev').parentElement,
+            next = document.querySelector('#next').parentElement,
+            articlePrev = document.querySelector('article .prev-next a.prev p.title'),
+            articleNext = document.querySelector('article .prev-next a.next p.title');
+
+        prev.style.display = articlePrev ? 'block' : 'none';
+        prev.title = articlePrev ? articlePrev.innerText : null;
+        next.style.display = articleNext ? 'block' : 'none';
+        next.title = articleNext ? articleNext.innerText : null;
+    }, 'prevNext', false) 
+</script>
   <!-- Custom Files headEnd end-->
   <!-- front-matter head_end begin -->
   <!-- front-matter head_end end -->
@@ -2401,6 +2438,29 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
                     active-action="action-archives"
                   >
                   <i class='fa-solid fa-archive fa-fw'></i>归档
+                </a>
+                
+              </li>
+            
+          
+                    
+                      
+            
+              <hr>
+            
+          
+                    
+                      
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover"
+                href="/notes/" title="笔记"
+                  
+                  
+                  
+                    active-action="action-notes"
+                  >
+                  <i class='fa-solid fa-pen-square fa-fw'></i>笔记
                 </a>
                 
               </li>
@@ -2569,6 +2629,29 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
             
           
                     
+                      
+            
+              <hr>
+            
+          
+                    
+                      
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover"
+                href="/notes/" title="笔记"
+                  
+                  
+                  
+                    active-action="action-notes"
+                  >
+                  <i class='fa-solid fa-pen-square fa-fw'></i>笔记
+                </a>
+                
+              </li>
+            
+          
+                    
                   </ul>
                 
               </li>
@@ -2644,8 +2727,10 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
   <div class='top'>
     
     
-      <p class="title">AJream'S Blog</p>
+      <p class="title"><font><span>AJream'S</span> <span>Blog</span></font></p>
     
+    
+      <p class="subtitle"><div id="binft"></div></p>
     
   </div>
   <div class='bottom'>
@@ -2667,11 +2752,11 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
               <img src='/static/imgs/book.svg'><p>博客</p>
             </a>
           
-            <a target="_blank" rel="noopener" href="https://github.com/ajream/"
+            <a href="/notes/"
               
               
-              active-action="action-https:githubcomajream">
-              <img src='/static/imgs/github.svg'><p>Github</p>
+              active-action="action-notes">
+              <img src='/static/imgs/notes.svg'><p>笔记</p>
             </a>
           
             <a href="/friends/"
@@ -2740,10 +2825,10 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
           
         
           
-            <div class="new-meta-item date" itemprop="dateCreated datePublished" datetime="2023-09-03T13:50:03+08:00">
+            <div class="new-meta-item date" itemprop="dateCreated datePublished" datetime="2021-05-08T12:32:44+08:00">
   <a class='notlink'>
     <i class="fa-solid fa-calendar-alt fa-fw" aria-hidden="true"></i>
-    <p>发布于：2023年9月3日</p>
+    <p>发布于：2021年5月8日</p>
   </a>
 </div>
 
@@ -2781,19 +2866,30 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
   <div id="layoutHelper-page-plugins"></div>
   <div id="post-body" itemprop="articleBody">
     <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
+<div class="story post-story"><h2 id="quick-start"><a class="markdownIt-Anchor" href="#quick-start"></a> Quick Start</h2>
+<h3 id="create-a-new-post"><a class="markdownIt-Anchor" href="#create-a-new-post"></a> Create a new post</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
 <p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
+<h3 id="run-server"><a class="markdownIt-Anchor" href="#run-server"></a> Run server</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
 <p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
+<h3 id="generate-static-files"><a class="markdownIt-Anchor" href="#generate-static-files"></a> Generate static files</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
 <p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
+<h3 id="deploy-to-remote-sites"><a class="markdownIt-Anchor" href="#deploy-to-remote-sites"></a> Deploy to remote sites</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
 <p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+<h3 id="公式示例"><a class="markdownIt-Anchor" href="#公式示例"></a> 公式示例</h3>
+<div class="note quote"><p>设函数<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(x,y)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span></span></span></span>的全微分为<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo><mo>=</mo><mo stretchy="false">(</mo><mn>2</mn><mi>a</mi><mi>x</mi><mo>+</mo><mi>b</mi><mi>y</mi><mo stretchy="false">)</mo><mi>d</mi><mi>x</mi><mo>+</mo><mo stretchy="false">(</mo><mn>2</mn><mi>b</mi><mi>y</mi><mo>+</mo><mi>a</mi><mi>x</mi><mo stretchy="false">)</mo><mi>d</mi><mi>y</mi></mrow><annotation encoding="application/x-tex">df(x,y)=(2ax+by)dx+(2by+ax)dy</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">d</span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">2</span><span class="mord mathnormal">a</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">b</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span><span class="mord mathnormal">d</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">2</span><span class="mord mathnormal">b</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">a</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mord mathnormal">d</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span></span></span></span>,(<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">a</span></span></span></span>,<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi></mrow><annotation encoding="application/x-tex">b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">b</span></span></span></span>为常数),且<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mn>0</mn><mo separator="true">,</mo><mn>0</mn><mo stretchy="false">)</mo><mo>=</mo><mo>−</mo><mn>3</mn><mo separator="true">,</mo><msubsup><mi>f</mi><mi>x</mi><msup><mrow></mrow><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup></msubsup><mo stretchy="false">(</mo><mn>1</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">f(0,0)=-3,f_{x}^{&#x27;}(1,1)=3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">0</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.19248em;vertical-align:-0.25em;"></span><span class="mord">−</span><span class="mord">3</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.94248em;"><span style="top:-2.4530000000000003em;margin-left:-0.10764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">x</span></span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8278285714285715em;"><span style="top:-2.931em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">3</span></span></span></span>,求<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(x,y)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span></span></span></span></p></div>
+<p>本题给的是全微分,但是可以看成两个偏微分,并且较为基础,所以放在第一题</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mfrac><mrow><mi mathvariant="normal">∂</mi><mi>f</mi></mrow><mrow><mi mathvariant="normal">∂</mi><mi>x</mi></mrow></mfrac><mo>=</mo><mn>2</mn><mi>a</mi><mi>x</mi><mo>+</mo><mi>b</mi><mi>y</mi><mo separator="true">,</mo><mfrac><mrow><mi mathvariant="normal">∂</mi><mi>f</mi></mrow><mrow><mi mathvariant="normal">∂</mi><mi>y</mi></mrow></mfrac><mo>=</mo><mn>2</mn><mi>b</mi><mi>y</mi><mo>+</mo><mi>a</mi><mi>x</mi></mrow><annotation encoding="application/x-tex">\frac{∂f}{∂x}=2ax+by,\frac{∂f}{∂y}=2by+ax
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.0574399999999997em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714399999999998em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord mathnormal">x</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">2</span><span class="mord mathnormal">a</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:2.25188em;vertical-align:-0.8804400000000001em;"></span><span class="mord mathnormal">b</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714399999999998em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.8804400000000001em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord">2</span><span class="mord mathnormal">b</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">a</span><span class="mord mathnormal">x</span></span></span></span></span></p>
+<p>直接对两个偏微分求不定积分,可以得到原函数.注意对x积分时,将y看作常数,因此最后的<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>+</mo><mi>C</mi></mrow><annotation encoding="application/x-tex">+C</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.76666em;vertical-align:-0.08333em;"></span><span class="mord">+</span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span></span></span></span>实际上应该写作<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>+</mo><mi>g</mi><mo stretchy="false">(</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">+g(y)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">+</span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span></span></span></span></p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo><mo>=</mo><mi>a</mi><msup><mi>x</mi><mn>2</mn></msup><mo>+</mo><mi>b</mi><mi>x</mi><mi>y</mi><mo>+</mo><mi>g</mi><mo stretchy="false">(</mo><mi>y</mi><mo stretchy="false">)</mo><mo>=</mo><mi>b</mi><msup><mi>y</mi><mn>2</mn></msup><mo>+</mo><mi>a</mi><mi>x</mi><mi>y</mi><mo>+</mo><mi>h</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(x,y)=ax^{2}+bxy+g(y)=by^{2}+axy+h(x)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.9474379999999999em;vertical-align:-0.08333em;"></span><span class="mord mathnormal">a</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641079999999999em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">b</span><span class="mord mathnormal">x</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.0585479999999998em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">b</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641079999999999em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.7777700000000001em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">a</span><span class="mord mathnormal">x</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">h</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span></span></span></span></span></p>
+<p>显然两者是同一个函数,因此对应的项的系数也相同,即<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>=</mo><mi>b</mi></mrow><annotation encoding="application/x-tex">a=b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">b</span></span></span></span>,对x求偏导,得到<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>f</mi><mi>x</mi><msup><mrow></mrow><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup></msubsup><mo stretchy="false">(</mo><mn>1</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo><mo>=</mo><mn>2</mn><mi>a</mi><mo>+</mo><mi>b</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">f_{x}^{&#x27;}(1,1)=2a+b=3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.19248em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.94248em;"><span style="top:-2.4530000000000003em;margin-left:-0.10764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">x</span></span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8278285714285715em;"><span style="top:-2.931em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">2</span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">b</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">3</span></span></span></span>,故<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup><mo>+</mo><mi>x</mi><mi>y</mi><mo>+</mo><msup><mi>y</mi><mn>2</mn></msup><mo>−</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">f(x,y)=x^2+xy+y^2-3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.897438em;vertical-align:-0.08333em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.7777700000000001em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">x</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.008548em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">3</span></span></span></span></p>
 
+</div>
   </div>
   
   
@@ -2817,10 +2913,10 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     <div class='new-meta-box'>
       
         
-          <div class="new-meta-item date" itemprop="dateModified" datetime="2023-09-04T23:19:20+08:00">
+          <div class="new-meta-item date" itemprop="dateModified" datetime="2023-09-05T14:07:10+08:00">
   <a class='notlink'>
     <i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i>
-    <p>更新于：2023年9月4日</p>
+    <p>更新于：2023年9月5日</p>
   </a>
 </div>
 
@@ -2896,11 +2992,14 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
   
     <div class="prev-next">
       
-      
-        <a class='next' href='/posts/1daa047d/'>
-          <p class='title'>GitCode & Picgo图床<i class="fa-solid fa-chevron-right" aria-hidden="true"></i></p>
-          <p class='content'>GitCode图床GitCode实际上是使用Gitlab服务搭建的一个代码托管平台，因此我们可以使用【Gitlab】图床插件来将图片上传到Gitcode。而从npm官网上正好可以找到这样的插件：...</p>
+        <a class='prev' href='/posts/a2b5a2ea/'>
+          <p class='title'><i class="fa-solid fa-chevron-left" aria-hidden="true"></i>疫情填报自动化</p>
+          <p class='content'>
+问题已解决，可以继续使用了，最新代码已经提交到Gitee，腾讯云函数好像改变收费方式了，本人已转移到GitHub Actions阵地👀
+
+最近已经用不了了，好好每天设定好闹钟吧，想学习的还可...</p>
         </a>
+      
       
     </div>
   
@@ -3023,19 +3122,54 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
       <ul class="entry navigation">
         
           <li><a class="flat-box"
-            title="/categories/%E5%88%9B%E4%BD%9C%E7%AC%94%E8%AE%B0/" href="/categories/%E5%88%9B%E4%BD%9C%E7%AC%94%E8%AE%B0/"
-            active-action="action-categoriesE5889BE4BD9CE7AC94E8AEB0"
-            ><div class='name'>创作笔记</div><div class='badge'>(1)</div></a></li>
+            title="/categories/Hexo/" href="/categories/Hexo/"
+            active-action="action-categoriesHexo"
+            ><div class='name'>Hexo</div><div class='badge'>(1)</div></a></li>
         
           <li><a class="flat-box"
-            title="/categories/%E7%A1%AC%E4%BB%B6%E5%AD%A6%E4%B9%A0/" href="/categories/%E7%A1%AC%E4%BB%B6%E5%AD%A6%E4%B9%A0/"
-            active-action="action-categoriesE7A1ACE4BBB6E5ADA6E4B9A0"
-            ><div class='name'>硬件学习</div><div class='badge'>(2)</div></a></li>
+            title="/categories/%E5%A8%B1%E4%B9%90/" href="/categories/%E5%A8%B1%E4%B9%90/"
+            active-action="action-categoriesE5A8B1E4B990"
+            ><div class='name'>娱乐</div><div class='badge'>(1)</div></a></li>
         
-          <li><a class="flat-box child"
-            title="/categories/%E7%A1%AC%E4%BB%B6%E5%AD%A6%E4%B9%A0/ESP8266/" href="/categories/%E7%A1%AC%E4%BB%B6%E5%AD%A6%E4%B9%A0/ESP8266/"
-            active-action="action-categoriesE7A1ACE4BBB6E5ADA6E4B9A0ESP8266"
-            ><div class='name'>ESP8266</div><div class='badge'>(2)</div></a></li>
+          <li><a class="flat-box"
+            title="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"
+            active-action="action-categoriesE695B0E68DAEE7BB93E69E84"
+            ><div class='name'>数据结构</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/categories/%E7%9E%8E%E6%8A%98%E8%85%BE/" href="/categories/%E7%9E%8E%E6%8A%98%E8%85%BE/"
+            active-action="action-categoriesE79E8EE68A98E885BE"
+            ><div class='name'>瞎折腾</div><div class='badge'>(5)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/categories/%E7%AE%80%E5%8E%86/" href="/categories/%E7%AE%80%E5%8E%86/"
+            active-action="action-categoriesE7AE80E58E86"
+            ><div class='name'>简历</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/categories/%E7%AE%97%E6%B3%95%E9%A2%98/" href="/categories/%E7%AE%97%E6%B3%95%E9%A2%98/"
+            active-action="action-categoriesE7AE97E6B395E9A298"
+            ><div class='name'>算法题</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/categories/%E7%BC%96%E7%A8%8B/" href="/categories/%E7%BC%96%E7%A8%8B/"
+            active-action="action-categoriesE7BC96E7A88B"
+            ><div class='name'>编程</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/"
+            active-action="action-categoriesE7BC96E7A88BE8AFADE8A880"
+            ><div class='name'>编程语言</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/categories/%E8%80%83%E7%A0%94/" href="/categories/%E8%80%83%E7%A0%94/"
+            active-action="action-categoriesE88083E7A094"
+            ><div class='name'>考研</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/categories/%E8%AF%BE%E7%A8%8B%E8%80%83%E8%AF%95/" href="/categories/%E8%AF%BE%E7%A8%8B%E8%80%83%E8%AF%95/"
+            active-action="action-categoriesE8AFBEE7A88BE88083E8AF95"
+            ><div class='name'>课程考试</div><div class='badge'>(3)</div></a></li>
         
       </ul>
     </div>
@@ -3069,7 +3203,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 
 
     <div class='content'>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Quick-Start"><span class="toc-text">Quick Start</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Create-a-new-post"><span class="toc-text">Create a new post</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Run-server"><span class="toc-text">Run server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generate-static-files"><span class="toc-text">Generate static files</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deploy-to-remote-sites"><span class="toc-text">Deploy to remote sites</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#quick-start"><span class="toc-text"> Quick Start</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#create-a-new-post"><span class="toc-text"> Create a new post</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#run-server"><span class="toc-text"> Run server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#generate-static-files"><span class="toc-text"> Generate static files</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#deploy-to-remote-sites"><span class="toc-text"> Deploy to remote sites</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%AC%E5%BC%8F%E7%A4%BA%E4%BE%8B"><span class="toc-text"> 公式示例</span></a></li></ol></li></ol>
     </div>
   </section>
 
@@ -3079,6 +3213,26 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 
 
 <!-- 没有 pjax 占位会报错 万恶的 pjax -->
+
+  <div class="pjax">
+    <!-- pjax占位 -->
+  </div>
+
+  <div class="pjax">
+    <!-- pjax占位 -->
+  </div>
+
+  <div class="pjax">
+    <!-- pjax占位 -->
+  </div>
+
+  <div class="pjax">
+    <!-- pjax占位 -->
+  </div>
+
+  <div class="pjax">
+    <!-- pjax占位 -->
+  </div>
 
   <div class="pjax">
     <!-- pjax占位 -->
@@ -3244,6 +3398,10 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 
 <!-- required -->
 
+  
+<script src="https://unpkg.com/volantis-static@0.0.1654736714924/libs/jquery/dist/jquery.min.js"></script>
+
+
 
 <!-- internal -->
 
@@ -3289,6 +3447,41 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 
 
   </li>
+
+
+    <hr class="menuLoad-Content" >
+
+
+
+  <li class="menuLoad-Content">
+    <span class="vlts-menu fix-cursor-default event" id="darkMode" data-event="volantis.dark.toggle()" data-group="darkMode">
+      <i class="fa-solid fa-circle-half-stroke fa-fw"></i>
+      暗黑模式
+    </span>
+  </li>
+
+
+
+    <hr class="menuLoad-Content" >
+
+
+
+  <li class="menuLoad-Content">
+    <span class="vlts-menu fix-cursor-default event" id="prev" data-event="volantis.rightmenu.jump('prev')" data-group="prevNext">
+      <i class="fa-solid fa-angles-left fa-fw"></i>
+      查看上一篇
+    </span>
+  </li>
+
+
+
+  <li class="menuLoad-Content">
+    <span class="vlts-menu fix-cursor-default event" id="next" data-event="volantis.rightmenu.jump('next')" data-group="prevNext">
+      <i class="fa-solid fa-angles-right fa-fw"></i>
+      查看下一篇
+    </span>
+  </li>
+
 
 
     <hr class="menuLoad-Content" >
@@ -3412,6 +3605,15 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 
 
 
+  <li class="menuLoad-Content">
+    <a class="vlts-menu fix-cursor-default" id="notes" href="/notes/" data-group="link">
+      <i class="fa-solid fa-pen-square fa-fw"></i>
+      笔记
+    </a>
+  </li>
+
+
+
     <hr class="menuLoad-Content" >
 
 
@@ -3435,15 +3637,6 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 
 
     <hr class="menuLoad-Content" >
-
-
-
-  <li class="menuLoad-Content">
-    <span class="vlts-menu fix-cursor-default event" id="darkMode" data-event="volantis.dark.toggle()" data-group="darkMode">
-      <i class="fa-solid fa-circle-half-stroke fa-fw"></i>
-      暗黑模式
-    </span>
-  </li>
 
 
 
@@ -3503,6 +3696,28 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 
 
 
+
+
+
+
+
+
+
+  RightMenusFunction['darkMode'] = () => {volantis.dark.toggle()}
+
+
+
+
+
+
+
+  RightMenusFunction['prev'] = () => {volantis.rightmenu.jump('prev')}
+
+
+
+
+
+  RightMenusFunction['next'] = () => {volantis.rightmenu.jump('next')}
 
 
 
@@ -3581,10 +3796,6 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 
 
 
-
-
-
-  RightMenusFunction['darkMode'] = () => {volantis.dark.toggle()}
 
 
 
@@ -3882,52 +4093,29 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 
 
 
-      <script>
-  volantis.layoutHelper("comments",`<div id="giscus_container"></div>`)
-
-  volantis.giscus = {};
-
-  function check_giscus() {
-    if (volantis.dark.mode === "dark") {
-      volantis.giscus.Theme = 'dark';
-    } else {
-      volantis.giscus.Theme = 'light';
+      <script type="text/javascript">
+  volantis.layoutHelper("comments",`<div id="gitalk-container"></div>`)
+  function pjax_gitalk() {
+    if(!document.querySelector("#gitalk-container"))return;
+    let path = pdata.commentPath;
+    if (path.length == 0) {
+      let defaultPath = '';
+      path = defaultPath || decodeURI(window.location.pathname);
     }
-
-    return document.getElementById("giscus_container");
+    if (document.getElementById('gitalk-container') != null) {
+      var gitalk = new Gitalk(
+        Object.assign(
+          Object.assign({"js":"https://unpkg.com/gitalk@1/dist/gitalk.min.js","clientID":"a243da98c2aa499fdd9b","clientSecret":"6e325fd564965e65619f882e9937459d8e216b03","repo":"gitalk-comments","owner":"ajream","admin":"ajream","path":null}, {
+            id: path,
+            distractionFreeMode: false  // Facebook-like distraction free mode
+          }),
+        pdata.commentConfig)
+      );
+      gitalk.render('gitalk-container');
+    }
   }
-
-  function pjax_giscus() {
-    const HEAD = check_giscus();
-    if (!HEAD) return;
-    let cfg = Object.assign({"theme":{"light":"light","dark":"dark"},"repo":"ajream/giscus","repo-id":"R_kgDOKPG_bA","category":"Announcements","category-id":"DIC_kwDOKPG_bM4CZEUo","mapping":"url","reactions-enabled":"1","emit-metadata":"0","lang":"zh-CN"},pdata.commentConfig)
-    const script = document.createElement('script');
-    script.setAttribute('src', 'https://giscus.app/client.js');
-    Object.keys(cfg).forEach(k=>{
-      if (k != "theme") {
-        script.setAttribute('data-'+k, cfg[k]);
-      }
-    })
-    script.setAttribute('data-theme', volantis.giscus.Theme);
-    script.setAttribute('crossorigin', "anonymous");
-    HEAD.appendChild(script);
-  }
-
-  function dark_giscus() {
-    const HEAD = check_giscus();
-    if (!HEAD) return;
-
-    const message = {
-      setConfig: {
-        theme: volantis.giscus.Theme
-      }
-    };
-    const giscusIframe = document.querySelector('iframe.giscus-frame');
-    giscusIframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-  }
-  pjax_giscus();
-  volantis.pjax.push(pjax_giscus);
-  volantis.dark.push(dark_giscus);
+  volantis.js('https://unpkg.com/gitalk@1/dist/gitalk.min.js').then(pjax_gitalk)
+  volantis.pjax.push(pjax_gitalk);
 </script>
 
     
@@ -4241,7 +4429,7 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 
 
   <script>
-  let imgs = ["https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/046.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/056.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/001.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/034.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/033.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/051.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/025.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/004.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/054.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/035.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/016.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/019.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/052.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/042.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/003.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/039.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/006.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/002.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/005.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/038.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/012.webp"];
+  let imgs = ["https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/003.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/033.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/006.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/054.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/019.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/002.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/038.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/012.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/039.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/005.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/035.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/046.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/052.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/042.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/056.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/001.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/004.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/034.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/025.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/016.webp","https://unpkg.com/volantis-static@0.0.1654736714924/media/wallpaper/minimalist/2020/051.webp"];
   let index = 0;
   let IntervalParallax = null;
 
@@ -4451,6 +4639,96 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 </script>
 
 
+  <script>
+  try {
+    // https://web.dev/content-visibility/
+    // https://www.caniuse.com/?search=content-visibility
+    // https://infrequently.org/2020/12/content-visibility-scroll-fix/
+    // https://infrequently.org/2020/12/resize-resilient-deferred-rendering/
+
+    // 备注 目前已知的问题:
+    // 动态修改导致的内容高度变化(例如评论框异步渲染的外部盒子高度变化) 无法提前获知, 进而导致的首次滚动条跳动无法去除 (wontfix) 事实上不使用 content-visibility 也会有跳动, 不过是比使用 content-visibility 跳动提前
+    // scrollreveal 插件潜在问题 目前尚不明确
+
+    let eqIsh = (a, b, fuzz = 2) => {
+      return Math.abs(a - b) <= fuzz;
+    };
+
+    let rectNotEQ = (a, b) => {
+      return !eqIsh(a.width, b.width) || !eqIsh(a.height, b.height);
+    };
+
+    // Keep a map of elements and the dimensions of
+    // their place-holders, re-setting the element's
+    // intrinsic size when we get updated measurements
+    // from observers.
+    let spaced = new WeakMap();
+
+    // Only call this when known cheap, post layout
+    let reserveSpace = (el, rect = el.getClientBoundingRect()) => {
+      let old = spaced.get(el);
+      // Set intrinsic size to prevent jumping on un-painting:
+      //    https://drafts.csswg.org/css-sizing-4/#intrinsic-size-override
+      if (!old || rectNotEQ(old, rect)) {
+        spaced.set(el, rect);
+        el.style["contain-intrinsic-size"] = `${rect.width}px ${rect.height}px`;
+      }
+    };
+
+    let iObs = new IntersectionObserver(
+      (entries, o) => {
+        entries.forEach((entry) => {
+          // We don't care if the element is intersecting or
+          // has been laid out as our page structure ensures
+          // they'll get the right width.
+          reserveSpace(entry.target, entry.boundingClientRect);
+        });
+      },
+      { rootMargin: "500px 0px 500px 0px" }
+    );
+
+    let rObs = new ResizeObserver((entries, o) => {
+      entries.forEach((entry) => {
+        reserveSpace(entry.target, entry.contentRect);
+      });
+    });
+
+    let resizeResilientDeferredRendering = (Selector) => {
+      let articles = document.querySelectorAll(Selector);
+
+      if (articles.length) {
+        articles.forEach((el) => {
+          iObs.observe(el);
+          rObs.observe(el);
+        });
+
+        // Workaround for Chrome bug, part 2.
+        //
+        // Re-enable browser management of rendering for the
+        // first article after the first paint. Double-rAF
+        // to ensure we get called after a layout.
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            articles[0].style["content-visibility"] = "auto";
+          });
+        });
+      }
+    };
+
+    let contentVisibilityScrollFix = () => {
+      if (!("content-visibility" in document.documentElement.style)) {
+        return;
+      }
+      resizeResilientDeferredRendering(".post-story");
+    };
+    contentVisibilityScrollFix();
+    volantis.pjax.push(contentVisibilityScrollFix);
+  } catch (error) {
+    console.log(error);
+  }
+</script>
+
+
 
 <script>
   document.onreadystatechange = function () {
@@ -4468,7 +4746,7 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 </script>
 
 
-  <script type="application/ld+json">[{"@context":"http://schema.org","@type":"Organization","name":"aJream","url":"http://ajream.netlify.com/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"http://schema.org","@type":"Person","name":"aJream","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://ajream.netlify.com/","sameAs":["https://github.com/volantis-x"],"description":"aJream的个人博客"},{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"http://ajream.netlify.com/","name":"aJream"}},{"@type":"ListItem","position":3,"item":{"@id":"http://ajream.netlify.com/posts/4a17b156/","name":"Hello World"}}]},{"@context":"http://schema.org","@type":"WebSite","name":"aJream","url":"http://ajream.netlify.com/","keywords":null,"description":"aJream的个人博客","author":{"@type":"Person","name":"aJream","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://ajream.netlify.com/","description":"aJream的个人博客"},"publisher":{"@type":"Organization","name":"aJream","url":"http://ajream.netlify.com/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"http://ajream.netlify.com?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"http://schema.org","@type":"BlogPosting","headline":"Hello World","description":"aJream的个人博客","inLanguage":["zh-CN","en","zh-TW","default"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://ajream.netlify.com/posts/4a17b156/"},"author":{"@type":"Person","name":"aJream","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://ajream.netlify.com/"},"publisher":{"@type":"Organization","name":"aJream","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"http://ajream.netlify.com/posts/4a17b156/","wordCount":0,"datePublished":"2023-09-03T05:50:03.105Z","dateModified":"2023-09-04T15:19:20.646Z","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
+  <script type="application/ld+json">[{"@context":"http://schema.org","@type":"Organization","name":"aJream","url":"http://ajream.netlify.com/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"http://schema.org","@type":"Person","name":"aJream","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://ajream.netlify.com/","sameAs":["https://github.com/volantis-x"],"description":"aJream的个人博客"},{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"http://ajream.netlify.com/","name":"aJream"}},{"@type":"ListItem","position":3,"item":{"@id":"http://ajream.netlify.com/posts/4a17b156/","name":"Hello World"}}]},{"@context":"http://schema.org","@type":"WebSite","name":"aJream","url":"http://ajream.netlify.com/","keywords":null,"description":"aJream的个人博客","author":{"@type":"Person","name":"aJream","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://ajream.netlify.com/","description":"aJream的个人博客"},"publisher":{"@type":"Organization","name":"aJream","url":"http://ajream.netlify.com/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"http://ajream.netlify.com?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"http://schema.org","@type":"BlogPosting","headline":"Hello World","description":"aJream的个人博客","inLanguage":["zh-CN","en","zh-TW","default"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://ajream.netlify.com/posts/4a17b156/"},"author":{"@type":"Person","name":"aJream","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"http://ajream.netlify.com/"},"publisher":{"@type":"Organization","name":"aJream","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"http://ajream.netlify.com/posts/4a17b156/","wordCount":0,"datePublished":"2021-05-08T04:32:44.000Z","dateModified":"2023-09-05T06:07:10.883Z","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
 
 
 
