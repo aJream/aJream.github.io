@@ -59,11 +59,11 @@
 <meta property="og:title" content="aJream">
 <meta property="og:url" content="https://blog.ajream.top/notes/stm32/stm32_9/">
 <meta property="og:site_name" content="aJream">
-<meta property="og:description" content="中断介绍  相关概念百度或查找其它资料  中断源 中断屏蔽 中断处理过程（响应中断、执行中断服务函数、中断返回） 中断优先级（抢占优先级、子优先级） 中断嵌套  中断系统  嵌套向量中断控制器NVIC   中断优先级   color:blue 优先级分组                               Cortex-M3允许具有较少中断源时使用较少的寄存器位指定中断源的优先级，因此S">
+<meta property="og:description" content="中断介绍  相关概念百度或查找其它资料  中断源 中断屏蔽 中断处理过程（响应中断、执行中断服务函数、中断返回） 中断优先级（抢占优先级、子优先级） 中断嵌套  中断系统  嵌套向量中断控制器NVIC   中断优先级   优先级分组                               Cortex-M3允许具有较少中断源时使用较少的寄存器位指定中断源的优先级，因此STM32把指定中断优先">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png">
-<meta property="article:published_time" content="2024-03-31T14:49:40.675Z">
-<meta property="article:modified_time" content="2024-03-31T14:49:40.675Z">
+<meta property="article:published_time" content="2024-03-31T15:02:29.106Z">
+<meta property="article:modified_time" content="2024-03-31T15:02:29.106Z">
 <meta property="article:author" content="aJream">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png">
@@ -1870,7 +1870,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     debug: false,
     cdn: {"js":{"app":"/js/app.js","parallax":"/js/plugins/parallax.js","rightMenu":"/js/plugins/rightMenu.js","rightMenus":"/js/plugins/rightMenus.js","sites":"/js/plugins/tags/sites.js","friends":"/js/plugins/tags/friends.js","contributors":"/js/plugins/tags/contributors.js","search":"/js/search/hexo.js"},"css":{"style":"/css/style.css"}},
     default: {"avatar":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/avatar/round/3442075.svg","link":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/link/8f277b4ee0ecd.svg","cover":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/cover/76b86c0226ffd.svg","image":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/image/2659360.svg"},
-    lastupdate: new Date(1711896588594),
+    lastupdate: new Date(1711897360314),
     sidebar: {
       for_page: ["blogger","fastnav","category","tagcloud","webinfo"],
       for_post: ["blogger","category","toc"],
@@ -2831,7 +2831,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 <blockquote>
 <p>中断优先级</p>
 </blockquote>
-<details ><summary> color:blue 优先级分组 </summary>
+<details blue><summary> 优先级分组 </summary>
               <div class='content'>
               <p>Cortex-M3允许具有较少中断源时使用较少的寄存器位指定中断源的优先级，因此STM32把指定中断优先级的寄存器位减少到4位，这4个寄存器位的分组方式如下：<br />第0组：所有4位用于指定响应优先级，此时不会发生中断嵌套<br />第1组：最高1位用于指定抢占式优先级，最低3位用于指定响应优先级<br />第2组：最高2位用于指定抢占式优先级，最低2位用于指定响应优先级<br />第3组：最高3位用于指定抢占式优先级，最低1位用于指定响应优先级<br />第4组：所有4位用于指定抢占式优先级</p><p>可以通过调用STM32的固件库中的函数<code>NVIC_PriorityGroupConfig()</code>选择使用哪种优先级分组方式，这个函数的参数有下列5种：</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">NVIC_PriorityGroup_0 <span class="comment">//选择第0组</span></span><br><span class="line">NVIC_PriorityGroup_1 <span class="comment">// 选择第1组</span></span><br><span class="line">NVIC_PriorityGroup_2 <span class="comment">// 选择第2组</span></span><br><span class="line">NVIC_PriorityGroup_3 <span class="comment">// 选择第3组</span></span><br><span class="line">NVIC_PriorityGroup_4 <span class="comment">// 选择第4组</span></span><br></pre></td></tr></table></figure>
               </div>
@@ -2840,23 +2840,23 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 <p>中断服务函数<br />
 中断服务函数通常以<code>PPP_IRQHandler</code>命名，PPP是对应外设名</p>
 </blockquote>
-<details ><summary> color:blue 中断设置过程 </summary>
+<details blue><summary> 中断设置过程 </summary>
               <div class='content'>
               <ol><li>建立中断向量表（必须在用户程序执行前完成，通常在启动过程中完成可以在Flash、RAM中建立中断向量表）<ul><li>在Flash建立（默认情况下）：无需重定位中断向量表，即每个中断对应的中断服务函数不能被修改</li><li>在RAM中建立：需要重定向中断向量表，在用户程序运行过程，可根据需要动态修改中断服务程序</li></ul></li><li>分配栈空间并初始化</li><li>设置中断优先级<ul><li>分组</li><li>抢占优先级、子优先级</li></ul></li><li>使能中断</li><li>编写中断服务函数</li></ol>
               </div>
             </details>
 </div><div class="story post-story"><h2 id="外部中断事件控制器exti"><a class="markdownIt-Anchor" href="#外部中断事件控制器exti"></a> 外部中断/事件控制器EXTI</h2>
-<details ><summary> color:blue 原理框图 </summary>
+<details blue><summary> 原理框图 </summary>
               <div class='content'>
               <p><img src="https://gitcode.net/ajream/myimages/-/raw/master/img/20211004225923_image-20211004225919271.png" class="lazyload" data-srcset="https://gitcode.net/ajream/myimages/-/raw/master/img/20211004225923_image-20211004225919271.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20211004225919271" /></p>
               </div>
             </details>
-<details ><summary> color:blue 外部中断输入线 </summary>
+<details blue><summary> 外部中断输入线 </summary>
               <div class='content'>
               <ul><li><p>一共16个中断输入线<code>EXTI0~EXTI15</code></p></li><li><p>每个输入线都可以源于<code>PA~PG</code>共7个端口（同一时刻只能启用其中一个端口，比如对于EXTI0，用了PA0作为外部输入，就不能用PB0或者PC0、PD0……）</p></li></ul><p><img src="https://gitcode.net/ajream/myimages/-/raw/master/img/20211004230109_image-20211004230108522.png" class="lazyload" data-srcset="https://gitcode.net/ajream/myimages/-/raw/master/img/20211004230109_image-20211004230108522.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20211004230108522" /></p>
               </div>
             </details>
-<details ><summary> color:blue 原理实现 </summary>
+<details blue><summary> 原理实现 </summary>
               <div class='content'>
               <p><img src="https://gitcode.net/ajream/myimages/-/raw/master/img/20211005000129_image-20211005000126353.png" class="lazyload" data-srcset="https://gitcode.net/ajream/myimages/-/raw/master/img/20211005000129_image-20211005000126353.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20211005000126353" /></p><ol><li><p>外部信号通过输入线（GPIO端口）进入EXTIx</p></li><li><p>信号经过边沿检测电路，可以选择上升沿或下降沿触发，或者2种触发都选择</p></li><li><p>然后经过或门，一路输出到NVIC控制器（用于产生中断），一路经过脉冲发生器输出一个脉冲；在这个过程中信号可以被屏蔽。用于产生中断的信号称为“中断”，用于产生脉冲的信号被称为“事件”</p></li></ol>
               </div>
@@ -2889,7 +2889,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     <div class='new-meta-box'>
       
         
-          <div class="new-meta-item date" itemprop="dateModified" datetime="2024-03-31T14:49:40+00:00">
+          <div class="new-meta-item date" itemprop="dateModified" datetime="2024-03-31T15:02:29+00:00">
   <a class='notlink'>
     <i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i>
     <p>更新于：2024年3月31日</p>
@@ -4377,7 +4377,7 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 
 
   <script>
-  let imgs = ["/static/imgs/bg_013.webp","/static/imgs/bg_014.webp","/static/imgs/bg_017.webp","/static/imgs/bg_010.webp","/static/imgs/bg_019.webp","/static/imgs/bg_006.webp","/static/imgs/bg_009.webp","/static/imgs/bg_012.webp","/static/imgs/blog_bg.jpg","/static/imgs/bg_020.webp","/static/imgs/bg_008.webp","/static/imgs/bg_016.webp"];
+  let imgs = ["/static/imgs/bg_017.webp","/static/imgs/bg_014.webp","/static/imgs/bg_012.webp","/static/imgs/bg_016.webp","/static/imgs/blog_bg.jpg","/static/imgs/bg_019.webp","/static/imgs/bg_008.webp","/static/imgs/bg_006.webp","/static/imgs/bg_010.webp","/static/imgs/bg_020.webp","/static/imgs/bg_009.webp","/static/imgs/bg_013.webp"];
   let index = 0;
   let IntervalParallax = null;
 
@@ -4694,7 +4694,7 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 </script>
 
 
-  <script type="application/ld+json">[{"@context":"http://schema.org","@type":"Organization","name":"aJream","url":"https://blog.ajream.top/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"http://schema.org","@type":"Person","name":"aJream","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://blog.ajream.top/","sameAs":["https://github.com/volantis-x"],"description":"aJream的个人博客"},{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https://blog.ajream.top/","name":"aJream"}}]},{"@context":"http://schema.org","@type":"WebSite","name":"aJream","url":"https://blog.ajream.top/","keywords":null,"description":"aJream的个人博客","author":{"@type":"Person","name":"aJream","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://blog.ajream.top/","description":"aJream的个人博客"},"publisher":{"@type":"Organization","name":"aJream","url":"https://blog.ajream.top/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"https://blog.ajream.top?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"http://schema.org","@type":"BlogPosting","headline":"stm32中断","description":"aJream的个人博客","inLanguage":["zh-CN","en","zh-TW","default"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.ajream.top/notes/stm32/stm32_9/"},"author":{"@type":"Person","name":"aJream","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://blog.ajream.top/"},"publisher":{"@type":"Organization","name":"aJream","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"https://blog.ajream.top/notes/stm32/stm32_9/","wordCount":0,"datePublished":"2024-03-31T14:49:40.675Z","dateModified":"2024-03-31T14:49:40.675Z","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
+  <script type="application/ld+json">[{"@context":"http://schema.org","@type":"Organization","name":"aJream","url":"https://blog.ajream.top/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"http://schema.org","@type":"Person","name":"aJream","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://blog.ajream.top/","sameAs":["https://github.com/volantis-x"],"description":"aJream的个人博客"},{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https://blog.ajream.top/","name":"aJream"}}]},{"@context":"http://schema.org","@type":"WebSite","name":"aJream","url":"https://blog.ajream.top/","keywords":null,"description":"aJream的个人博客","author":{"@type":"Person","name":"aJream","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://blog.ajream.top/","description":"aJream的个人博客"},"publisher":{"@type":"Organization","name":"aJream","url":"https://blog.ajream.top/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"https://blog.ajream.top?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"http://schema.org","@type":"BlogPosting","headline":"stm32中断","description":"aJream的个人博客","inLanguage":["zh-CN","en","zh-TW","default"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.ajream.top/notes/stm32/stm32_9/"},"author":{"@type":"Person","name":"aJream","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://blog.ajream.top/"},"publisher":{"@type":"Organization","name":"aJream","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"https://blog.ajream.top/notes/stm32/stm32_9/","wordCount":0,"datePublished":"2024-03-31T15:02:29.106Z","dateModified":"2024-03-31T15:02:29.106Z","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
 
 
 

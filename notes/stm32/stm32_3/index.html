@@ -62,8 +62,8 @@
 <meta property="og:description" content="工程结构建立 点击跳转到工程查看  初始化工程目录结构 首先创建一个文件夹test, 用于存放该工程，然后在该文件夹下创建以下几个文件夹(目的是让工程管理起来更有条理)：  lib: 用于存放库文件（像Libraries、Lib等文件名字也是可以的，根据自己的风格，最好是能&quot;见名知义&quot;）  CMSIS: 存放内核核心库文件 STM32F10x_StdPeriph_Driver">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png">
-<meta property="article:published_time" content="2024-03-31T14:49:40.675Z">
-<meta property="article:modified_time" content="2024-03-31T14:49:40.675Z">
+<meta property="article:published_time" content="2024-03-31T15:02:29.106Z">
+<meta property="article:modified_time" content="2024-03-31T15:02:29.106Z">
 <meta property="article:author" content="aJream">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png">
@@ -1870,7 +1870,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     debug: false,
     cdn: {"js":{"app":"/js/app.js","parallax":"/js/plugins/parallax.js","rightMenu":"/js/plugins/rightMenu.js","rightMenus":"/js/plugins/rightMenus.js","sites":"/js/plugins/tags/sites.js","friends":"/js/plugins/tags/friends.js","contributors":"/js/plugins/tags/contributors.js","search":"/js/search/hexo.js"},"css":{"style":"/css/style.css"}},
     default: {"avatar":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/avatar/round/3442075.svg","link":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/link/8f277b4ee0ecd.svg","cover":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/cover/76b86c0226ffd.svg","image":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/image/2659360.svg"},
-    lastupdate: new Date(1711896588594),
+    lastupdate: new Date(1711897360314),
     sidebar: {
       for_page: ["blogger","fastnav","category","tagcloud","webinfo"],
       for_post: ["blogger","category","toc"],
@@ -2831,7 +2831,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 </ul>
 <h3 id="添加相关文件"><a class="markdownIt-Anchor" href="#添加相关文件"></a> 添加相关文件</h3>
 <h4 id="固件库说明"><a class="markdownIt-Anchor" href="#固件库说明"></a> 固件库说明</h4>
-<details ><summary> color:blue 展开 </summary>
+<details blue><summary> 点击展开 </summary>
               <div class='content'>
               <p>首先要去官网或其他渠道下载STM32固件库，这个库包含了我们创建要用到的所有文件，其包含的文件如下</p><p><img src="https://gitcode.net/ajream/myimages/-/raw/master/img/20210910194652_image-20210910194646565.png" class="lazyload" data-srcset="https://gitcode.net/ajream/myimages/-/raw/master/img/20210910194652_image-20210910194646565.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20210910194646565" /></p><p>【Libraries】文件夹存放STM32F10x开发要用到的各种库函数和启动文件，包括<code>CMSIS</code>和<code>STM32F10x_StdPeriph_Driver</code>两个子文件夹:</p><ol><li><p>【CMSIS】文件夹是内核库核心文件夹，包括CoreSupport和DeviceSupport等两个文件夹</p><p>CoreSupport文件夹包括Cortcx-M3内核通用源文件<code>core_cm3.c</code>和头文件<code>core_cm3.h</code></p></li><li><p>【DeviceSupport】文件夹STM32F0x头文件<code>stm32f10x.h</code>和系统初始化文件<code>system_stm32f10x.c</code>【STM32F10x_StdPeriph_Driver】文件夹是STM32Fl0x标准外设驱动库函数目录，包括了所有STM32F10x微控制器的外设驱动</p></li></ol><p><img src="https://gitcode.net/ajream/myimages/-/raw/master/img/20210910195026_image-20210910195021702.png" class="lazyload" data-srcset="https://gitcode.net/ajream/myimages/-/raw/master/img/20210910195026_image-20210910195021702.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20210910195021702" /></p><p>【Project】文件夹对应STM32F10x标准外设库体系架构中的用户层，用来存放ST官方提供的STM32F10x工程模板和外设驱动示例</p><p>【Utilities】文件夹用于存放ST官方评估板的BSP(Board Support Package, 板级支持包)和额外的第三方固件</p>
               </div>
@@ -2872,7 +2872,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 <li>选择芯片，这里使用 <code>STM32F103ZE</code></li>
 <li>选择库，这里先不选，后面再选，直接跳过</li>
 </ol>
-<details ><summary> color:blue 具体步骤 </summary>
+<details blue><summary> 点击查看具体步骤 </summary>
               <div class='content'>
               <p>点击 <code>new uVision Project</code></p><p><img src="https://gitcode.net/ajream/myimages/-/raw/master/img/20210910210853_image-20210910210845401.png" class="lazyload" data-srcset="https://gitcode.net/ajream/myimages/-/raw/master/img/20210910210853_image-20210910210845401.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20210910210845401" /></p><p>自己命名，选择保存；</p><p>选择芯片 <code>STM32F103ZE</code></p><p><img src="https://gitcode.net/ajream/myimages/-/raw/master/img/20210910211318_image-20210910211314033.png" class="lazyload" data-srcset="https://gitcode.net/ajream/myimages/-/raw/master/img/20210910211318_image-20210910211314033.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20210910211314033" /></p><p>选择库，直接跳过，后面再选</p><p><img src="https://gitcode.net/ajream/myimages/-/raw/master/img/20210910211421_image-20210910211418672.png" class="lazyload" data-srcset="https://gitcode.net/ajream/myimages/-/raw/master/img/20210910211421_image-20210910211418672.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20210910211418672" /></p><p>完成</p><p><img src="https://gitcode.net/ajream/myimages/-/raw/master/img/20210910211512_image-20210910211508362.png" class="lazyload" data-srcset="https://gitcode.net/ajream/myimages/-/raw/master/img/20210910211512_image-20210910211508362.png" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="image-20210910211508362" /></p>
               </div>
@@ -2960,7 +2960,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     <div class='new-meta-box'>
       
         
-          <div class="new-meta-item date" itemprop="dateModified" datetime="2024-03-31T14:49:40+00:00">
+          <div class="new-meta-item date" itemprop="dateModified" datetime="2024-03-31T15:02:29+00:00">
   <a class='notlink'>
     <i class="fa-solid fa-edit fa-fw" aria-hidden="true"></i>
     <p>更新于：2024年3月31日</p>
@@ -4449,7 +4449,7 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 
 
   <script>
-  let imgs = ["/static/imgs/bg_013.webp","/static/imgs/bg_014.webp","/static/imgs/bg_017.webp","/static/imgs/bg_010.webp","/static/imgs/bg_019.webp","/static/imgs/bg_006.webp","/static/imgs/bg_009.webp","/static/imgs/bg_012.webp","/static/imgs/blog_bg.jpg","/static/imgs/bg_020.webp","/static/imgs/bg_008.webp","/static/imgs/bg_016.webp"];
+  let imgs = ["/static/imgs/bg_017.webp","/static/imgs/bg_014.webp","/static/imgs/bg_012.webp","/static/imgs/bg_016.webp","/static/imgs/blog_bg.jpg","/static/imgs/bg_019.webp","/static/imgs/bg_008.webp","/static/imgs/bg_006.webp","/static/imgs/bg_010.webp","/static/imgs/bg_020.webp","/static/imgs/bg_009.webp","/static/imgs/bg_013.webp"];
   let index = 0;
   let IntervalParallax = null;
 
@@ -4766,7 +4766,7 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 </script>
 
 
-  <script type="application/ld+json">[{"@context":"http://schema.org","@type":"Organization","name":"aJream","url":"https://blog.ajream.top/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"http://schema.org","@type":"Person","name":"aJream","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://blog.ajream.top/","sameAs":["https://github.com/volantis-x"],"description":"aJream的个人博客"},{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https://blog.ajream.top/","name":"aJream"}}]},{"@context":"http://schema.org","@type":"WebSite","name":"aJream","url":"https://blog.ajream.top/","keywords":null,"description":"aJream的个人博客","author":{"@type":"Person","name":"aJream","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://blog.ajream.top/","description":"aJream的个人博客"},"publisher":{"@type":"Organization","name":"aJream","url":"https://blog.ajream.top/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"https://blog.ajream.top?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"http://schema.org","@type":"BlogPosting","headline":"MDK keil新建stm32工程","description":"aJream的个人博客","inLanguage":["zh-CN","en","zh-TW","default"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.ajream.top/notes/stm32/stm32_3/"},"author":{"@type":"Person","name":"aJream","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://blog.ajream.top/"},"publisher":{"@type":"Organization","name":"aJream","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"https://blog.ajream.top/notes/stm32/stm32_3/","wordCount":0,"datePublished":"2024-03-31T14:49:40.675Z","dateModified":"2024-03-31T14:49:40.675Z","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
+  <script type="application/ld+json">[{"@context":"http://schema.org","@type":"Organization","name":"aJream","url":"https://blog.ajream.top/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"http://schema.org","@type":"Person","name":"aJream","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://blog.ajream.top/","sameAs":["https://github.com/volantis-x"],"description":"aJream的个人博客"},{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https://blog.ajream.top/","name":"aJream"}}]},{"@context":"http://schema.org","@type":"WebSite","name":"aJream","url":"https://blog.ajream.top/","keywords":null,"description":"aJream的个人博客","author":{"@type":"Person","name":"aJream","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://blog.ajream.top/","description":"aJream的个人博客"},"publisher":{"@type":"Organization","name":"aJream","url":"https://blog.ajream.top/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"https://blog.ajream.top?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"http://schema.org","@type":"BlogPosting","headline":"MDK keil新建stm32工程","description":"aJream的个人博客","inLanguage":["zh-CN","en","zh-TW","default"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.ajream.top/notes/stm32/stm32_3/"},"author":{"@type":"Person","name":"aJream","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://blog.ajream.top/"},"publisher":{"@type":"Organization","name":"aJream","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"https://blog.ajream.top/notes/stm32/stm32_3/","wordCount":0,"datePublished":"2024-03-31T15:02:29.106Z","dateModified":"2024-03-31T15:02:29.106Z","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
 
 
 
