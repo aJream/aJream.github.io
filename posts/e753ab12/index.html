@@ -52,7 +52,7 @@
   <!-- feed -->
   <!-- 页面元数据 -->
   <title>VSCode配置STM32 HAL库开发环境 - aJream</title>
-  <meta name="keywords" content="cmake,null">
+  <meta name="keywords" content="cmake,stm32,null">
   <meta desc name="description" content="经常用MDK Keil进行STM32程序开发，但用过jetbrain全家桶等现代IDE后，对keil复古的开发界面以及代码提示不是很喜欢，因此参照网络方法配置了stm32cubemx+vscode+cmake+ninja/make+gcc的开发环境 - aJream - aJream">
   
 <meta property="og:type" content="article">
@@ -66,6 +66,7 @@
 <meta property="article:modified_time" content="2024-09-18T04:21:03.000Z">
 <meta property="article:author" content="aJream">
 <meta property="article:tag" content="cmake">
+<meta property="article:tag" content="stm32">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png">
   <style>
@@ -1871,7 +1872,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     debug: false,
     cdn: {"js":{"app":"/js/app.js","parallax":"/js/plugins/parallax.js","rightMenu":"/js/plugins/rightMenu.js","rightMenus":"/js/plugins/rightMenus.js","sites":"/js/plugins/tags/sites.js","friends":"/js/plugins/tags/friends.js","contributors":"/js/plugins/tags/contributors.js","search":"/js/search/hexo.js"},"css":{"style":"/css/style.css"}},
     default: {"avatar":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/avatar/round/3442075.svg","link":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/link/8f277b4ee0ecd.svg","cover":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/cover/76b86c0226ffd.svg","image":"https://unpkg.com/volantis-static@0.0.1654736714924/media/placeholder/image/2659360.svg"},
-    lastupdate: new Date(1727003848263),
+    lastupdate: new Date(1727012136245),
     sidebar: {
       for_page: ["blogger","fastnav","category","tagcloud","webinfo"],
       for_post: ["blogger","category","toc"],
@@ -3011,8 +3012,8 @@ cmake options可以选择生成器，cmake支持的生成器可以通过命令 <
         
           
   
-  <div class="new-meta-item meta-tags"><a class="tag" href="/tags/cmake/" rel="nofollow"><i class="fa-solid fa-hashtag fa-fw" aria-hidden="true"></i><p>cmake</p></a></div>
-  <span hidden itemprop="keywords">cmake</span>
+  <div class="new-meta-item meta-tags"><a class="tag" href="/tags/cmake/" rel="nofollow"><i class="fa-solid fa-hashtag fa-fw" aria-hidden="true"></i><p>cmake</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/tags/stm32/" rel="nofollow"><i class="fa-solid fa-hashtag fa-fw" aria-hidden="true"></i><p>stm32</p></a></div>
+  <span hidden itemprop="keywords">cmake stm32</span>
 
 
         
@@ -3081,6 +3082,13 @@ cmake options可以选择生成器，cmake支持的生成器可以通过命令 <
 
   
     <div class="prev-next">
+      
+        <a class='prev' href='/posts/1645af1c/'>
+          <p class='title'><i class="fa-solid fa-chevron-left" aria-hidden="true"></i>手动移植FreeRTOS到stm32</p>
+          <p class='content'> 手动移植FreeRTOS
+stm32cubemx内置了freertos，如果不想手动移植，可以参考这个视频：
+https://www.bilibili.com/video/BV1To4UeVE...</p>
+        </a>
       
       
         <a class='next' href='/posts/fdd0441e/'>
@@ -3213,6 +3221,11 @@ cmake options可以选择生成器，cmake支持的生成器可以通过命令 <
             title="/categories/Hexo/" href="/categories/Hexo/"
             active-action="action-categoriesHexo"
             ><div class='name'>Hexo</div><div class='badge'>(7)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/categories/stm32/" href="/categories/stm32/"
+            active-action="action-categoriesstm32"
+            ><div class='name'>stm32</div><div class='badge'>(1)</div></a></li>
         
           <li><a class="flat-box"
             title="/categories/%E5%A8%B1%E4%B9%90/" href="/categories/%E5%A8%B1%E4%B9%90/"
@@ -4450,7 +4463,7 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 
 
   <script>
-  let imgs = ["/static/imgs/bg_019.webp","/static/imgs/bg_010.webp","/static/imgs/blog_bg.jpg","/static/imgs/bg_008.webp","/static/imgs/bg_014.webp","/static/imgs/bg_013.webp","/static/imgs/bg_017.webp","/static/imgs/bg_016.webp","/static/imgs/bg_020.webp","/static/imgs/bg_006.webp","/static/imgs/bg_009.webp","/static/imgs/bg_012.webp"];
+  let imgs = ["/static/imgs/bg_010.webp","/static/imgs/bg_017.webp","/static/imgs/bg_009.webp","/static/imgs/blog_bg.jpg","/static/imgs/bg_012.webp","/static/imgs/bg_016.webp","/static/imgs/bg_019.webp","/static/imgs/bg_020.webp","/static/imgs/bg_013.webp","/static/imgs/bg_014.webp","/static/imgs/bg_008.webp","/static/imgs/bg_006.webp"];
   let index = 0;
   let IntervalParallax = null;
 
@@ -4767,7 +4780,7 @@ window.matchMedia('(prefers-color-scheme: light)').addListener(darkModelListener
 </script>
 
 
-  <script type="application/ld+json">[{"@context":"http://schema.org","@type":"Organization","name":"aJream","url":"https://blog.ajream.top/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"http://schema.org","@type":"Person","name":"aJream","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://blog.ajream.top/","sameAs":["https://github.com/volantis-x"],"description":"aJream的个人博客"},{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https://blog.ajream.top/","name":"aJream"}},{"@type":"ListItem","position":2,"item":{"@id":"https://blog.ajream.top/categories/开发环境搭建/","name":"开发环境搭建"}},{"@type":"ListItem","position":3,"item":{"@id":"https://blog.ajream.top/posts/e753ab12/","name":"VSCode配置STM32 HAL库开发环境"}}]},{"@context":"http://schema.org","@type":"WebSite","name":"aJream","url":"https://blog.ajream.top/","keywords":null,"description":"aJream的个人博客","author":{"@type":"Person","name":"aJream","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://blog.ajream.top/","description":"aJream的个人博客"},"publisher":{"@type":"Organization","name":"aJream","url":"https://blog.ajream.top/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"https://blog.ajream.top?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"http://schema.org","@type":"BlogPosting","headline":"VSCode配置STM32 HAL库开发环境","description":"经常用MDK Keil进行STM32程序开发，但用过jetbrain全家桶等现代IDE后，对keil复古的开发界面以及代码提示不是很喜欢，因此参照网络方法配置了stm32cubemx+vscode+cmake+ninja/make+gcc的开发环境","inLanguage":["zh-CN","en","zh-TW","default"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.ajream.top/posts/e753ab12/"},"author":{"@type":"Person","name":"aJream","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://blog.ajream.top/"},"publisher":{"@type":"Organization","name":"aJream","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"https://blog.ajream.top/posts/e753ab12/","wordCount":0,"datePublished":"2024-09-17T02:30:34.000Z","dateModified":"2024-09-18T04:21:03.000Z","articleSection":"开发环境搭建","keywords":"cmake","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
+  <script type="application/ld+json">[{"@context":"http://schema.org","@type":"Organization","name":"aJream","url":"https://blog.ajream.top/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},{"@context":"http://schema.org","@type":"Person","name":"aJream","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://blog.ajream.top/","sameAs":["https://github.com/volantis-x"],"description":"aJream的个人博客"},{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"https://blog.ajream.top/","name":"aJream"}},{"@type":"ListItem","position":2,"item":{"@id":"https://blog.ajream.top/categories/开发环境搭建/","name":"开发环境搭建"}},{"@type":"ListItem","position":3,"item":{"@id":"https://blog.ajream.top/posts/e753ab12/","name":"VSCode配置STM32 HAL库开发环境"}}]},{"@context":"http://schema.org","@type":"WebSite","name":"aJream","url":"https://blog.ajream.top/","keywords":null,"description":"aJream的个人博客","author":{"@type":"Person","name":"aJream","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://blog.ajream.top/","description":"aJream的个人博客"},"publisher":{"@type":"Organization","name":"aJream","url":"https://blog.ajream.top/","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"potentialAction":{"@type":"SearchAction","name":"Site Search","target":{"@type":"EntryPoint","urlTemplate":"https://blog.ajream.top?s={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"http://schema.org","@type":"BlogPosting","headline":"VSCode配置STM32 HAL库开发环境","description":"经常用MDK Keil进行STM32程序开发，但用过jetbrain全家桶等现代IDE后，对keil复古的开发界面以及代码提示不是很喜欢，因此参照网络方法配置了stm32cubemx+vscode+cmake+ninja/make+gcc的开发环境","inLanguage":["zh-CN","en","zh-TW","default"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.ajream.top/posts/e753ab12/"},"author":{"@type":"Person","name":"aJream","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png"},"url":"https://blog.ajream.top/"},"publisher":{"@type":"Organization","name":"aJream","logo":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}},"url":"https://blog.ajream.top/posts/e753ab12/","wordCount":0,"datePublished":"2024-09-17T02:30:34.000Z","dateModified":"2024-09-18T04:21:03.000Z","articleSection":"开发环境搭建","keywords":"cmake,stm32","image":{"@type":"ImageObject","url":"https://unpkg.com/volantis-static@0.0.1654736714924/media/org.volantis/blog/favicon/android-chrome-192x192.png","width":192,"height":192}}]</script>
 
 
 
